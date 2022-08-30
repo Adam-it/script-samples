@@ -84,7 +84,7 @@
 <p>The script removes a user from a site collection and adds a new one as site collection admin.</p>
 <div class="WARNING">
 <h5>Warning</h5>
-<p>Please be aware this script contains a command that will remove or delete an artefact, ensure you test and understand the implications of running the script.</p>
+<p>Please be aware this script contains a command that will remove or delete an artifact, ensure you test and understand the implications of running the script.</p>
 </div>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
@@ -103,7 +103,7 @@ $webUrl = &quot;&lt;spoUrl&gt;&quot;
 
 $m365Status = m365 status
 Write-Host $m365Status
-if ($m365Status -eq &quot;Logged Out&quot;) {
+if ($m365Status -match &quot;Logged Out&quot;) {
   # Connection to Microsoft 365
   m365 login
   $m365Status = m365 status

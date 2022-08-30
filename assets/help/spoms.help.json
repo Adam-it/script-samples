@@ -168,6 +168,14 @@
     "helpUrl": "https://docs.microsoft.com/en-us/powershell/module/sharepoint-online/Get-SPOHubSite?view=sharepoint-ps"
   },
   {
+    "cmd": "Get-SPOMalwareFile",
+    "helpUrl": "https://docs.microsoft.com/en-us/powershell/module/sharepoint-online/Get-SPOMalwareFile?view=sharepoint-ps"
+  },
+  {
+    "cmd": "Get-SPOMalwareFileContent",
+    "helpUrl": "https://docs.microsoft.com/en-us/powershell/module/sharepoint-online/Get-SPOMalwareFileContent?view=sharepoint-ps"
+  },
+  {
     "cmd": "Get-SPOMigrationJobProgress",
     "helpUrl": "https://docs.microsoft.com/en-us/powershell/module/sharepoint-online/Get-SPOMigrationJobProgress?view=sharepoint-ps"
   },
@@ -702,6 +710,10 @@
   {
     "cmd": "Set-SPOWebTheme",
     "helpUrl": "https://docs.microsoft.com/en-us/powershell/module/sharepoint-online/Set-SPOWebTheme?view=sharepoint-ps"
+  },
+  {
+    "cmd": "sharepoint-online",
+    "helpUrl": "https://docs.microsoft.com/en-us/powershell/module/sharepoint-online/sharepoint-online?view=sharepoint-ps"
   },
   {
     "cmd": "Start-SPOSiteContentMove",

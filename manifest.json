@@ -1554,6 +1554,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/graph-common-operations/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "graph-common-operations/README.html",
+          "hash": "XiMidz+MlZCDBx0S2J2kQA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-common-operations/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-common-operations/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-common-operations/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-common-operations/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-common-operations/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "graph-common-operations/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/graph-download-office-documents-as-pdf/README.md",
       "output": {
         ".html": {
@@ -5627,6 +5673,129 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-recover-meeting-recordings/README.html",
+          "hash": "SZYaFJ3/27Y0BO+gR0kd0A=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/GrantAccessToOnedrive.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/GrantAccessToOnedrive.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/LoopingthroughOnedrive.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/LoopingthroughOnedrive.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/RecordingsFolderAfterRestore.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/RecordingsFolderAfterRestore.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/Recyclebin1_unrestored.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/Recyclebin1_unrestored.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/RecylebinAfterRestore.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/RecylebinAfterRestore.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/RemoveAccess.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/RemoveAccess.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/RestoringFiles.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/RestoringFiles.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/TestingAccess.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/TestingAccess.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-recover-meeting-recordings/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-recover-meeting-recordings/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-recyclebin-items-to-csv/README.md",
       "output": {
         ".html": {
@@ -8751,7 +8920,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "jaPfOuFjbswULdpu6875qQ=="
+          "hash": "lE8DsszOtGl+JWMsyy5tYA=="
         }
       },
       "is_incremental": false,
@@ -8860,7 +9029,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "ggMaGvQyCC40T+LmhCRLtw=="
+          "hash": "Os16gzQk2rsrHdmr9HQHSA=="
         }
       },
       "is_incremental": false,
@@ -8872,7 +9041,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "GanRBm/MWclQU9LoGttPOw=="
+          "hash": "GtpK7CVVGL0VXp0DZEAEhg=="
         }
       },
       "is_incremental": false,

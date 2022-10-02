@@ -1646,6 +1646,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/graph-get-license-and-signins/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "graph-get-license-and-signins/README.html",
+          "hash": "D9IDR8T3AE/Rdr+JpJMqXw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-get-license-and-signins/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-get-license-and-signins/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-get-license-and-signins/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-get-license-and-signins/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-get-license-and-signins/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "graph-get-license-and-signins/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/magic-tooltips-module/README.md",
       "output": {
         ".html": {
@@ -2371,6 +2417,74 @@
       "output": {
         "resource": {
           "relative_path": "spo-add-bulk-users-to-groups/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-add-contenttypehub-format-field-to-List/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-add-contenttypehub-format-field-to-List/README.html",
+          "hash": "ma6xpKwH9xabVDXxtEaQFQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-contenttypehub-format-field-to-List/assets/ContentTypeHub.PNG",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-contenttypehub-format-field-to-List/assets/ContentTypeHub.PNG"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-contenttypehub-format-field-to-List/assets/ContentTypeHubFormatField.gif",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-contenttypehub-format-field-to-List/assets/ContentTypeHubFormatField.gif"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-contenttypehub-format-field-to-List/assets/ContentTypeHubList.PNG",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-contenttypehub-format-field-to-List/assets/ContentTypeHubList.PNG"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-contenttypehub-format-field-to-List/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-contenttypehub-format-field-to-List/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-contenttypehub-format-field-to-List/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-contenttypehub-format-field-to-List/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -4115,7 +4229,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-export-termstore-terms-to-csv/README.html",
-          "hash": "NwfzfnFTmEkNVbnPWvMXMg=="
+          "hash": "8dEuN/j2ZRHzNKK7XSkokA=="
         }
       },
       "is_incremental": false,
@@ -5712,6 +5826,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-provision-homepage/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-quicklink-wp-creator/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-quicklink-wp-creator/README.html",
+          "hash": "QgveczdT8JpCf9Esf+tOFA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-quicklink-wp-creator/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-quicklink-wp-creator/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-quicklink-wp-creator/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-quicklink-wp-creator/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -8966,7 +9115,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "JkCVwkSEepHz9VeUz1SYnA=="
+          "hash": "Acte0bsLfZAHt/SysCOWCw=="
         }
       },
       "is_incremental": false,
@@ -9075,7 +9224,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "tYarS2Ync2wgUXPZKY+IxA=="
+          "hash": "w9lyrE2RHybv1FZurjvoSg=="
         }
       },
       "is_incremental": false,
@@ -9087,7 +9236,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "VNkvSf3qLK8SQZYAhN0Npw=="
+          "hash": "rSLXqM96GTuJcb89KgaD4w=="
         }
       },
       "is_incremental": false,

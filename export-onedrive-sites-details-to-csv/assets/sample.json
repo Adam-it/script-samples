@@ -1,14 +1,14 @@
 [
   {
-    "name": "spo-add-bulk-users-to-groups",
+    "name": "export-onedrive-sites-details-to-csv",
     "source": "pnp",
-    "title": "Add bulk users to SharePoint site groups from CSV.",
-    "shortDescription": "Add bulk users to SharePoint site groups from CSV.",
-    "url": "https://pnp.github.io/script-samples/spo-add-bulk-users-to-groups/README.html",
+    "title": "Export OneDrive Sites",
+    "shortDescription": "This script exports all onedrive sites to CSV",
+    "url": "https://pnp.github.io/script-samples/export-onedrive-sites-details-to-csv/README.html",
     "longDescription": [
-      "Add bulk users to SharePoint site groups by reading CSV."
+      "This script exports all onedrive sites."
     ],
-    "creationDateTime": "2022-07-05",
+    "creationDateTime": "2022-10-18",
     "updateDateTime": "2022-10-19",
     "products": [
       "SharePoint"
@@ -16,7 +16,7 @@
     "metadata": [
       {
         "key": "PNP-POWERSHELL",
-        "value": "1.10.0"
+        "value": "1.11.0"
       },
       {
         "key": "SPO-MANAGEMENT-SHELL",
@@ -24,33 +24,28 @@
       }
     ],
     "categories": [
-      "Configure",
-      "Security"
+      "Report"
     ],
     "tags": [
-      "Connect-PnPOnline",
-      "Add-PnPGroupMember",
-      "Get-PnPGroup",
-      "Get-PnPGroupMember",
+      "SharePoint Online",
       "Connect-SPOService",
+      "Connect-PnPOnline",
       "Get-SPOSite",
-      "Get-SPOUser",
-      "Add-SPOUser"
+      "Get-PnPTenantSite"
     ],
     "thumbnails": [
       {
         "type": "image",
         "order": 100,
-        "url": "https://raw.githubusercontent.com/pnp/script-samples/main/scripts/spo-add-bulk-users-to-groups/assets/preview.png",
-        "alt": "preview image for the sample"
+        "url": "https://raw.githubusercontent.com/pnp/script-samples/main/scripts/export-onedrive-sites-details-to-csv/assets/example.png",
+        "alt": "Preview of the sample <title>"
       }
     ],
     "authors": [
       {
-        "name": "Chandani Prajapati",
         "gitHubAccount": "chandaniprajapati",
-        "company": "Rapid Circle",
-        "pictureUrl": "https://avatars.githubusercontent.com/u/52065929?v=4"
+        "pictureUrl": "https://avatars.githubusercontent.com/u/52065929?v=4",
+        "name": "Chandani Prajapati"
       }
     ],
     "references": [

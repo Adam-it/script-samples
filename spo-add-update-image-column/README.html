@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Delete orphaned temporary site pages | PnP Samples </title>
+    <title>Add/Update Image in SharePoint Image column | PnP Samples </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Delete orphaned temporary site pages | PnP Samples ">
+    <meta name="title" content="Add/Update Image in SharePoint Image column | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Delete orphaned temporary site pages | PnP Samples ">
+    <meta property="og:title" content="Add/Update Image in SharePoint Image column | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -76,23 +76,18 @@
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-delete-orphaned-temporary-sitepages/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-add-update-image-column/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="delete-orphaned-temporary-site-pages">Delete orphaned temporary site pages</h1>
+                    <h1 id="addupdate-image-in-sharepoint-image-column">Add/Update Image in SharePoint Image column</h1>
 
 <h2 id="summary">Summary</h2>
-<p>Locate, take ownership of, and delete temporary orphaned pages from /SitePages library.</p>
-<div class="WARNING">
-<h5>Warning</h5>
-<p>Please be aware this script contains a command that will remove or delete an artifact, ensure you test and understand the implications of running the script.</p>
-</div>
+<p>This sample script shows how to create a new list item with image column and update existing list item to update the image column using PnP PowerShell.</p>
+<p>Scenario inspired from this blog post: <a href="https://ganeshsanapblogs.wordpress.com/2022/10/13/add-update-image-columns-in-sharepoint-microsoft-lists-using-pnp-powershell/">Add/Update image columns in SharePoint/Microsoft Lists using PnP PowerShell</a></p>
+<p><img src="assets/output.png" alt="Outupt Screenshot"></p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
 <a href="#tabpanel_CeZOj-G++Q_pnpps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_pnpps" data-tab="pnpps" tabindex="0" aria-selected="true">PnP PowerShell</a>
-</li>
-<li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_cli-m365-ps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_cli-m365-ps" data-tab="cli-m365-ps" tabindex="-1">CLI for Microsoft 365 using PowerShell</a>
 </li>
 </ul>
 <section id="tabpanel_CeZOj-G++Q_pnpps" role="tabpanel" data-tab="pnpps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='pnpps'] pre">
@@ -101,117 +96,21 @@
 </button>
 
 <pre><code class="lang-powershell">
-$SiteURL = &quot;https://{tenant}.sharepoint.com/sites/{site}&quot;
-$ListName = &quot;Site Pages&quot;
+# SharePoint online site url
+$siteUrl = &quot;https://contoso.sharepoint.com/sites/SPConnect&quot;	
 
-Disconnect-PnPOnline
-#use a login with Site Collection Administrator or Owner permissions
-Connect-PnPOnline -Url $SiteURL -Interactive
-$context = Get-PnPContext
+# Connect to SharePoint Online site  
+Connect-PnPOnline -Url $siteUrl -Interactive
 
-$list = Get-PnPList -Identity $ListName
+# Create new list item with image column
+Add-PnPListItem -List &quot;Logo Universe&quot; -Values @{&quot;Title&quot; = &quot;PnP PowerShell&quot;; &quot;Image&quot; = &quot;{'type':'thumbnail','fileName':'PnP-PowerShell-Blue.png','fieldName':'Image','serverUrl':'https://contoso.sharepoint.com','serverRelativeUrl':'/sites/SPConnect/SiteAssets/Lists/dbc6f551-252b-462f-8002-c8f88d0d12d5/PnP-PowerShell-Blue.png'}&quot;}
 
-$context.Load($list)
-Invoke-PnPQuery
+# Update list item with image column
+Set-PnPListItem -List &quot;Logo Universe&quot; -Identity 12 -Values @{&quot;Image&quot; = &quot;{'type':'thumbnail','fileName':'PnP-PowerShell-Blue.png','fieldName':'Image','serverUrl':'https://contoso.sharepoint.com','serverRelativeUrl':'/sites/SPConnect/SiteAssets/Lists/dbc6f551-252b-462f-8002-c8f88d0d12d5/PnP-PowerShell-Green.png'}&quot;}
 
-$checkedOutFiles = $list.GetCheckedOutFiles()
-$context.Load($checkedOutFiles)
-Invoke-PnPQuery
-
-$filesProcessed = @()
-
-foreach($checkedOutFile in $CheckedOutFiles) {
-    $fileServerRelativeUrl = [string]::Concat($list.ParentWebUrl, $checkedOutFile.ServerRelativePath.DecodedUrl.Replace($list.ParentWebUrl, &quot;&quot;))
-
-    #8 random characters seem to be used for temporary page names.  Be careful - if a valid page was created with valid 8 character name, that page would be deleted as well.  TODO: figure out a way to avoid valid pages?
-    $tempPageSampleUrlForThisSite = $list.RootFolder.ServerRelativeUrl + &quot;/zz5yfe8u.aspx&quot;
-
-    if ($fileServerRelativeUrl.Length -ne $tempPageSampleUrlForThisSite.Length) {
-        Write-Host &quot;Skipping $fileServerRelativeUrl&quot; -ForegroundColor Green
-    } else {
-        $checkedOutFile.TakeOverCheckOut()
-        Invoke-PnPQuery
-
-        $file = $checkedOutFile.Context.Web.GetFileByServerRelativeUrl($fileServerRelativeUrl)
-
-        $context.Load($file)
-        Invoke-PnPQuery
-
-        $filesProcessed += [PSCustomObject]@{
-            ServerRelativeUrl = $fileServerRelativeUrl
-            Exists = $file.Exists
-            UIVersionLabel = $file.UIVersionLabel
-        }
-
-        $file.DeleteObject()
-        $context.ExecuteQuery()
-        Write-host &quot;.&quot; -NoNewline
-    }
-}
-
-
-$nowString = [System.DateTime]::Now.ToString(&quot;yyyyMMdd_hhmm&quot;)
-$path = &quot;$env:USERPROFILE\Desktop\PS1\Get-FilesWithNoCheckin_$nowString.csv&quot;
-$filesProcessed | select ServerRelativeUrl, Exists, UIVersionLabel | Export-Csv $path -NoTypeInformation
 </code></pre>
 <div class="highlight-tool">
 <p>Check out the <strong>PnP PowerShell</strong> to learn more at: <a href="https://aka.ms/pnp/powershell">https://aka.ms/pnp/powershell</a></p>
-</div>
-</section>
-<section id="tabpanel_CeZOj-G++Q_cli-m365-ps" role="tabpanel" data-tab="cli-m365-ps" aria-hidden="true" hidden="hidden"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='cli-m365-ps'] pre">
-    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
-    <span class="article-clipboard__message done">Copied</span>
-</button>
-
-<pre><code class="lang-powershell">
-$SiteURL = &quot;https://{tenant}.sharepoint.com/sites/{site}&quot;
-$listName = &quot;Site Pages&quot;
-
-$m365Status = m365 status
-if ($m365Status -match &quot;Logged Out&quot;) {
-  Write-Host &quot;Logging in the User!&quot;
-  m365 login --authType browser
-}
-
-$filesProcessed = @()
-
-$pages = m365 spo page list -u $SiteURL | ForEach-Object { $_.replace(&quot;Id&quot;, &quot;_Id&quot;) } | ConvertFrom-Json
-$list =  m365 spo list get -u $SiteURL -t $listName | ConvertFrom-Json
-$checkedOutPages = $pages | ? CheckOutType -eq 0
-
-foreach ($page in $checkedOutPages){
- $fileServerRelativeUrl = [string]::Concat($list.ParentWebUrl, $page.ServerRelativePath.DecodedUrl.Replace($list.ParentWebUrl, &quot;&quot;))
-
-    #8 random characters seem to be used for temporary page names.  Be careful - if a valid page was created with valid 8 character name, that page would be deleted as well.  TODO: figure out a way to avoid valid pages?
-    $tempPageSampleUrlForThisSite = $list.RootFolder.ServerRelativeUrl  + &quot;/zz5yfe8u.aspx&quot;
-
-    if ($fileServerRelativeUrl.Length -ne $tempPageSampleUrlForThisSite.Length) {
-        Write-Host &quot;Skipping $fileServerRelativeUrl&quot; -ForegroundColor Green
-    } else {
-        if(!$page.IsPageCheckedOutToCurrentUser){
-        #take over check out
-            m365 spo file checkin  --webUrl $SiteUrl --fileUrl $page.ServerRelativeUrl
-            m365 spo file checkout  --webUrl $SiteUrl --fileUrl $page.ServerRelativeUrl
-       }
-
- $filesProcessed += [PSCustomObject]@{
-            ServerRelativeUrl = $page.ServerRelativeUrl
-            Exists = $page.Exists
-            UIVersionLabel = $page.UIVersionLabel
-        }
-  m365 spo page remove -u $SiteURL -n $page.Name --confirm
- }
-}
-
-$nowString = [System.DateTime]::Now.ToString(&quot;yyyyMMdd_hhmm&quot;)
-$path = &quot;$env:USERPROFILE\Desktop\PS1\Get-FilesWithNoCheckin_$nowString.csv&quot;
-$filesProcessed | select ServerRelativeUrl, Exists, UIVersionLabel | Export-Csv $path -NoTypeInformation
-
-## Disconnect the context  
-m365 logout  
-</code></pre>
-<div class="highlight-tool">
-<p>Check out the <strong>CLI for Microsoft 365</strong> to learn more at: <a href="https://aka.ms/cli-m365">https://aka.ms/cli-m365</a></p>
 </div>
 </section>
 </div>
@@ -224,16 +123,13 @@ m365 logout
 </thead>
 <tbody>
 <tr>
-<td><a href="https://github.com/brianpmccullough">Brian P. McCullough</a></td>
-</tr>
-<tr>
-<td><a href="https://github.com/reshmee011">Reshmee Auckloo</a></td>
+<td><a href="https://ganeshsanapblogs.wordpress.com/about">Ganesh Sanap</a></td>
 </tr>
 </tbody>
 </table>
 <h2 id="disclaimer">Disclaimer</h2>
 <p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
-<img src="https://pnptelemetry.azurewebsites.net/script-samples/scripts/spo-delete-orphaned-temporary-sitepages" aria-hidden="true">
+<img src="https://pnptelemetry.azurewebsites.net/script-samples/scripts/spo-add-update-image-column" aria-hidden="true">
 </article>
           </div>
         </div>

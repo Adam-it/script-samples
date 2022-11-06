@@ -5592,6 +5592,41 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-list-download-contenttype-documenttemplate/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-list-download-contenttype-documenttemplate/README.html",
+          "hash": "fwZk6vIROsdV4oWnbljGug=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-list-download-contenttype-documenttemplate/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-list-download-contenttype-documenttemplate/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-list-download-contenttype-documenttemplate/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-list-download-contenttype-documenttemplate/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-list-failed-sitedesigns/README.md",
       "output": {
         ".html": {
@@ -9713,7 +9748,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "qVdirnbKV4zx7IPCb7r2jA=="
+          "hash": "MuHtPvR8XVrHdEgSbScJMA=="
         }
       },
       "is_incremental": false,
@@ -9822,7 +9857,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "dHj31aMlCNphuQuhlDHZKg=="
+          "hash": "p+sJpRAI6tWLezhqaFPK6A=="
         }
       },
       "is_incremental": false,
@@ -9834,7 +9869,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "rLKTS0vyfsJhvFhAFzx6JQ=="
+          "hash": "CDIUJ6d6mLHuQZ5IDFRUHQ=="
         }
       },
       "is_incremental": false,

@@ -4098,6 +4098,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-deploy-pnpmodernsearch-webpart/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-deploy-pnpmodernsearch-webpart/README.html",
+          "hash": "5g/UEGL5qrd5C6UJMHo4aA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-deploy-pnpmodernsearch-webpart/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-deploy-pnpmodernsearch-webpart/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-deploy-pnpmodernsearch-webpart/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-deploy-pnpmodernsearch-webpart/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-deploy-pnpmodernsearch-webpart/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-deploy-pnpmodernsearch-webpart/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-deploy-sppkgs-and-install-apps/README.md",
       "output": {
         ".html": {
@@ -10037,6 +10083,28 @@
       "version": ""
     },
     {
+      "type": "Resource",
+      "source_relative_path": "assets/support-scripts/HappyHolidays-Community.ps1",
+      "output": {
+        "resource": {
+          "relative_path": "assets/support-scripts/HappyHolidays-Community.ps1"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "assets/support-scripts/Script-Community.ps1",
+      "output": {
+        "resource": {
+          "relative_path": "assets/support-scripts/Script-Community.ps1"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
       "type": "Conceptual",
       "source_relative_path": "by-product.md",
       "output": {
@@ -10070,7 +10138,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "lIN8to1H6ubGVrb/wE1NkQ=="
+          "hash": "n8qr7P/zRUJJvGZJ5fj9VA=="
         }
       },
       "is_incremental": false,
@@ -10179,7 +10247,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "WlNLexw8RBCNAdW4EO0fYA=="
+          "hash": "AMnWBR89WbX9Ge2GRDXfYA=="
         }
       },
       "is_incremental": false,
@@ -10191,7 +10259,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "GR2P017bTYusba6w75PH+w=="
+          "hash": "JqOMIyvDDWZP0P3WWxAFbg=="
         }
       },
       "is_incremental": false,

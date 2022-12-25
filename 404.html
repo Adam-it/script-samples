@@ -1,18 +1,18 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html lang="en">
   
   <head>
     <meta charset="utf-8">
-    <title>Delete custom color themes from SharePoint | PnP Samples </title>
+    <title>Sorry, these are not the scripts you are looking for | PnP Samples </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Delete custom color themes from SharePoint | PnP Samples ">
+    <meta name="title" content="Sorry, these are not the scripts you are looking for | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Delete custom color themes from SharePoint | PnP Samples ">
+    <meta property="og:title" content="Sorry, these are not the scripts you are looking for | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -21,15 +21,15 @@
     <meta property="og:description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <link rel="shortcut icon" href="https://c.s-microsoft.com/favicon.ico?v2">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <link rel="stylesheet" href="../styles/extra.css">
-    <link rel="stylesheet" href="../styles/filter.css">
-    <link rel="stylesheet" href="../styles/site.css">
+    <link rel="stylesheet" href="https://pnp.github.io/script-samples/styles/docfx.vendor.css">
+    <link rel="stylesheet" href="https://pnp.github.io/script-samples/styles/docfx.css">
+    <link rel="stylesheet" href="https://pnp.github.io/script-samples/styles/main.css">
+    <link rel="stylesheet" href="https://pnp.github.io/script-samples/styles/extra.css">
+    <link rel="stylesheet" href="https://pnp.github.io/script-samples/styles/filter.css">
+    <link rel="stylesheet" href="https://pnp.github.io/script-samples/styles/site.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="../toc.html">
+    <meta property="docfx:navrel" content="toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
     
     
     <meta property="docfx:newtab" content="true">
@@ -75,8 +75,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../assets/logo.svg" alt="">
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="https://pnp.github.io/script-samples/assets/logo.svg" alt="">
               </a>    </div>
             <div class="collapse navbar-collapse" id="navbar">
               <form class="navbar-form navbar-right" role="search" id="search">
@@ -92,65 +92,13 @@
         <div class="article row grid">
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
-                  <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-remove-custom-themes/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
-                  </div>
-                    <h1 id="delete-custom-color-themes-from-sharepoint">Delete custom color themes from SharePoint</h1>
+                  
+                    <h1 id="sorry-these-are-not-the-scripts-you-are-looking-for">Sorry, these are not the scripts you are looking for</h1>
 
-<h2 id="summary">Summary</h2>
-<p>Have you been creating a lot of beautiful themes lately and testing them in your dev tenant, but don’t want to keep them anymore? If yes, then this PowerShell script is for you.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
-<ul role="tablist">
-<li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_pnpps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_pnpps" data-tab="pnpps" tabindex="0" aria-selected="true">PnP PowerShell</a>
-</li>
-</ul>
-<section id="tabpanel_CeZOj-G++Q_pnpps" role="tabpanel" data-tab="pnpps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='pnpps'] pre">
-    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
-    <span class="article-clipboard__message done">Copied</span>
-</button>
-
-<pre><code class="lang-powershell">
-$SPOAdmminSite = 'https://contoso-admin.sharepoint.com'
-$themesToKeep = &quot;Contoso Explorers&quot;, &quot;Multicolored theme&quot;
-
-Connect-PnPOnline -Url $SPOAdmminSite -Interactive
-$themes = Get-PnPTenantTheme
-$themes = $themes | where {-not ($themesToKeep -contains $_.name)}
-$themes | Format-Table name
-if ($themes.Count -eq 0) { break }
-Read-Host -Prompt &quot;Press Enter to start deleting $($themes.Count) themes (CTRL + C to exit)&quot;
-$progress = 0
-$total = $themes.Count
-foreach ($theme in $themes)
-{
-  $progress++
-  write-host $progress / $total&quot;:&quot; $theme.name
-  Remove-PnPTenantTheme -Identity &quot;$($theme.name)&quot;
-}
-
-</code></pre>
-<div class="highlight-tool">
-<p>Check out the <strong>PnP PowerShell</strong> to learn more at: <a href="https://aka.ms/pnp/powershell">https://aka.ms/pnp/powershell</a></p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The script or page does not exist, please navigate <a href="https://pnp.github.io/script-samples/index.html">Home</a> and retry your search.</p>
 </div>
-</section>
-</div>
-<h2 id="contributors">Contributors</h2>
-<table>
-<thead>
-<tr>
-<th>Author(s)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="https://github.com/LeonArmston">Leon Armston</a></td>
-</tr>
-</tbody>
-</table>
-<h2 id="disclaimer">Disclaimer</h2>
-<p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
-<img src="https://pnptelemetry.azurewebsites.net/script-samples/scripts/spo-remove-custom-themes" aria-hidden="true">
 </article>
           </div>
         </div>
@@ -170,14 +118,14 @@ foreach ($theme in $themes)
         </div>
       </footer>    </div>
     
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <script type="text/javascript" src="https://pnp.github.io/script-samples/styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="https://pnp.github.io/script-samples/styles/docfx.js"></script>
+    <script type="text/javascript" src="https://pnp.github.io/script-samples/styles/main.js"></script>
     
-    <script type="text/javascript" src="../styles/clipboard.min.js"></script>
-    <script type="text/javascript" src="../styles/isotope.pkgd.min.js"></script>
-    <script type="text/javascript" src="../styles/loadsamples.js"></script>
-    <script type="text/javascript" src="../styles/filtersamples.js"></script>
-
+    <script type="text/javascript" src="https://pnp.github.io/script-samples/styles/clipboard.min.js"></script>
+    <script type="text/javascript" src="https://pnp.github.io/script-samples/styles/isotope.pkgd.min.js"></script>
+    <script type="text/javascript" src="https://pnp.github.io/script-samples/styles/loadsamples.js"></script>
+    <script type="text/javascript" src="https://pnp.github.io/script-samples/styles/filtersamples.js"></script>
+    
   </body>
 </html>

@@ -513,7 +513,7 @@
       "output": {
         ".html": {
           "relative_path": "bulk-restore-from-recyclebin/README.html",
-          "hash": "aIfLq1T7UcbsxEJM2VKDqQ=="
+          "hash": "L1xvYSQX/rqziculYC7WBA=="
         }
       },
       "is_incremental": false,
@@ -1363,6 +1363,74 @@
       "output": {
         "resource": {
           "relative_path": "graph-get-license-and-signins/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/graph-upload-file-to-sharepoint/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "graph-upload-file-to-sharepoint/README.html",
+          "hash": "UoowU7UmyP/p1goGf9iJ+w=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-upload-file-to-sharepoint/assets/AfterUpload.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-upload-file-to-sharepoint/assets/AfterUpload.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-upload-file-to-sharepoint/assets/FileToUpload.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-upload-file-to-sharepoint/assets/FileToUpload.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-upload-file-to-sharepoint/assets/SharePointLibrary.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-upload-file-to-sharepoint/assets/SharePointLibrary.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-upload-file-to-sharepoint/assets/Uploading.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-upload-file-to-sharepoint/assets/Uploading.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-upload-file-to-sharepoint/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "graph-upload-file-to-sharepoint/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -3504,7 +3572,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-deploy-sppkgs-and-install-apps/README.html",
-          "hash": "fHbAKoiYEP2QEcob6g1uZg=="
+          "hash": "xHsjPbwZUIAVB6qGt3I+hA=="
         }
       },
       "is_incremental": false,
@@ -3712,6 +3780,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-export-all-site-pages-details/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-export-author-byline-users/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-export-author-byline-users/README.html",
+          "hash": "DaHIeKX/4LZkchVjWrAJlQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-author-byline-users/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-author-byline-users/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-author-byline-users/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-author-byline-users/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-author-byline-users/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-author-byline-users/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -3931,6 +4045,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-export-hub-sites-details-to-csv/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-export-people-web-part-users/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-export-people-web-part-users/README.html",
+          "hash": "a6Ugp5tpaqc+WY92M44fzA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-people-web-part-users/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-people-web-part-users/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-people-web-part-users/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-people-web-part-users/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-people-web-part-users/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-people-web-part-users/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -4998,7 +5158,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-large-list-items-to-pnp-template/README.html",
-          "hash": "RaE4RhdEnoXhC72w4kjnVQ=="
+          "hash": "Kob6h35rX19gKGOp2TKY7g=="
         }
       },
       "is_incremental": false,
@@ -8079,7 +8239,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "ek7H+9ebyoMivaB+Pc+fNA=="
+          "hash": "7/ih68RIXP3nSto5TTVIBw=="
         }
       },
       "is_incremental": false,
@@ -8188,7 +8348,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "TisNtUy3D60HcEfMNwUPcg=="
+          "hash": "F5TwJsLOZiCqi4rsnhr9zg=="
         }
       },
       "is_incremental": false,
@@ -8200,7 +8360,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "N6zyOZoiS7/o4Yky+zwjiw=="
+          "hash": "S1P97rMnIxDS4dM8BtkHKg=="
         }
       },
       "is_incremental": false,

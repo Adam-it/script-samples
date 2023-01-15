@@ -303,6 +303,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/aad-graph-create-dynamic-groups-project-visio/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "aad-graph-create-dynamic-groups-project-visio/README.html",
+          "hash": "j7CohSjOEs1ReWCZ+25OzA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/aad-graph-create-dynamic-groups-project-visio/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "aad-graph-create-dynamic-groups-project-visio/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/aad-graph-create-dynamic-groups-project-visio/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "aad-graph-create-dynamic-groups-project-visio/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/aad-graph-create-dynamic-groups-project-visio/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "aad-graph-create-dynamic-groups-project-visio/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/aad-guest-signin-activity/README.md",
       "output": {
         ".html": {
@@ -3316,6 +3362,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-create-documentset/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-create-documentset/README.html",
+          "hash": "q7AWpjReIMJOy+FEqi0CZg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-create-documentset/assets/docset06.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-create-documentset/assets/docset06.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-create-documentset/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-create-documentset/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-create-documentset/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-create-documentset/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-create-modern-pages-add-web-parts/README.md",
       "output": {
         ".html": {
@@ -3745,6 +3837,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-empty-tenant-recyclebin/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-enable-site-collection-app-catalog/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-enable-site-collection-app-catalog/README.html",
+          "hash": "DFCGJ6DFs5JZ6mNw5DB3Yg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-enable-site-collection-app-catalog/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-enable-site-collection-app-catalog/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-enable-site-collection-app-catalog/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-enable-site-collection-app-catalog/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -8239,7 +8366,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "7/ih68RIXP3nSto5TTVIBw=="
+          "hash": "AnGmm+9gHg30O0EKAgZaQw=="
         }
       },
       "is_incremental": false,
@@ -8348,7 +8475,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "F5TwJsLOZiCqi4rsnhr9zg=="
+          "hash": "jlICtXO+SPHoSN/Qwikgog=="
         }
       },
       "is_incremental": false,
@@ -8360,7 +8487,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "S1P97rMnIxDS4dM8BtkHKg=="
+          "hash": "8+9mIzslZokQVE1sirtuBw=="
         }
       },
       "is_incremental": false,

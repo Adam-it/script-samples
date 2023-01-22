@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Maintainers Guidance | PnP Samples </title>
+    <title>Create AD app and connect to SharePoint Online | PnP Samples </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Maintainers Guidance | PnP Samples ">
+    <meta name="title" content="Create AD app and connect to SharePoint Online | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Maintainers Guidance | PnP Samples ">
+    <meta property="og:title" content="Create AD app and connect to SharePoint Online | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="../styles/site.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
     <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
     
     
     <meta property="docfx:newtab" content="true">
@@ -89,93 +89,85 @@
           </div>
         </nav>      </header>
       <div role="main" class="container body-content hide-when-search">
-        
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
-        </div>
-        <div class="article row grid-right">
+        <div class="article row grid">
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/docfx/contributing/maintainers-guidance.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/aad-add-app-permissions-and-connect-to-sharepoint/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="maintainers-guidance">Maintainers Guidance</h1>
+                    <h1 id="create-ad-app-and-connect-to-sharepoint-online">Create AD app and connect to SharePoint Online</h1>
 
-<p>This is the maintainers guide to provide a location to share knowledge about how the site works and some of the behaviors of the setup and underlying configuration.</p>
-<p>The site uses the DocFx engine, this is the same tool that <a href="https://docs.microsoft.com">docs.microsoft.com</a> uses (albeit a special version) in combination with the Material UI + UI tweaks we have made with the help and thanks for Hugo Bernier.</p>
-<p>In addition, plugins have been developed to extend DocFx to generate the galleries.</p>
-<p>The main goal with DocFx builds must complete with <strong>0 warnings and errors</strong>. The site will not publish/update if there are warnings.</p>
-<h2 id="front-matter-for-gallery-pages">Front Matter for Gallery Pages</h2>
-<p>A small amount of front matter is used to tag the pages to inject the gallery into.</p>
-<h3 id="generate-galleries">Generate galleries</h3>
+<h2 id="summary">Summary</h2>
+<p>Create an Azure AD app, add permissions and connect it to SharePoint Online.</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_azuread" role="tab" aria-controls="tabpanel_CeZOj-G++Q_azuread" data-tab="azuread" tabindex="0" aria-selected="true">Azure AD</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_azuread" role="tabpanel" data-tab="azuread"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='azuread'] pre">
+    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
+    <span class="article-clipboard__message done">Copied</span>
+</button>
+
+<pre><code class="lang-powershell">Install-Module AzureAD
+
+# Add the Azure AD Module
+Import-Module AzureAD -UseWindowsPowerShell
+
+# Connect to Azure AD with an admin account
+Connect-AzureAD
+
+# Create a new Azure AD App
+$newApp = New-AzureADApplication -DisplayName &quot;My SharePoint App&quot; -ReplyUrls &quot;http://localhost&quot;
+
+# Create a new client secret
+$newSecret = New-AzureADApplicationPasswordCredential -ObjectId $newApp.ObjectId -CustomKeyIdentifier &quot;MySharePointAppKey&quot;
+
+Get-AzureADServicePrincipal -All $true
+$svcprincipalSharePoint = Get-AzureADServicePrincipal -All $true | ? { $_.DisplayName -match &quot;Office 365 SharePoint Online&quot; } #Office 365 SharePoint Online
+$svcprincipalSharePoint.AppRoles | FT ID, DisplayName
+
+# Show the Delegated Permissions
+$svcprincipalSharePoint.Oauth2Permissions | FT ID, UserConsentDisplayName
+
+$Sharepoint = New-Object -TypeName &quot;Microsoft.Open.AzureAD.Model.RequiredResourceAccess&quot;
+$Sharepoint.ResourceAppId = $svcprincipalSharePoint.AppId
+
+# Add permissions to the app
+$applicationPermissions = New-Object -TypeName &quot;Microsoft.Open.AzureAD.Model.ResourceAccess&quot; -ArgumentList &quot;9bff6588-13f2-4c48-bbf2-ddab62256b36&quot;,&quot;Scope&quot; # Read and write items and lists in all site collections
+$delegatedPermission = New-Object -TypeName &quot;Microsoft.Open.AzureAD.Model.ResourceAccess&quot; -ArgumentList &quot;2cfdc887-d7b4-4798-9b33-3d98d6b95dd2&quot;,&quot;Scope&quot; # Read and write your files
+$Sharepoint.ResourceAccess = $delegatedPermission , $applicationPermissions
+
+$ADApplication = Get-AzureADApplication -All $true | ? { $_.AppId -match $newApp.AppId }
+ 
+Set-AzureADApplication -ObjectId $ADApplication.ObjectId -RequiredResourceAccess $Sharepoint
+
+
+# Connect to SharePoint Online
+Connect-PnPOnline -Url &quot;https://yourtenantname.sharepoint.com&quot; -ClientId $newApp.AppId -ClientSecret $newSecret.Value
+
+# Execute standard SharePoint commands
+Get-pnpSite
+</code></pre>
+<h2 id="contributors">Contributors</h2>
 <table>
 <thead>
 <tr>
-<th>Front Matter Example</th>
-<th>Action taken by Plugin</th>
+<th>Author(s)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>plugin: insert-gallery</td>
-<td>Inserts a gallery into the page that contains this marker: &quot;<em>--this will be auto generated--</em>&quot; the generator will replace this line with the gallery.</td>
-</tr>
-<tr>
-<td>plugin: add-to-gallery</td>
-<td>Registers the sample is ready to be added to the gallery</td>
-</tr>
-<tr>
-<td>plugin-filter: product</td>
-<td>Changes the gallery presentation mode. <br> None = by operation, product = By Product and library = by library</td>
+<td>Valeras Narbutas</td>
 </tr>
 </tbody>
 </table>
-<p>Currently, there are 3 pages that galleries are used:</p>
-<ul>
-<li>Index.md - default gallery page</li>
-<li>bytool.md - By Library gallery page e.g. M365 CLI, PnP PS, Graph PS SDK etc.</li>
-<li>byproduct.md - By Product e.g. Microsoft Product the script performs an action against</li>
-</ul>
-<h4 id="initial-state">Initial State</h4>
-<p>Initially there are features in the sample generation that prevent it from showing in the gallery, allowing commits to be created and then readied with subsequent commits.</p>
-<pre><code class="lang-markdown">---
-plugin: add-to-gallery-preparation
----
-</code></pre>
-<p>To show in the gallery simply update to &quot;plugin: add-to-gallery&quot;.</p>
-<h2 id="folder-structure-for-scripts">Folder Structure for scripts</h2>
-<p>We have worked to keep the folder structure lean and as simple as possible when submitting scripts:</p>
-<p><img src="../assets/contributing/folder-structure.png" alt="Folder Structure"></p>
-<h2 id="naming-and-casing">Naming and casing</h2>
-<p>DocFx is case sensitive with the markdown files and in compilation of the site, to make this easier, all sample file paths etc. should be in lowercase to avoid any issues with linking to files.</p>
-<p>Spaces should be replaced with hyphens as well.</p>
-<h2 id="images-and-previews">Images and previews</h2>
-<p>When creating images and previews, please follow this guidance:</p>
-<ul>
-<li>Favor the product UI change, close up of the affect element if preferred, to reduce the updates</li>
-<li>If delete, show a before image and indicate what is being removed.</li>
-<li>Terminal is less favorable because it would only show output of 1 of the three types of script that could run.</li>
-<li>PNG format preferred, JPG can be submitted, though these will be converted to PNG.</li>
-</ul>
-<p>If only example images are shown, Paul Bullock has a tool to convert in bulk.</p>
-<h2 id="recognizing-contributors">Recognizing contributors</h2>
-<p>When samples are submitted it is important that contributors are recognized for their contributions as without them the library would not grow, this is done in the following ways:</p>
-<ul>
-<li>Their name on the sample. If we as a maintainer also contributes to the article, they must be the primary or first name.</li>
-<li>The article must list their name, company and GitHub/LinkedIn/Twitter handle - we will encourage their complete this.</li>
-<li>Promotion to Twitter - their sample will get promoted to Twitter for exposure.</li>
-</ul>
-<h2 id="reports">Reports</h2>
-<p>There are a series of reports that are generated to help with the maintenance of the site, these are:</p>
-<ul>
-<li><a href="https://pnp.github.io/script-samples/matrix.html">Matrix of Sample Distribution by Tool</a></li>
-<li><a href="https://pnp.github.io/script-samples/cmdusage.html">Report of Samples Command Usage</a></li>
-<li><a href="https://pnp.github.io/script-samples/metadata.html">Metadata Report of Samples</a></li>
-</ul>
-<img src="https://pnptelemetry.azurewebsites.net/script-samples/contributing/maintainers-guidance" aria-hidden="true">
+<h2 id="disclaimer">Disclaimer</h2>
+<p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
+<img src="https://pnptelemetry.azurewebsites.net/script-samples/scripts/aad-add-app-permissions-and-connect-to-sharepoint" aria-hidden="true">
+</section>
+</div>
 </article>
           </div>
         </div>

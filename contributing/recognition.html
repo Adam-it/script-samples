@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Maintainers Guidance | PnP Samples </title>
+    <title>How you are recognized for your submissions | PnP Samples </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Maintainers Guidance | PnP Samples ">
+    <meta name="title" content="How you are recognized for your submissions | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Maintainers Guidance | PnP Samples ">
+    <meta property="og:title" content="How you are recognized for your submissions | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -100,82 +100,21 @@
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/docfx/contributing/maintainers-guidance.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/docfx/contributing/recognition.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="maintainers-guidance">Maintainers Guidance</h1>
+                    <h1 id="how-you-are-recognized-for-your-submissions">How you are recognized for your submissions</h1>
 
-<p>This is the maintainers guide to provide a location to share knowledge about how the site works and some of the behaviors of the setup and underlying configuration.</p>
-<p>The site uses the DocFx engine, this is the same tool that <a href="https://docs.microsoft.com">docs.microsoft.com</a> uses (albeit a special version) in combination with the Material UI + UI tweaks we have made with the help and thanks for Hugo Bernier.</p>
-<p>In addition, plugins have been developed to extend DocFx to generate the galleries.</p>
-<p>The main goal with DocFx builds must complete with <strong>0 warnings and errors</strong>. The site will not publish/update if there are warnings.</p>
-<h2 id="front-matter-for-gallery-pages">Front Matter for Gallery Pages</h2>
-<p>A small amount of front matter is used to tag the pages to inject the gallery into.</p>
-<h3 id="generate-galleries">Generate galleries</h3>
-<table>
-<thead>
-<tr>
-<th>Front Matter Example</th>
-<th>Action taken by Plugin</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>plugin: insert-gallery</td>
-<td>Inserts a gallery into the page that contains this marker: &quot;<em>--this will be auto generated--</em>&quot; the generator will replace this line with the gallery.</td>
-</tr>
-<tr>
-<td>plugin: add-to-gallery</td>
-<td>Registers the sample is ready to be added to the gallery</td>
-</tr>
-<tr>
-<td>plugin-filter: product</td>
-<td>Changes the gallery presentation mode. <br> None = by operation, product = By Product and library = by library</td>
-</tr>
-</tbody>
-</table>
-<p>Currently, there are 3 pages that galleries are used:</p>
-<ul>
-<li>Index.md - default gallery page</li>
-<li>bytool.md - By Library gallery page e.g. M365 CLI, PnP PS, Graph PS SDK etc.</li>
-<li>byproduct.md - By Product e.g. Microsoft Product the script performs an action against</li>
-</ul>
-<h4 id="initial-state">Initial State</h4>
-<p>Initially there are features in the sample generation that prevent it from showing in the gallery, allowing commits to be created and then readied with subsequent commits.</p>
-<pre><code class="lang-markdown">---
-plugin: add-to-gallery-preparation
----
-</code></pre>
-<p>To show in the gallery simply update to &quot;plugin: add-to-gallery&quot;.</p>
-<h2 id="folder-structure-for-scripts">Folder Structure for scripts</h2>
-<p>We have worked to keep the folder structure lean and as simple as possible when submitting scripts:</p>
-<p><img src="../assets/contributing/folder-structure.png" alt="Folder Structure"></p>
-<h2 id="naming-and-casing">Naming and casing</h2>
-<p>DocFx is case sensitive with the markdown files and in compilation of the site, to make this easier, all sample file paths etc. should be in lowercase to avoid any issues with linking to files.</p>
-<p>Spaces should be replaced with hyphens as well.</p>
-<h2 id="images-and-previews">Images and previews</h2>
-<p>When creating images and previews, please follow this guidance:</p>
-<ul>
-<li>Favor the product UI change, close up of the affect element if preferred, to reduce the updates</li>
-<li>If delete, show a before image and indicate what is being removed.</li>
-<li>Terminal is less favorable because it would only show output of 1 of the three types of script that could run.</li>
-<li>PNG format preferred, JPG can be submitted, though these will be converted to PNG.</li>
-</ul>
-<p>If only example images are shown, Paul Bullock has a tool to convert in bulk.</p>
-<h2 id="recognizing-contributors">Recognizing contributors</h2>
-<p>When samples are submitted it is important that contributors are recognized for their contributions as without them the library would not grow, this is done in the following ways:</p>
-<ul>
-<li>Their name on the sample. If we as a maintainer also contributes to the article, they must be the primary or first name.</li>
-<li>The article must list their name, company and GitHub/LinkedIn/Twitter handle - we will encourage their complete this.</li>
-<li>Promotion to Twitter - their sample will get promoted to Twitter for exposure.</li>
-</ul>
-<h2 id="reports">Reports</h2>
-<p>There are a series of reports that are generated to help with the maintenance of the site, these are:</p>
-<ul>
-<li><a href="https://pnp.github.io/script-samples/matrix.html">Matrix of Sample Distribution by Tool</a></li>
-<li><a href="https://pnp.github.io/script-samples/cmdusage.html">Report of Samples Command Usage</a></li>
-<li><a href="https://pnp.github.io/script-samples/metadata.html">Metadata Report of Samples</a></li>
-</ul>
-<img src="https://pnptelemetry.azurewebsites.net/script-samples/contributing/maintainers-guidance" aria-hidden="true">
+<p>In PnP, we are all about community and we want to recognize your contributions. We have a few ways to do this</p>
+<h2 id="community-calls">Community Calls</h2>
+<p>Your submission is announced on the next &quot;Microsoft 365 &amp; Power Platform Development Community call&quot;, Bi-weekly on Thursdays 7:00 AM PT / 3:00 PM GMT.
+You are invited to join the call and we will provide a mention of your submission as a Thank you! - Join here: <a href="https://aka.ms/spdev-sig-call-join">https://aka.ms/spdev-sig-call-join</a></p>
+<h2 id="pnp-blog">PnP Blog</h2>
+<p>We run a monthly blog post on the <a href="https://pnp.github.io/blog/">PnP blog</a>, where we highlight the submissions we received in the previous month. You will be mentioned in the blog post and we will list your sample and name.</p>
+<h2 id="social-media">Social Media</h2>
+<p>We will share your submission on our social media channels, typically Twitter, when they are processed by the team.</p>
+<h2 id="badges">Badges!</h2>
+<p>Finally, as a Thank you for your contributions, we invite you to opt-in into the PnP Recognition Program. This will give you access to a badge that you can use on your social media profiles, blog posts, and other places to show that you are a PnP contributor. You can opt-in here: <a href="https://pnp.github.io/recognitionprogram/">https://pnp.github.io/recognitionprogram/</a></p>
+<p>You will receive a badge in a batch run (might be a few weeks) when you have submitted your first sample - that's it.</p>
 </article>
           </div>
         </div>

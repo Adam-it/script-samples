@@ -119,6 +119,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/aad-add-app-permissions-and-connect-to-sharepoint/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "aad-add-app-permissions-and-connect-to-sharepoint/README.html",
+          "hash": "rkWfssdIgwvm1y6sOUw7QA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/aad-add-app-permissions-and-connect-to-sharepoint/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "aad-add-app-permissions-and-connect-to-sharepoint/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/aad-add-app-permissions-and-connect-to-sharepoint/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "aad-add-app-permissions-and-connect-to-sharepoint/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/aad-add-app-permissions-and-connect-to-sharepoint/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "aad-add-app-permissions-and-connect-to-sharepoint/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/aad-analyze-users-hibp/README.md",
       "output": {
         ".html": {
@@ -1328,7 +1374,7 @@
       "output": {
         ".html": {
           "relative_path": "graph-download-office-documents-as-pdf/README.html",
-          "hash": "w9+NC/n5VLMaHx7d2QYW/Q=="
+          "hash": "d/2mPtC1WgHAcC9cPB+2qw=="
         }
       },
       "is_incremental": false,
@@ -2823,6 +2869,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-add-sitedesign-permissions/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-add-sitedesign-permissions/README.html",
+          "hash": "P5nfHRvcoO08hd16msku+w=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-sitedesign-permissions/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-sitedesign-permissions/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-sitedesign-permissions/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-sitedesign-permissions/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-sitedesign-permissions/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-sitedesign-permissions/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-add-tenant-theme/README.md",
       "output": {
         ".html": {
@@ -3837,6 +3929,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-empty-tenant-recyclebin/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-enable-page-scheduling/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-enable-page-scheduling/README.html",
+          "hash": "upI0nturt3+auI8vYJmLmA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-enable-page-scheduling/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-enable-page-scheduling/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-enable-page-scheduling/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-enable-page-scheduling/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -4930,6 +5057,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-get-lists-libraries-item-count-permissions/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-get-message-centre-announcements-and-post-to-teams-channel/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-get-message-centre-announcements-and-post-to-teams-channel/README.html",
+          "hash": "BX0SgNksM39mJM6Wq0NVQQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-message-centre-announcements-and-post-to-teams-channel/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-message-centre-announcements-and-post-to-teams-channel/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-message-centre-announcements-and-post-to-teams-channel/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-message-centre-announcements-and-post-to-teams-channel/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-message-centre-announcements-and-post-to-teams-channel/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-message-centre-announcements-and-post-to-teams-channel/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -8366,7 +8539,19 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "AnGmm+9gHg30O0EKAgZaQw=="
+          "hash": "tGRmDHcBkOAnYZSXrMVU5Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "contributing/how-can-i-contribute.md",
+      "output": {
+        ".html": {
+          "relative_path": "contributing/how-can-i-contribute.html",
+          "hash": "DddIrXwy7KHbSy4Rh2vnLA=="
         }
       },
       "is_incremental": false,
@@ -8378,7 +8563,7 @@
       "output": {
         ".html": {
           "relative_path": "contributing/index.html",
-          "hash": "8DREvlCB7OJ45QO8UUa7hg=="
+          "hash": "jsodYquJKhY2V7mOnuyeNA=="
         }
       },
       "is_incremental": false,
@@ -8390,7 +8575,7 @@
       "output": {
         ".html": {
           "relative_path": "contributing/maintainers-guidance.html",
-          "hash": "f7esrKjJoHW2l84U8fG0GA=="
+          "hash": "g5aHGkOk9S7fRmLyZZntkw=="
         }
       },
       "is_incremental": false,
@@ -8414,7 +8599,19 @@
       "output": {
         ".html": {
           "relative_path": "contributing/preparing-a-submission.html",
-          "hash": "mnBtx8m3pyuAr3J9IMB1qA=="
+          "hash": "cnbIk76jMmDHSQJVNxK8NA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "contributing/recognition.md",
+      "output": {
+        ".html": {
+          "relative_path": "contributing/recognition.html",
+          "hash": "oi8M7sxqMJ1Mr16AeyhhJA=="
         }
       },
       "is_incremental": false,
@@ -8426,7 +8623,7 @@
       "output": {
         ".html": {
           "relative_path": "contributing/submitting-pull-requests.html",
-          "hash": "VrbyH+6wUubaoKKJ7kxBPg=="
+          "hash": "FD6YjqneMPmkSOmtcJ4CKA=="
         }
       },
       "is_incremental": false,
@@ -8438,7 +8635,7 @@
       "output": {
         ".html": {
           "relative_path": "contributing/toc.html",
-          "hash": "rAEnWDumfr+YB1A/asu4fw=="
+          "hash": "O6J/5yOQPU5cOxOWM8wJtA=="
         }
       },
       "is_incremental": false,
@@ -8475,7 +8672,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "jlICtXO+SPHoSN/Qwikgog=="
+          "hash": "nipYMAZOwFElTQgq5eP56A=="
         }
       },
       "is_incremental": false,
@@ -8487,7 +8684,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "8+9mIzslZokQVE1sirtuBw=="
+          "hash": "NxoSvYaCQYhWrZGUmQ/efQ=="
         }
       },
       "is_incremental": false,

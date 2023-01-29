@@ -557,11 +557,11 @@
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Report</td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">2</td>
 </tr>
 <tr>
 <td><a href="reset-files-permission-unique-to-inherited/README.html">Reset files permission unique to inheritance</a></td>
@@ -804,6 +804,17 @@
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td><a href="spo-compare-files/README.html">Compare files hash from two different SharePoint tenants</a></td>
+<td style="text-align: center;">SharePoint</td>
+<td style="text-align: center;">Report</td>
+<td style="text-align: center;">hash, Connect-PnPOnline, Get-PnPFile, Get-FileHash</td>
+<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
 </tr>
 <tr>
 <td><a href="spo-copy-directory-structure-to-sharepoint-list/README.html">Copy the folder structure of a directory to a SharePoint list</a></td>
@@ -1136,6 +1147,17 @@
 <td style="text-align: center;">1</td>
 </tr>
 <tr>
+<td><a href="spo-export-stream-classic-webparts/README.html">Export of pages that use Stream (Classic) Web Parts</a></td>
+<td style="text-align: center;">SharePoint, Stream</td>
+<td style="text-align: center;">Report</td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPListItem, Get-PnPPage</td>
+<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
 <td><a href="spo-export-termstore-terms-to-csv/README.html">Export SharePoint Term Store terms to CSV</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Data, Migration, Archive</td>
@@ -1246,10 +1268,21 @@
 <td style="text-align: center;">2</td>
 </tr>
 <tr>
-<td><a href="spo-get-message-centre-announcements-and-post-to-teams-channel/README.html">This script allows you to retrieve Message Centre announcements and post to teams</a></td>
+<td><a href="spo-get-message-centre-announcements-and-post-to-teams-channel/README.html">Retrieve Message Centre announcements and post to MS Teams channel</a></td>
 <td style="text-align: center;">SharePoint, Teams</td>
 <td style="text-align: center;">Report</td>
-<td style="text-align: center;">SharePoint, Teams</td>
+<td style="text-align: center;">SharePoint, Teams, Connect-PnPOnline, Disconnect-PnPOnline, Get-PnPMessageCenterAnnouncement, Connect-MicrosoftTeams, Submit-PnPTeamsChannelMessage, m365 login, m365 logout, m365 status, m365 teams team get, m365 teams channel get, m365 teams message send, m365 tenant serviceannouncement message list</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr>
+<td><a href="spo-get-usage-from-audit-logs/README.html">Gets usage from a particular user(s) or site(s) from the Unified Audit Log</a></td>
+<td style="text-align: center;">SharePoint, Graph</td>
+<td style="text-align: center;">Report</td>
+<td style="text-align: center;">Unified Audit Logs, ULS, PDF</td>
 <td style="text-align: center;">PNP-POWERSHELL</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
@@ -1257,10 +1290,10 @@
 <td style="text-align: center;">1</td>
 </tr>
 <tr>
-<td><a href="spo-get-usage-from-audit-logs/README.html">Gets usage from a particular user(s) or site(s) from the Unified Audit Log</a></td>
-<td style="text-align: center;">SharePoint, Graph</td>
-<td style="text-align: center;">Report</td>
-<td style="text-align: center;">Unified Audit Logs, ULS, PDF</td>
+<td><a href="spo-grant-app-site-permission/README.html">Grant permissions for a given Azure Active Directory application registration</a></td>
+<td style="text-align: center;">SharePoint, Azure</td>
+<td style="text-align: center;">Configure, Security</td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPAzureADApp, Get-PnPAzureADAppSitePermission, Grant-PnPAzureADAppSitePermission, Set-PnPAzureADAppSitePermission</td>
 <td style="text-align: center;">PNP-POWERSHELL</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
@@ -1686,6 +1719,17 @@
 <td style="text-align: center;">1</td>
 </tr>
 <tr>
+<td><a href="spo-update-people-web-part/README.html">Sample showing how to ensure that the Role/Title in each People web part is updated</a></td>
+<td style="text-align: center;">SharePoint</td>
+<td style="text-align: center;">Data</td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPUserProfileProperty, Export-Csv, Get-PnPClientSidePage, Get-PnPTenantSite</td>
+<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
 <td><a href="spo-update-search-result-webparts/README.html">Sample on how to locate the classic Search Result Web part and check the Remove Duplicates setting</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Data</td>
@@ -1852,7 +1896,7 @@
 </tr>
 </tbody>
 </table>
-<p>There are <strong>158</strong> script scenarios with metadata in the site | Generated: 22 Jan 2023 07:03:39</p>
+<p>There are <strong>162</strong> script scenarios with metadata in the site | Generated: 29 Jan 2023 08:03:46</p>
 </article>
           </div>
         </div>

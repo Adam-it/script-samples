@@ -31,7 +31,7 @@
       "output": {
         ".html": {
           "relative_path": "ReportTermUse/README.html",
-          "hash": "M03LJ4bdJDrPC09lYLsfFw=="
+          "hash": "chIX0JrdIY4tfcd8dI0RWg=="
         }
       },
       "is_incremental": false,
@@ -2873,7 +2873,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-add-sitedesign-permissions/README.html",
-          "hash": "P5nfHRvcoO08hd16msku+w=="
+          "hash": "7H+u6ki8kOYfeasBL82jrg=="
         }
       },
       "is_incremental": false,
@@ -3217,6 +3217,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-cleanup-site-column-usage/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-compare-files/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-compare-files/README.html",
+          "hash": "F/uVhTjhW4NbVjW4udjifg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-compare-files/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-compare-files/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-compare-files/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-compare-files/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-compare-files/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-compare-files/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -4604,6 +4650,63 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-export-stream-classic-webparts/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-export-stream-classic-webparts/README.html",
+          "hash": "kxP9LCSGG7GE9CrASXaLpQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-stream-classic-webparts/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-stream-classic-webparts/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-stream-classic-webparts/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-stream-classic-webparts/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-stream-classic-webparts/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-stream-classic-webparts/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-stream-classic-webparts/assets/stream.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-stream-classic-webparts/assets/stream.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-export-termstore-terms-to-csv/README.md",
       "output": {
         ".html": {
@@ -5068,7 +5171,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-get-message-centre-announcements-and-post-to-teams-channel/README.html",
-          "hash": "BX0SgNksM39mJM6Wq0NVQQ=="
+          "hash": "xXlkvVvn2qXDW//ySf5SmA=="
         }
       },
       "is_incremental": false,
@@ -5149,6 +5252,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-get-usage-from-audit-logs/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-grant-app-site-permission/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-grant-app-site-permission/README.html",
+          "hash": "crGbRBRmcHcxS5Nmt7XpRA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-grant-app-site-permission/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-grant-app-site-permission/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-grant-app-site-permission/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-grant-app-site-permission/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-grant-app-site-permission/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-grant-app-site-permission/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -7058,6 +7207,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-update-people-web-part/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-update-people-web-part/README.html",
+          "hash": "yPPIXnqee41R8dkysUbOHQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-update-people-web-part/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-update-people-web-part/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-update-people-web-part/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-update-people-web-part/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-update-people-web-part/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-update-people-web-part/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-update-search-result-webparts/README.md",
       "output": {
         ".html": {
@@ -8539,7 +8734,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "tGRmDHcBkOAnYZSXrMVU5Q=="
+          "hash": "Yw4oSqiZ7+ysdnDvGsYhOw=="
         }
       },
       "is_incremental": false,
@@ -8672,7 +8867,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "nipYMAZOwFElTQgq5eP56A=="
+          "hash": "BPr93n0Pgqi2Nl6c6L7UTw=="
         }
       },
       "is_incremental": false,
@@ -8684,7 +8879,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "NxoSvYaCQYhWrZGUmQ/efQ=="
+          "hash": "tGPUumK8R3JRAK/HT7h8Mg=="
         }
       },
       "is_incremental": false,

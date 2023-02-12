@@ -3099,6 +3099,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-bulk-import-data/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-bulk-import-data/README.html",
+          "hash": "ZWVPREoIvAN+P+M5zsOntw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-import-data/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-import-data/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-import-data/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-import-data/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-import-data/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-import-data/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-bulk-publish-syntex-model/README.md",
       "output": {
         ".html": {
@@ -8734,7 +8780,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "1b+hRnec4PupElJITuVk5g=="
+          "hash": "SYj+p1bJD5rJWhXuJ4Eiww=="
         }
       },
       "is_incremental": false,
@@ -8867,7 +8913,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "jWozQQ6QiHL8maNCWVQusA=="
+          "hash": "FMNjvIxTeJB7okO6OVAPnA=="
         }
       },
       "is_incremental": false,
@@ -8879,7 +8925,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "CiW60X8yyqOZpYGDMwnVaQ=="
+          "hash": "1ZJoGNrbEJeXfkh/PE5VsA=="
         }
       },
       "is_incremental": false,

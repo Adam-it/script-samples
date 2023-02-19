@@ -1462,6 +1462,85 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/graph-send-email-from-csv-onbehalf-of-user/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "graph-send-email-from-csv-onbehalf-of-user/README.html",
+          "hash": "tdGW3KXw5DDN0Gkuto/ZpA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-send-email-from-csv-onbehalf-of-user/assets/API_Permissions.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-send-email-from-csv-onbehalf-of-user/assets/API_Permissions.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-send-email-from-csv-onbehalf-of-user/assets/EmailDetails.csv",
+      "output": {
+        "resource": {
+          "relative_path": "graph-send-email-from-csv-onbehalf-of-user/assets/EmailDetails.csv"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-send-email-from-csv-onbehalf-of-user/assets/header-2.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-send-email-from-csv-onbehalf-of-user/assets/header-2.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-send-email-from-csv-onbehalf-of-user/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-send-email-from-csv-onbehalf-of-user/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-send-email-from-csv-onbehalf-of-user/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "graph-send-email-from-csv-onbehalf-of-user/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-send-email-from-csv-onbehalf-of-user/assets/secret_santa.jpg",
+      "output": {
+        "resource": {
+          "relative_path": "graph-send-email-from-csv-onbehalf-of-user/assets/secret_santa.jpg"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/graph-upload-file-to-sharepoint/README.md",
       "output": {
         ".html": {
@@ -5103,6 +5182,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-get-files-and-creators-modifiers/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-get-items-not-indexed-since-last-update/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-get-items-not-indexed-since-last-update/README.html",
+          "hash": "h9t6GGhOAW4YsoIdYCaO6g=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-items-not-indexed-since-last-update/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-items-not-indexed-since-last-update/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-items-not-indexed-since-last-update/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-items-not-indexed-since-last-update/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -8780,7 +8894,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "SYj+p1bJD5rJWhXuJ4Eiww=="
+          "hash": "XCx5YjkPsQc+9BddxkQatg=="
         }
       },
       "is_incremental": false,
@@ -8913,7 +9027,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "FMNjvIxTeJB7okO6OVAPnA=="
+          "hash": "/aJ9qxBy4qQW5lFLKMnYIA=="
         }
       },
       "is_incremental": false,
@@ -8925,7 +9039,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "1ZJoGNrbEJeXfkh/PE5VsA=="
+          "hash": "veP0vE8bSpNhHG1XGv066g=="
         }
       },
       "is_incremental": false,

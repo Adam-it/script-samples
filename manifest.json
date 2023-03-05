@@ -77,7 +77,7 @@
       "output": {
         ".html": {
           "relative_path": "_template-script-submission/README.html",
-          "hash": "R+jvDMWcg1re+S5gEoGxeA=="
+          "hash": "9CnSCAjlnZzYWFvaJRV46A=="
         }
       },
       "is_incremental": false,
@@ -1455,6 +1455,52 @@
       "output": {
         "resource": {
           "relative_path": "graph-get-license-and-signins/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/graph-openai-get-page-summary/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "graph-openai-get-page-summary/README.html",
+          "hash": "dXh5dbpZsRXlsmMK5GjC+w=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-openai-get-page-summary/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-openai-get-page-summary/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-openai-get-page-summary/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-openai-get-page-summary/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-openai-get-page-summary/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "graph-openai-get-page-summary/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -3079,6 +3125,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-add-update-image-column/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-add-user-follow-site/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-add-user-follow-site/README.html",
+          "hash": "U2HHxYj3I2bN90X3+VH8Pw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-user-follow-site/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-user-follow-site/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-user-follow-site/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-user-follow-site/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-user-follow-site/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-user-follow-site/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -6863,6 +6955,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-remove-page-title-area/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-remove-page-title-area/README.html",
+          "hash": "pc8HPvNcxrvVHTU6AmZREQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-remove-page-title-area/assets/output.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-remove-page-title-area/assets/output.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-remove-page-title-area/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-remove-page-title-area/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-remove-page-title-area/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-remove-page-title-area/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-remove-site-designs/README.md",
       "output": {
         ".html": {
@@ -9032,7 +9170,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "aCFR8pPg3eghYQ6+9vQtdA=="
+          "hash": "btgaaA4sS6rH5V+17g3xgA=="
         }
       },
       "is_incremental": false,
@@ -9165,7 +9303,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "HObTf7IZnb8wMDZ95AQZvQ=="
+          "hash": "ZlSuVqGFT1eVI0feSu7ZYQ=="
         }
       },
       "is_incremental": false,
@@ -9177,7 +9315,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "vxiEhWtPUJrJ144+yfiBdQ=="
+          "hash": "XUaiBT4X8fn4cQABtMQHVg=="
         }
       },
       "is_incremental": false,

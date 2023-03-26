@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Export User Profiles to csv | PnP Samples </title>
+    <title>Disable SharePoint List Commenting at list level | PnP Samples </title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" "="">
-    <meta name="title" content="Export User Profiles to csv | PnP Samples ">
+    <meta name="title" content="Disable SharePoint List Commenting at list level | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Export User Profiles to csv | PnP Samples ">
+    <meta property="og:title" content="Disable SharePoint List Commenting at list level | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -94,21 +94,19 @@
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-export-upa-accounts/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-disable-list-comments/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="export-user-profiles-to-csv">Export User Profiles to csv</h1>
+                    <h1 id="disable-sharepoint-list-commenting-at-list-level">Disable SharePoint List Commenting at list level</h1>
 
 <h2 id="summary">Summary</h2>
-<p>Sometimes you will have to export all or a sub set of the account in the User Profiles in order to do some validation or cleaning. This is where this script sample comes in handy.
-The sample is an update of an existing script by Salaudeen Rajack , see <a href="https://www.sharepointdiary.com/2017/08/sharepoint-online-export-user-profile-properties-to-csv-using-powershell.html#ixzz7vvoXWaLr">https://www.sharepointdiary.com/2017/08/sharepoint-online-export-user-profile-properties-to-csv-using-powershell.html#ixzz7vvoXWaLr</a></p>
-<p><img src="assets/example.png" alt="Example Screenshot"></p>
+<p>This sample script shows how to disable commenting feature in SharePoint online lists at list level.</p>
+<p>Scenario inspired from this blog post: <a href="https://ganeshsanapblogs.wordpress.com/2023/03/19/enable-disable-sharepoint-online-list-comments-using-pnp-powershell/">Enable/Disable SharePoint Online List Comments using PnP PowerShell</a></p>
+<p>If you want to enable/disable SharePoint list commenting at tenant level, check this PnP script sample: <a href="https://pnp.github.io/script-samples/spo-disable-list-comments-tenant/README.html?tabs=pnpps">Disable SharePoint List Commenting at tenant level</a></p>
+<p><img src="assets/output.png" alt="Outupt Screenshot"></p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
 <a href="#tabpanel_CeZOj-G++Q_pnpps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_pnpps" data-tab="pnpps" tabindex="0" aria-selected="true">PnP PowerShell</a>
-</li>
-<li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_cli-m365-ps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_cli-m365-ps" data-tab="cli-m365-ps" tabindex="-1">CLI for Microsoft 365</a>
 </li>
 </ul>
 <section id="tabpanel_CeZOj-G++Q_pnpps" role="tabpanel" data-tab="pnpps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='pnpps'] pre">
@@ -117,95 +115,26 @@ The sample is an update of an existing script by Salaudeen Rajack , see <a href=
 </button>
 
 <pre><code class="lang-powershell">
-$adminsiteUrl = &quot;https://contoso-admin.sharepoint.com/&quot;
-$conn = Connect-PnPOnline -Url $adminsiteUrl -Interactive -ReturnConnection
-Connect-AzAccount
-$AllUsers = Get-AzADUser 
-$Counter = 0
-$AllUsers.Count
-$UserProfileData = @()
-$emaildomain = &quot;@contoso.com&quot;
+# SharePoint online site URL
+$siteUrl = &quot;https://contoso.sharepoint.com/sites/SPConnect&quot;
 
+# Display name of SharePoint list
+$listName = &quot;Comments List&quot;
 
-ForEach($User in $AllUsers)
-{
-        #filter out those account you dont need
-        if($User.ObjectType -ne &quot;User&quot;)
-        {
-            continue
-        }
-        # exclude those without an email address that matches this domain
-        if($null -eq $User.Mail -or $User.Mail.IndexOf($emaildomain) -eq -1 )
-        {
-            continue
-        }
-        
-        
-        Write-host &quot;`nGetting User Profile Property for: $($User.UserPrincipalName)&quot; -f Yellow
-        #Get the User Property value from SharePoint 
-        try 
-        {
-            $UserProfile = Get-PnPUserProfileProperty -Account ($User.UserPrincipalName) -Connection $conn
-            $UserProfile.UserProfileProperties[&quot;Department&quot;]
-            
-            # Yet another option to exclude account from the export. Here we exclude account without a value in the Department field
-            if($null -eq $UserProfile.UserProfileProperties[&quot;Department&quot;] -or $UserProfile.UserProfileProperties[&quot;Department&quot;] -eq &quot;&quot;)
-            {
-                continue
-            }
-            #Get User Profile Data
-            $UserData = New-Object PSObject
-            ForEach($Key in $UserProfile.UserProfileProperties.Keys)
-            { 
-                $UserData | Add-Member NoteProperty $Key($UserProfile.UserProfileProperties[$Key])
-            }
-            $UserProfileData += $UserData
-            $Counter++
-            Write-Progress -Activity &quot;Getting User Profile Data...&quot; -Status &quot;Getting User Profile $Counter of $($AllUsers.Count)&quot; -PercentComplete (($Counter / $AllUsers.Count)  * 100)
-        
-        }
-        catch 
-        {
-            Write-Host $_.Exception.Message
-            
-        }     
-        
+# Connect to SharePoint online site
+Connect-PnPOnline -Url $siteUrl -Interactive
 
-}
-#Export the data to CSV
-$CSVPath = &quot;C:\temp\UPAAccounts.csv&quot;
-$UserProfileData | Export-Csv $CSVPath -Encoding utf8BOM -Delimiter &quot;|&quot;
-   
-write-host -f Green &quot;User Profiles Data Exported Successfully to:&quot; $CSVPath
+# Get the SharePoint online list 
+$list = Get-PnPList -Identity $listName
+ 
+# Disable SharePoint online list Comments
+$list.DisableCommenting = $true
+$list.Update()
+Invoke-PnPQuery
 
 </code></pre>
 <div class="highlight-tool">
 <p>Check out the <strong>PnP PowerShell</strong> to learn more at: <a href="https://aka.ms/pnp/powershell">https://aka.ms/pnp/powershell</a></p>
-</div>
-</section>
-<section id="tabpanel_CeZOj-G++Q_cli-m365-ps" role="tabpanel" data-tab="cli-m365-ps" aria-hidden="true" hidden="hidden"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='cli-m365-ps'] pre">
-    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
-    <span class="article-clipboard__message done">Copied</span>
-</button>
-
-<pre><code class="lang-powershell">
-m365 login --authType deviceCode
-
-# Get all users and their properties, add properties as needed with --properties and separate with comma
-m365 aad user list --properties &quot;displayName,mail&quot;
-
-# Get all users and their properties and export to csv
-m365 aad user list --output csv --properties &quot;displayName,mail,givenName,jobTitle,mail,mobilePhone,officeLocation,preferredLanguage,surname,userPrincipalName,id&quot; &gt; users.csv
-
-# Get current user with all properties
-m365 aad user get --id &quot;@meId&quot;
-
-# get any user with all properties
-m365 aad user get --id &quot;UserID&quot;
-
-</code></pre>
-<div class="highlight-tool">
-<p>Check out the <strong>CLI for Microsoft 365</strong> to learn more at: <a href="https://aka.ms/cli-m365">https://aka.ms/cli-m365</a></p>
 </div>
 </section>
 </div>
@@ -218,16 +147,13 @@ m365 aad user get --id &quot;UserID&quot;
 </thead>
 <tbody>
 <tr>
-<td>Kasper Larsen</td>
-</tr>
-<tr>
-<td>Valeras Narbutas</td>
+<td><a href="https://ganeshsanapblogs.wordpress.com/about">Ganesh Sanap</a></td>
 </tr>
 </tbody>
 </table>
 <h2 id="disclaimer">Disclaimer</h2>
 <p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
-<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-export-upa-accounts" aria-hidden="true">
+<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-disable-list-comments" aria-hidden="true">
 </article>
           </div>
         </div>

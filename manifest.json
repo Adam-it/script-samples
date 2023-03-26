@@ -3216,7 +3216,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-add-update-image-column/README.html",
-          "hash": "97kgaQBCa77oMpI05d2G/g=="
+          "hash": "TDcqKWmIOF7QzjsA4WdzUw=="
         }
       },
       "is_incremental": false,
@@ -3619,6 +3619,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-bulk-publish-syntex-model/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-change-list-url/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-change-list-url/README.html",
+          "hash": "tjQZVqLvoI4MpofZICAu4w=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-change-list-url/assets/output.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-change-list-url/assets/output.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-change-list-url/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-change-list-url/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-change-list-url/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-change-list-url/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -4410,6 +4456,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-disable-list-comments-tenant/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-disable-list-comments/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-disable-list-comments/README.html",
+          "hash": "8+DWSDrFptf+hPER2c6kSQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-disable-list-comments/assets/output.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-disable-list-comments/assets/output.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-disable-list-comments/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-disable-list-comments/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-disable-list-comments/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-disable-list-comments/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -5284,7 +5376,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-export-upa-accounts/README.html",
-          "hash": "NkeYeskivQSSFqaM4tib7A=="
+          "hash": "vCAbhp+/x/jJcnaGgByOBw=="
         }
       },
       "is_incremental": false,
@@ -7865,7 +7957,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-update-page-banner-image/README.html",
-          "hash": "Ib2E7HnWqVGqCQ3V078T6Q=="
+          "hash": "9M7O21LqG8Ek9i8/wPUp9g=="
         }
       },
       "is_incremental": false,
@@ -9434,7 +9526,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "X7SXbaqaILhRFjprH63S7w=="
+          "hash": "DXlbdIWxKvUzhMMqThlpsg=="
         }
       },
       "is_incremental": false,
@@ -9567,7 +9659,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "/dF2bApumcHP7fMkYBLARw=="
+          "hash": "k6yi8a9J7nK3XigK9LGOZQ=="
         }
       },
       "is_incremental": false,
@@ -9579,7 +9671,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "vaYGYyFDbD9lhvTqYCKQGg=="
+          "hash": "vA3+jbgJQMvZtAh0yMxR9g=="
         }
       },
       "is_incremental": false,

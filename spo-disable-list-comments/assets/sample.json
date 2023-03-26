@@ -1,18 +1,18 @@
 [{
-    "name": "spo-add-update-image-column",
+    "name": "spo-disable-list-comments",
     "source": "pnp",
-    "title": "Add/Update Image in SharePoint Image column",
-    "shortDescription": "Add/Update image in SharePoint image column in a SharePoint List or Library",
-    "url": "https://pnp.github.io/script-samples/spo-add-update-image-column/README.html",
+    "title": "Disable SharePoint List Commenting at list level",
+    "shortDescription": "This sample script shows how to disable commenting feature in SharePoint online lists at list level",
+    "url": "https://pnp.github.io/script-samples/spo-disable-list-comments/README.html",
     "longDescription": [],
-    "creationDateTime": "2022-10-14",
-    "updateDateTime": "2023-03-21",
+    "creationDateTime": "2023-03-20",
+    "updateDateTime": "2023-03-20",
     "products": [
         "SharePoint"
     ],
     "metadata": [{
         "key": "PNP-POWERSHELL",
-        "value": "1.11.0"
+        "value": "1.12.0"
     }],
     "categories": [
         "Configure"
@@ -20,23 +20,15 @@
     "tags": [
         "modern",
         "Connect-PnPOnline",
-        "Add-PnPListItem",
-        "Set-PnPListItem"
+        "Get-PnPList"
     ],
     "thumbnails": [{
         "type": "image",
         "order": 100,
-        "url": "https://raw.githubusercontent.com/pnp/script-samples/main/scripts/spo-add-update-image-column/assets/preview.png",
+        "url": "https://raw.githubusercontent.com/pnp/script-samples/main/scripts/spo-disable-list-comments/assets/preview.png",
         "alt": ""
     }],
-    "authors": [
-        {
-            "gitHubAccount": "mjimison",
-            "company": "",
-            "pictureUrl": "https://github.com/mjimison.png",
-            "name": "Matt Jimison"
-        },
-        {
+    "authors": [{
         "gitHubAccount": "ganesh-sanap",
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/25476310?v=4",

@@ -2368,7 +2368,7 @@
       "output": {
         ".html": {
           "relative_path": "reset-files-permission-unique-to-inherited/README.html",
-          "hash": "ZzDgpFs2lQ3x2phOUc3o0Q=="
+          "hash": "HPm3j+cwx0Jvn2U3DRjvCQ=="
         }
       },
       "is_incremental": false,
@@ -3389,6 +3389,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-apply-custom-form-formatting-json/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-apply-json-view-formatting/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-apply-json-view-formatting/README.html",
+          "hash": "jg76+G33ZhNOBQxrKFEGBw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-apply-json-view-formatting/assets/output.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-apply-json-view-formatting/assets/output.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-apply-json-view-formatting/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-apply-json-view-formatting/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-apply-json-view-formatting/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-apply-json-view-formatting/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -4509,6 +4555,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-empty-recycle-bin/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-empty-recycle-bin/README.html",
+          "hash": "+vnBcyuaC32HMfspIm+Qmw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-empty-recycle-bin/assets/output.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-empty-recycle-bin/assets/output.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-empty-recycle-bin/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-empty-recycle-bin/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-empty-recycle-bin/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-empty-recycle-bin/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-empty-tenant-recyclebin/README.md",
       "output": {
         ".html": {
@@ -4791,6 +4883,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-export-checked-out-files-in-all-sites-associated-with-a-hub-site-to-csv/assets/screen-output.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-export-checked-out-files-in-tenant-using-search/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-export-checked-out-files-in-tenant-using-search/README.html",
+          "hash": "hUohgBIXPzIH95f2RNSpvg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-checked-out-files-in-tenant-using-search/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-checked-out-files-in-tenant-using-search/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-checked-out-files-in-tenant-using-search/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-checked-out-files-in-tenant-using-search/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-checked-out-files-in-tenant-using-search/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-checked-out-files-in-tenant-using-search/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -9526,7 +9664,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "DXlbdIWxKvUzhMMqThlpsg=="
+          "hash": "HW3jMi4E7aOwuZWLjcwpxw=="
         }
       },
       "is_incremental": false,
@@ -9659,7 +9797,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "k6yi8a9J7nK3XigK9LGOZQ=="
+          "hash": "2gng7c4A5xxCmZGzzM68pw=="
         }
       },
       "is_incremental": false,
@@ -9671,7 +9809,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "vA3+jbgJQMvZtAh0yMxR9g=="
+          "hash": "p5j3JrKZdTXIvfw8eHdHvw=="
         }
       },
       "is_incremental": false,

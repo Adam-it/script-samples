@@ -4325,6 +4325,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsite-associatedsites/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-deploy-install-update-spfx-hubsite-associatedsites/README.html",
+          "hash": "OCdoX4SHjh7GOTnS53foEA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsite-associatedsites/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-deploy-install-update-spfx-hubsite-associatedsites/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsite-associatedsites/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-deploy-install-update-spfx-hubsite-associatedsites/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsite-associatedsites/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-deploy-install-update-spfx-hubsite-associatedsites/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-deploy-pnpmodernsearch-webpart/README.md",
       "output": {
         ".html": {
@@ -9791,7 +9837,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "NlAx1pvs0a4ck+zOEiJODA=="
+          "hash": "iW/HJVb4TER2tsCgL6V0/g=="
         }
       },
       "is_incremental": false,
@@ -9924,7 +9970,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "zYhK+RWx0YqwujIvq00lAA=="
+          "hash": "BXLUl6wtkdTGMaeZTyzfbA=="
         }
       },
       "is_incremental": false,
@@ -9936,7 +9982,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "ru9UIVf4ZX56CAl3kj2LkQ=="
+          "hash": "5LF369dOxPLdubpDwRTLJA=="
         }
       },
       "is_incremental": false,

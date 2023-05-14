@@ -4570,7 +4570,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-disable-list-comments-tenant/README.html",
-          "hash": "h1+2naVclaW2eaQ4+Mr8qQ=="
+          "hash": "aOAB7ilqEtUro18Z4DQVOw=="
         }
       },
       "is_incremental": false,
@@ -4651,6 +4651,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-disable-list-comments/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-document-sets-modern-new-form/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-document-sets-modern-new-form/README.html",
+          "hash": "StViM23mGgcsJr4VrugTDw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-document-sets-modern-new-form/assets/output.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-document-sets-modern-new-form/assets/output.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-document-sets-modern-new-form/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-document-sets-modern-new-form/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -4789,6 +4824,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-empty-tenant-recyclebin/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-enable-disable-app-bar/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-enable-disable-app-bar/README.html",
+          "hash": "LwDs/oQltgrw/9vnoKhGOQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-enable-disable-app-bar/assets/AppBar.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-enable-disable-app-bar/assets/AppBar.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-enable-disable-app-bar/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-enable-disable-app-bar/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-enable-disable-app-bar/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-enable-disable-app-bar/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -7100,7 +7181,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-modern-page-url-report/README.html",
-          "hash": "gSPBHhsu2OY2yPBXIosa8w=="
+          "hash": "DIntR2wO5vtTA4diuZ+uxw=="
         }
       },
       "is_incremental": false,
@@ -7146,7 +7227,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-open-doc-in-client/README.html",
-          "hash": "npr1rLplJbR0EqJCi7zzYw=="
+          "hash": "e+TK01fk2oYBtARbVADffg=="
         }
       },
       "is_incremental": false,
@@ -9894,7 +9975,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "h6IKrhMmFOQGun2dm1ZqFg=="
+          "hash": "M4V2hCGsw1hj2tfkPR2NoQ=="
         }
       },
       "is_incremental": false,
@@ -10027,7 +10108,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "v1odGZyEgMvVLV/JMuEuWg=="
+          "hash": "bnCNDzaUl1PxZaC/HDaB4w=="
         }
       },
       "is_incremental": false,
@@ -10039,7 +10120,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "T5/T0PLuWbAGF+RNi0Kwtg=="
+          "hash": "xXgwwrpVikdXJEhXqZdRSQ=="
         }
       },
       "is_incremental": false,

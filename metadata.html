@@ -810,12 +810,12 @@
 <td><a href="spo-add-update-image-column/README.html">Add/Update Image in SharePoint Image column</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Configure</td>
-<td style="text-align: center;">modern, Connect-PnPOnline, Add-PnPListItem, Set-PnPListItem</td>
-<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">modern, Connect-PnPOnline, Get-PnPFile, Add-PnPListItem, Set-PnPListItem, Disconnect-PnPOnline, m365 status, m365 login, m365 spo file get, m365 spo listitem add, m365 spo listitem set, m365 logout</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">2</td>
 </tr>
 <tr>
 <td><a href="spo-add-user-follow-site/README.html">Add users to follow SharePoint Sites</a></td>
@@ -1041,12 +1041,12 @@
 <td><a href="spo-create-sharepoint-groups-bulk-csv/README.html">Create SharePoint Groups in Bulk using CSV file</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Provision, Security</td>
-<td style="text-align: center;">classic, Connect-PnPOnline, New-PnPGroup</td>
-<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">classic, Connect-PnPOnline, New-PnPGroup, Connect-SPOService, New-SPOSiteGroup, Disconnect-SPOService, m365 status, m365 login, m365 spo group add, m365 logout</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365, SPO-MANAGEMENT-SHELL</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">3</td>
 </tr>
 <tr>
 <td><a href="spo-delete-orphaned-temporary-sitepages/README.html">Delete orphaned temporary pages from Site Pages</a></td>
@@ -1162,12 +1162,12 @@
 <td><a href="spo-empty-tenant-recyclebin/README.html">Empty the tenant recycle bin</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Provision</td>
-<td style="text-align: center;">SharePoint Online, Clear-PnPTenantRecycleBinItem, Connect-PnPOnline, Get-PnPTenant, Get-PnPTenantRecycleBinItem</td>
-<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">SharePoint Online, Clear-PnPTenantRecycleBinItem, Connect-PnPOnline, Get-PnPTenantRecycleBinItem, Disconnect-PnPOnline, m365 status, m365 login, m365 spo tenant recyclebinitem list, m365 spo tenant recyclebinitem remove, m365 logout, Connect-SPOService, Get-SPODeletedSite, Remove-SPODeletedSite, Disconnect-SPOService</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365, SPO-MANAGEMENT-SHELL</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">3</td>
 </tr>
 <tr>
 <td><a href="spo-enable-disable-app-bar/README.html">Enable and Disable App Bar in SharePoint Online</a></td>
@@ -1423,6 +1423,17 @@
 <td style="text-align: center;">1</td>
 </tr>
 <tr>
+<td><a href="spo-file-version-trimmer/README.html">File Version Trimmer</a></td>
+<td style="text-align: center;">SharePoint, Graph, Azure</td>
+<td style="text-align: center;">Data, Configure, Report</td>
+<td style="text-align: center;">Get-PnPFileVersion, Remove-PnPFileVersion, Connect-PnPOnline, Disconnect-PnPOnline, Get-PnPFile, Get-PnPList, Get-PnPListItem, Get-PnPTenant, Get-PnPTenantSite, Remove-PnPFile</td>
+<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
 <td><a href="spo-generate-demo-events/README.html">Generate Demo Events for SharePoint Events List</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Data</td>
@@ -1493,6 +1504,17 @@
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Data</td>
 <td style="text-align: center;">Connect-PnPOnline, Get-PnPList, Get-PnPListItem, Get-PnPSearchCrawlLog</td>
+<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td><a href="spo-get-items-with-custom-permissions/README.html">Find all items with unique permissions and export to csv</a></td>
+<td style="text-align: center;">SharePoint</td>
+<td style="text-align: center;">Report, Security</td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPList, Get-PnPListItem, Get-PnPProperty, Get-PnPSubWeb, Get-PnPTenant, Get-PnPTenantSite</td>
 <td style="text-align: center;">PNP-POWERSHELL</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
@@ -1580,12 +1602,12 @@
 <td><a href="spo-hide-list-from-site-contents/README.html">Hide SharePoint list from Site Contents</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Configure</td>
-<td style="text-align: center;">SharePoint Online, Hide List, Connect-PnPOnline, Get-PnPList, Set-PnPList</td>
-<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">SharePoint Online, Hide List, Connect-PnPOnline, Set-PnPList, Disconnect-PnPOnline, m365 status, m365 login, m365 spo list set, m365 logout</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">2</td>
 </tr>
 <tr>
 <td><a href="spo-hub-sites-association/README.html">SharePoint Online Hub Site Association</a></td>
@@ -1645,13 +1667,13 @@
 <tr>
 <td><a href="spo-list-download-contenttype-documenttemplate/README.html">Download all the content type document templates files associated with a library</a></td>
 <td style="text-align: center;">SharePoint</td>
-<td style="text-align: center;">Data, Provision</td>
-<td style="text-align: center;">classic, Connect-PnPOnline, Get-PnPList, Get-PnPFile</td>
-<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">Data</td>
+<td style="text-align: center;">classic, Content Type, Content Type Document Templates, Connect-PnPOnline, Get-PnPList, Get-PnPFile, Disconnect-PnPOnline, m365 status, m365 login, m365 spo list contenttype list, m365 spo file get, m365 logout</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">2</td>
 </tr>
 <tr>
 <td><a href="spo-list-formatting/README.html">Export / Import list formatting</a></td>
@@ -1800,12 +1822,12 @@
 <td><a href="spo-remove-custom-themes/README.html">Delete custom color themes from SharePoint</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Configure</td>
-<td style="text-align: center;">SharePoint Online, Themes</td>
-<td style="text-align: center;">CLI-FOR-MICROSOFT365, PNP-POWERSHELL</td>
+<td style="text-align: center;">SharePoint Online, Themes, Connect-SPOService, Get-SPOTheme, Remove-SPOTheme, Disconnect-SPOService, Connect-PnPOnline, Get-PnPTenantTheme, Remove-PnPTenantTheme, Disconnect-PnPOnline, m365 status, m365 login, m365 spo theme list, m365 spo theme remove, m365 logout</td>
+<td style="text-align: center;">PNP-POWERSHELL, SPO-MANAGEMENT-SHELL, CLI-FOR-MICROSOFT365</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">3</td>
 </tr>
 <tr>
 <td><a href="spo-remove-large-library/README.html">Delete a library exceeding the list threshold limit. </a></td>
@@ -2183,7 +2205,7 @@
 </tr>
 </tbody>
 </table>
-<p>There are <strong>188</strong> script scenarios with metadata in the site | Generated: 14 May 2023 06:19:55</p>
+<p>There are <strong>190</strong> script scenarios with metadata in the site | Generated: 20 May 2023 06:14:13</p>
 </article>
           </div>
         </div>

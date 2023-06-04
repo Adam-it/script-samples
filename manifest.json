@@ -3361,6 +3361,41 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-allow-custom-scripts/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-allow-custom-scripts/README.html",
+          "hash": "6AKxBZCrIn28tcC4wu9u1w=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-allow-custom-scripts/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-allow-custom-scripts/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-allow-custom-scripts/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-allow-custom-scripts/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-apply-column-format/README.md",
       "output": {
         ".html": {
@@ -10067,7 +10102,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "zEodfqbdxxCy1lEw7n7/5A=="
+          "hash": "uFCDHevB/i0qbM6I169yIw=="
         }
       },
       "is_incremental": false,
@@ -10200,7 +10235,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "4lEvs+7flALlZpxxszVFig=="
+          "hash": "3/ZQeQXYOmqf/qArgat9cQ=="
         }
       },
       "is_incremental": false,
@@ -10212,7 +10247,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "q358POn/FlwqMt9hews2rg=="
+          "hash": "UVT+1/6NVNlEfCBn+bFRGg=="
         }
       },
       "is_incremental": false,

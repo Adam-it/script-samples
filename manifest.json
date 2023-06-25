@@ -2815,7 +2815,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-add-formextension-to-list/README.html",
-          "hash": "KLK6HGcSsASeltMQrLPW1g=="
+          "hash": "zMW75SIkz4XmQyi+qM/5Og=="
         }
       },
       "is_incremental": false,
@@ -4077,6 +4077,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-copy-library-view/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-copy-list/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-copy-list/README.html",
+          "hash": "zofdNjQb5w6mDetLfrF+nw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-copy-list/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-copy-list/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-copy-list/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-copy-list/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -10148,7 +10183,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "eP9NmGj2G+jG4lgCTIdYkg=="
+          "hash": "NC31M59OYdWXlOzTtvkt3g=="
         }
       },
       "is_incremental": false,
@@ -10281,7 +10316,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "G4L62dAwNBrjNzmRS0a+CA=="
+          "hash": "6z1mcNUfWOgnksGR67DGLQ=="
         }
       },
       "is_incremental": false,
@@ -10293,7 +10328,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "6vwb5RfhdulLABwK8KrVQA=="
+          "hash": "LJ3l/pqcM5b4hZZgSVXx2w=="
         }
       },
       "is_incremental": false,

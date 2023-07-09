@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Deploys and Installs SharePoint Framework (SPFx) solutions to Hub Site and Associated Sites | PnP Samples </title>
+    <title>Get Storage site Version Recycle Bin | PnP Samples </title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" "="">
-    <meta name="title" content="Deploys and Installs SharePoint Framework (SPFx) solutions to Hub Site and Associated Sites | PnP Samples ">
+    <meta name="title" content="Get Storage site Version Recycle Bin | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Deploys and Installs SharePoint Framework (SPFx) solutions to Hub Site and Associated Sites | PnP Samples ">
+    <meta property="og:title" content="Get Storage site Version Recycle Bin | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -94,31 +94,19 @@
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-deploy-install-update-spfx-hubsite-associatedsites/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-get-storage-site-versionsrecyclebin/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="deploys-and-installs-sharepoint-framework-spfx-solutions-to-hub-site-and-associated-sites">Deploys and Installs SharePoint Framework (SPFx) solutions to Hub Site and Associated Sites</h1>
+                    <h1 id="get-storage-site-version-recycle-bin">Get Storage site Version Recycle Bin</h1>
 
 <h2 id="summary">Summary</h2>
-<p>At the time of submitting this script sample there is no concept of a hub site app catalog. However you may want to install or upgrade a SPFx solution to all sites within a hub for example all sites linked to the intranet hub. This sample is applicable for a SPFx solution that needs to be deployed and upgraded across all sites in a hub.</p>
-<p><img src="assets/example.png" alt="Example Screenshot"></p>
-<h3 id="prerequisites">Prerequisites</h3>
+<p>This sample script may help to get a breakdown of storage for files, file versions and recycle bin. I failed to reconcile the site current usage with the total of file size, total file version size and recycle bin size but may help to get insights on storage usage despite I could not explain 30% of storage allocated. In the sample output, a total of around 15 MB was identified to be comprised of total file size, total version size and recycle bin size and could not identify the remaining 6MB.</p>
+<h2 id="implementation">Implementation</h2>
 <ul>
-<li>The user account that runs the script must have SharePoint Online tenant administrator access.</li>
-<li>Before running the script, edit the script and update the variable values in the Config Variables section, such as Admin Center URL, Hub Site URL, the CSV output file path and alternatively the sppkg packages Folder.</li>
+<li>Open Windows PowerShell ISE</li>
+<li>Create a new file</li>
+<li>Write a script as below,</li>
+<li>Update the $SiteURL, $OutputSite and $OutPutFile and optionally update $ExcludedLibraries to exclude any libraries</li>
 </ul>
-<p>The script will:</p>
-<ul>
-<li>Get the hub site ID using the Get-PnPHubSite cmdlet.</li>
-<li>Get all associated site collections in the tenant using the Get-PnPTenantSite cmdlet filtered by the HubSiteId property.</li>
-<li>Connect to the site using Connect-PnPOnline.</li>
-<li>Check if the site collection app catalog exists. If it doesn’t, create it using Add-PnPSiteCollectionAppCatalog.</li>
-<li>Deploy the SPFx package using Add-PnPApp.</li>
-<li>Check if the package is already installed on the site using Get-PnPApp.</li>
-<li>If the package is not installed, install it using Install-PnPApp.</li>
-<li>If a newer version of the package is available, update the package using Update-PnPApp.</li>
-<li>Export the site collection URL, package name, and package version to a CSV file for a record of what's updated.</li>
-</ul>
-<p>The script does not cover admin consent to app permissions. A global administrator will have to grant admin consent if required by the SPFx solutions.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
@@ -130,100 +118,105 @@
     <span class="article-clipboard__message done">Copied</span>
 </button>
 
-<pre><code class="lang-powershell">#Config variables
-$adminCenterURL = &quot;https://tenant-admin.sharepoint.com&quot;
-$fileName = &quot;\IntranetUpgradeSPFx-&quot; + $dateTime + &quot;.csv&quot;
-$hubSiteUrl = &quot;https://tenant.sharepoint.com/sites/u-intranet&quot;
-$OutPutView = $directorypath + $fileName
-$sppkgFolder = &quot;./packages&quot;
-
+<pre><code class="lang-powershell">$SharePointAdminSiteURL = &quot;https://contoso-admin.sharepoint.com&quot;
+$conn = Connect-PnPOnline -Url $SharePointAdminSiteURL -Interactive
+# Set Variables
 $dateTime = (Get-Date).toString(&quot;dd-MM-yyyy&quot;)
 $invocation = (Get-Variable MyInvocation).Value
 $directorypath = Split-Path $invocation.MyCommand.Path
-cd $PSScriptRoot
+$fileName = &quot;\SiteStoragReport-&quot; + $dateTime + &quot;.csv&quot;
+$OutputSite = $directorypath + $fileName
+$fileName = &quot;\FileStorageReport-&quot; + $dateTime + &quot;.csv&quot;
+$OutPutFile = $directorypath + $fileName
 
-$packageFiles = Get-ChildItem $sppkgFolder
 
-Connect-PnPOnline $adminCenterURL -Interactive
+$arraySite = New-Object System.Collections.ArrayList
+$arrayFile = New-Object System.Collections.ArrayList
+#Exclude certain libraries
+#$ExcludedLibraries = @(&quot;Form Templates&quot;, &quot;Preservation Hold Library&quot;, &quot;Site Assets&quot;, &quot;Site Pages&quot;, &quot;Images&quot;, &quot;Pages&quot;, &quot;Settings&quot;, &quot;Videos&quot;, &quot;Site Collection Documents&quot;, &quot;Site Collection Images&quot;, &quot;Style Library&quot;, &quot;AppPages&quot;, &quot;Apps for SharePoint&quot;, &quot;Apps for Office&quot;)
+function ReportStorageVersions($site) {
+    try {
+        $fileSizes = @(); 
+        $fileSize = 0 
+        $TotalVersionSize = 0
+        $DocLibraries = Get-PnPList -Includes BaseType, Hidden, Title -Connection $siteconn | Where-Object { $_.BaseType -eq &quot;DocumentLibrary&quot; -and $_.Hidden -eq $False -and $_.Title -notin $ExcludedLibraries }
+        $DocLibraries | ForEach-Object {
+            Write-host &quot;Processing Document Library:&quot; $_.Title -f Yellow
+            $library = $_
+            $listItems = Get-PnPListItem -List $library.Title -Fields &quot;ID&quot; -PageSize 1000 -Connection $siteconn
+            #Get file zize
+            $listItems | ForEach-Object {
+                $listitem = $_
+                $fileVersionSize = 0
+                $file = Get-PnPFile -Url $listitem[&quot;FileRef&quot;] -AsFileObject -ErrorAction SilentlyContinue -Connection $siteconn  
+                if ($file) {
+                    $fileSize += $file.Length          
+                    $elementFile = &quot;&quot; | Select-Object SiteUrl, siteName, siteStorage, FileRef,FileSize,TotalVersionSize,VersionCount,StartTime, EndTime
+                    $elementFile.SiteUrl = $site.Url
+                    $elementFile.siteName = $site.Title
+                    $elementFile.siteStorage = &quot;$siteStorage MB&quot;
+                    $elementFile.StartTime = (Get-Date).toString(&quot;dd-MM-yyyy HH:mm:ss&quot;)
+                    $elementFile.FileRef  =   $listitem[&quot;FileRef&quot;]
+                    $fileversions = Get-PnPFileVersion -Url $listitem[&quot;FileRef&quot;] -Connection $siteconn
+                    if ($fileversions) {
+                            # Calculate the total version size
+                        $fileVersionSize = $fileversions | Measure-Object -Property Size -Sum | Select-Object -ExpandProperty Sum                                                   
+                    }
 
-#collection to save the list of sites where the deployment or upgrades of SPFx solution happened for auditing
-$ViewCollection = @() 
-$HubSite = Get-PnPHubSite -Identity $hubSiteUrl
-$associatedSites = Get-PnPTenantSite -Detailed | Where-Object {$_.HubSiteId -eq $hubSite.Id}
-
-#Get all site collections associated with the hub site
-$associatedSites | select url | ForEach-Object { 
-  $Site = Get-PnPTenantSite $_.url
-  If($Site.HubSiteId -eq $HubSiteId){
-    Connect-PnPOnline -Url $Site.url -Interactive
-    Write-Host (&quot;Deploying packages to {0}...&quot; -f $Site.url) -ForegroundColor Yellow
-
-      foreach($package in $packageFiles){
-        $ExportVw = New-Object PSObject
-        $ExportVw | Add-Member -MemberType NoteProperty -name &quot;Site URL&quot; -value $Site.url
-        $packageName = $package.PSChildName
-        Write-Host (&quot;Installing {0}...&quot; -f $packageName) -ForegroundColor Yellow
-         $ExportVw | Add-Member -MemberType NoteProperty -name &quot;Package Name&quot; -value $packageName
-         #ensure app catalog
-          if(!(Get-PnPSiteCollectionAppCatalog -CurrentSite)){
-            Write-Host (&quot;Creating site collection app catalog in {0}...&quot; -f $Site.url) -ForegroundColor Yellow
-            Add-PnPSiteCollectionAppCatalog
-          }
-         while(!(Get-PnPSiteCollectionAppCatalog -CurrentSite)){
-            Start-Sleep -Seconds 20
-         }
-         #deploy sppkg
-         Add-PnPApp -Path (&quot;{0}/{1}&quot; -f $sppkgFolder , $package.PSChildName) -Scope Site -Overwrite -Publish
-
-         Start-Sleep -Seconds 5
-
-        #Find Name of app from installed package 
-        $RestMethodUrl = '/_api/web/lists/getbytitle(''Apps%20for%20SharePoint'')/items?$select=Title,LinkFilename'
-        $apps = (Invoke-PnPSPRestMethod -Url $RestMethodUrl -Method Get).Value
-        $appTitle = ($apps | where-object {$_.LinkFilename -eq $packageName} | select Title).Title
-        # Get the current version of the SPFx package
-        $currentPackage = Get-PnPApp -Identity $appTitle -Scope Site
-        Write-Host &quot;Current package version on site $($site.Url): $($currentPackage.InstalledVersion)&quot;
-
-        #Install App to the Site if not already installed
-        $web = Get-PnPWeb -Includes AppTiles
-        $app = $web.AppTiles  |  where-object {$_.Title -eq $currentPackage.Title } 
-        if(!$app){
-            Install-PnPApp -Identity $currentPackage.Id -Scope Site
-            Start-Sleep -Seconds 5
+                    $elementFile.FileSize = &quot;$([Math]::Round(($file.Length/1MB),3)) MB&quot; 
+                    $elementFile.TotalVersionSize = &quot;$([Math]::Round(($fileVersionSize/1MB),3)) MB&quot;
+                    $elementFile.VersionCount = $fileversions.Count
+                    $totalVersionSize += $fileVersionSize
+                    $elementFile.EndTime = (Get-Date).toString(&quot;dd-MM-yyyy HH:mm:ss&quot;)
+                    $arrayFile.Add($elementFile) | Out-Null 
+                }        
+            }
         }
-        # Get the latest version of the SPFx package
-        Write-Host &quot;Latest package version: $($currentPackage.AppCatalogVersion)&quot;
+        $fileSizes += $fileSize
+        $fileSizes += $totalVersionSize   
 
-        # Update the package to the latest version
-        if ($currentPackage.InstalledVersion -ne $currentPackage.AppCatalogVersion) {
-            Write-Host &quot;Upgrading package on site $($site.Url) to latest version...&quot; -ForegroundColor Green
-            Update-PnPApp -Identity $currentPackage.Id -Scope site
-            $currentPackage = Get-PnPApp -Identity $appTitle -Scope Site
-            $ExportVw | Add-Member -MemberType NoteProperty -name &quot;Package Version&quot; -value $currentPackage.AppCatalogVersion
-            $ViewCollection += $ExportVw
-        } else {
-            Write-Host &quot;Package already up-to-date on site $($site.Url).&quot;
-        }
+        return $fileSizes
     }
-  }
+    catch {
+        Write-Output &quot; An exception was thrown: $($_.Exception.Message)&quot; -ForegroundColor Red
+    } 
 }
 
-#Export the result Array to CSV file
-$ViewCollection | Export-CSV $OutPutView -Force -NoTypeInformation
-Disconnect-PnPOnline
+# Get total storage use for the site collection, amend query to run reports against site collection(s), e.g. filter by $_.StorageUsageCurrent -gt 10000
+Get-PnPTenantSite -Connection $conn | Where-Object { ($_.Template -eq &quot;GROUP#0&quot; -or $_.Template -eq &quot;SITEPAGEPUBLISHING#0&quot;) -and $_.Title -eq &quot;Company 311&quot;} | ForEach-Object {
+    $site = $_
+    $siteStorage = $site.StorageUsageCurrent
+    #$siteStorage = $siteStorage/1024l
+    #$siteStorage = [Math]::Round($siteStorage, 2)
+    Write-Host &quot;Site storage: $siteStorage MB&quot;
+    $siteconn = Connect-PnPOnline -Url $site.Url -Interactive -ReturnConnection
+
+    $element = &quot;&quot; | Select-Object SiteUrl, siteName, siteStorage, FileSize, StartTime,TotalVersionSize, RecycleBinSize,EndTime
+    $element.SiteUrl = $site.Url
+    $element.siteName = $site.Title
+    $element.siteStorage = &quot;$siteStorage MB&quot;
+    $element.StartTime = (Get-Date).toString(&quot;dd-MM-yyyy HH:mm:ss&quot;)
+    $FileSizeVersions = ReportStorageVersions -site $site
+    $element.FileSize = &quot;$([Math]::Round(($FileSizeVersions[0]/1MB),3)) MB&quot; 
+    $element.TotalVersionSize = &quot;$([Math]::Round(($FileSizeVersions[1]/1MB),3)) MB&quot;
+    $RecycleBinItemsSize = Get-PnPRecycleBinItem -Connection $siteconn | Measure-Object -Property Size -Sum | Select-Object -ExpandProperty Sum
+    $element.RecycleBinSize = &quot;$([Math]::Round(($RecycleBinItemsSize/1MB),3)) MB&quot;
+    $element.EndTime = (Get-Date).toString(&quot;dd-MM-yyyy HH:mm:ss&quot;)
+
+ 
+
+    $arraySite.Add($element) | Out-Null 
+}  
+
+$arraySite | Export-Csv -Path $OutputSite -NoTypeInformation -Force 
+$arrayFile | Export-Csv -Path $OutputFile -NoTypeInformation -Force
+
 </code></pre>
-<div class="NOTE">
-<h5>Note</h5>
-<p>SharePoint admin rights are required to run the script</p>
-</div>
 <div class="highlight-tool">
 <p>Check out the <strong>PnP PowerShell</strong> to learn more at: <a href="https://aka.ms/pnp/powershell">https://aka.ms/pnp/powershell</a></p>
 </div>
 </section>
 </div>
-<h2 id="source-credit">Source Credit</h2>
-<p>Sample first appeared on <a href="https://pnp.github.io/blog/post/deploy-spfx-in-hub-site-and-associated-sites/">Deploying and Installing SharePoint Framework (SPFx) solutions using PnP PowerShell to Hub Site and Associated Sites</a></p>
 <h2 id="contributors">Contributors</h2>
 <table>
 <thead>
@@ -235,14 +228,11 @@ Disconnect-PnPOnline
 <tr>
 <td><a href="https://github.com/reshmee011">Reshmee Auckloo</a></td>
 </tr>
-<tr>
-<td><a href="https://ganeshsanapblogs.wordpress.com/">Ganesh Sanap</a></td>
-</tr>
 </tbody>
 </table>
 <h2 id="disclaimer">Disclaimer</h2>
 <p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
-<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-deploy-install-update-spfx-hubsite-associatedsites" aria-hidden="true">
+<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-get-storage-site-versionsrecyclebin" aria-hidden="true">
 </article>
           </div>
         </div>

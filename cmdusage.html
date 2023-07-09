@@ -238,6 +238,11 @@
 <td style="text-align: center;">App-only, sign-in, Out-GridView, Find-Module, Disconnect-MgGraph, Get-MgUserMessage, App-Only, New-MgChatMessage, Find-MgGraphCommand, Get-MgDirectorySetting, Select-MgProfile, Get-MgAuditLogSignIn, New-Item, Get-MgReportMailboxUsageDetail, Invoke-MgGraphRequest, Import-CSV</td>
 </tr>
 <tr>
+<td><a href="graph-connect-to-graph/README.html">Connect to Graph using V1 or V2 or the SDK</a></td>
+<td style="text-align: center;">Connect-MgGraph</td>
+<td style="text-align: center;">Write-Host, Install-Module, Import-Module, Connect-ToGraph, user-based, Select-Object, Invoke-RestMethod, write-host, ConvertTo-SecureString, Select-MgProfile, app-based</td>
+</tr>
+<tr>
 <td><a href="graph-create-test-users-with-chat-gpt/README.html">Create test users from list or use ChatGPT to generate</a></td>
 <td style="text-align: center;">Connect-MgGraph</td>
 <td style="text-align: center;">Pre-requisites, Install-Module, Get-ListOfUsers, Select-Object, New-MgUser, Write-Host, Invoke-WebRequest, ConvertFrom-Json</td>
@@ -301,6 +306,11 @@
 <td><a href="onedrive-export-admins/README.html">Export OneDrive Admins</a></td>
 <td style="text-align: center;">Connect-PnPOnline, Get-PnPSite, Get-PnPSiteCollectionAdmin, Get-PnPTenant, Get-PnPTenantSite, Register-PnPAzureADApp</td>
 <td style="text-align: center;">write-host, New-Object, Export-Csv</td>
+</tr>
+<tr>
+<td><a href="openai-function-calling-tfl-status/README.html">Get TfL (Transport for London) status with OpenAI function calling feature</a></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Pre-requisites, Get-TubeStatus, Invoke-WebRequest, Show-FunnyMessage, Write-Host, Invoke-OpenAI, ConvertTo-Json, Get-Result, ConvertFrom-Json, Select-Object, ForEach-Object, Start-Chat, Read-Host</td>
 </tr>
 <tr>
 <td><a href="planner-copy-planner-plan/README.html">Copy Planner plan</a></td>
@@ -554,8 +564,8 @@
 </tr>
 <tr>
 <td><a href="spo-deploy-install-update-spfx-hubsite-associatedsites/README.html">Deploys and Installs SharePoint Framework (SPFx) solutions to Hub Site and Associated Sites</a></td>
-<td style="text-align: center;">Add-PnPApp, Add-PnPSiteCollectionAppCatalog, Connect-PnPOnline, Disconnect-PnPOnline, Get-PnPApp, Get-PnPSite, Get-PnPSiteCollectionAppCatalog, Get-PnPTenant, Get-PnPTenantSite, Get-PnPWeb, Install-PnPApp, Invoke-PnPSPRestMethod, Update-PnPApp</td>
-<td style="text-align: center;">Split-Path, Get-ChildItem, ForEach-Object, Write-Host, New-Object, Add-Member, Start-Sleep, where-object, Export-CSV</td>
+<td style="text-align: center;">Add-PnPApp, Add-PnPSiteCollectionAppCatalog, Connect-PnPOnline, Disconnect-PnPOnline, Get-PnPApp, Get-PnPHubSite, Get-PnPSite, Get-PnPSiteCollectionAppCatalog, Get-PnPTenant, Get-PnPTenantSite, Get-PnPWeb, Install-PnPApp, Invoke-PnPSPRestMethod, Update-PnPApp</td>
+<td style="text-align: center;">Split-Path, Get-ChildItem, Where-Object, ForEach-Object, Write-Host, New-Object, Add-Member, Start-Sleep, where-object, Export-CSV</td>
 </tr>
 <tr>
 <td><a href="spo-deploy-pnpmodernsearch-webpart/README.html">Extract the configuration of a PnP Modern Search results web part and apply it on another site collection</a></td>
@@ -748,6 +758,11 @@
 <td style="text-align: center;">Remove-Item, Where-Object, Write-host, New-Object, Add-Member, Start-Sleep, Export-CSV, write-host</td>
 </tr>
 <tr>
+<td><a href="spo-get-customfields-lists/README.html">Get custom fields within lists and libraries within a site </a></td>
+<td style="text-align: center;">Connect-PnPOnline, Disconnect-PnPOnline, Get-PnPField, Get-PnPList</td>
+<td style="text-align: center;">Split-Path, ForEach-Object, New-Object, Add-Member, Export-Csv</td>
+</tr>
+<tr>
 <td><a href="spo-get-files-and-creators-modifiers/README.html">Get all files in a Document Library along with Created By and Modified By</a></td>
 <td style="text-align: center;">Connect-PnPOnline, Get-PnPList, Get-PnPListItem, Get-PnPTenant, Get-PnPTenantSite</td>
 <td style="text-align: center;">Export-CSV, Where-Object, Select-Object, Export-Csv</td>
@@ -781,6 +796,11 @@
 <td><a href="spo-get-message-centre-announcements-and-post-to-teams-channel/README.html">Retrieve Message Center announcements and post to MS Teams channel</a></td>
 <td style="text-align: center;">m365 login, m365 logout, m365 status, m365 teams channel get, m365 teams team get, m365 tenant serviceannouncement message list, Connect-PnPOnline, Get-PnPMessageCenterAnnouncement, Submit-PnPTeamsChannelMessage</td>
 <td style="text-align: center;">Where-Object, Select-Object, Connect-MicrosoftTeams, Write-Host, ConvertFrom-Json</td>
+</tr>
+<tr>
+<td><a href="spo-get-storage-site-versionsrecyclebin/README.html">Get storage breakdown by file size, file version size and recycle bin.</a></td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPFile, Get-PnPFileVersion, Get-PnPList, Get-PnPListItem, Get-PnPRecycleBinItem, Get-PnPTenant, Get-PnPTenantSite</td>
+<td style="text-align: center;">Split-Path, New-Object, Where-Object, ForEach-Object, Write-host, Select-Object, Measure-Object, Out-Null, Write-Output, Write-Host, Export-Csv</td>
 </tr>
 <tr>
 <td><a href="spo-get-usage-from-audit-logs/README.html">Gets usage from a particular user(s) or site(s) from the Unified Audit Log</a></td>
@@ -871,6 +891,11 @@
 <td><a href="spo-modern-page-url-report/README.html">SharePoint Modern Page URL Report</a></td>
 <td style="text-align: center;">Connect-PnPOnline, Get-PnPList, Get-PnPListItem, Get-PnPPage, Get-PnPPageComponent, Get-PnPWeb</td>
 <td style="text-align: center;">Write-Host, Get-Location, Out-File, Where-Object, ConvertFrom-Json</td>
+</tr>
+<tr>
+<td><a href="spo-most-recent-update-report/README.html">Generate a csv report for a selection of site collections showing the time of the most recent update by any user</a></td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPAccessToken, Get-PnPProperty, Get-PnPTenant, Get-PnPTenantSite, Get-PnPWeb</td>
+<td style="text-align: center;">Invoke-RestMethod, ConvertFrom-Csv, New-Object, Add-Member, Write-Host, Out-Null, Export-Csv</td>
 </tr>
 <tr>
 <td><a href="spo-open-doc-in-client/README.html">Open Office documents in the Client</a></td>
@@ -1064,7 +1089,7 @@
 </tr>
 <tr>
 <td><a href="user-language-for-site/README.html">Testing user preferred language of SharePoint site</a></td>
-<td style="text-align: center;">m365 login, m365 status, m365 spo listitem get, m365 spo listitem list, m365 spo listitem set, multi-lingual, Connect-PnPOnline, Get-PnPList, Get-PnPListItem, Invoke-PnPQuery, sharepoint-online</td>
+<td style="text-align: center;">m365 login, m365 logout, m365 status, m365 spo listitem get, m365 spo listitem list, m365 spo listitem set, multi-lingual, Connect-PnPOnline, Disconnect-PnPOnline, Get-PnPList, Get-PnPListItem, Set-PnPList, Set-PnPListItem, sharepoint-online</td>
 <td style="text-align: center;"></td>
 </tr>
 <tr>
@@ -1135,7 +1160,7 @@
 </tr>
 </tbody>
 </table>
-<p>There are <strong>193</strong> script scenarios with metadata in the site | Generated: 25 Jun 2023 06:34:26</p>
+<p>There are <strong>198</strong> script scenarios with metadata in the site | Generated: 09 Jul 2023 07:53:42</p>
 </article>
           </div>
         </div>

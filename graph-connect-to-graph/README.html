@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Testing user preferred language of SharePoint site | PnP Samples </title>
+    <title>Connect to Graph using V1 or V2 SDK | PnP Samples </title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" "="">
-    <meta name="title" content="Testing user preferred language of SharePoint site | PnP Samples ">
+    <meta name="title" content="Connect to Graph using V1 or V2 SDK | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Testing user preferred language of SharePoint site | PnP Samples ">
+    <meta property="og:title" content="Connect to Graph using V1 or V2 SDK | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -94,123 +94,122 @@
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/user-language-for-site/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/graph-connect-to-graph/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="testing-user-preferred-language-of-sharepoint-site">Testing user preferred language of SharePoint site</h1>
+                    <h1 id="connect-to-graph-using-v1-or-v2-sdk">Connect to Graph using V1 or V2 SDK</h1>
 
 <h2 id="summary">Summary</h2>
-<p>Are you testing SharePoint multi-lingual features? And want a quick way to switch languages on a site for a particular user or yourself; this can be useful when testing the modern multi-lingual features in SharePoint if you want to check the quality of the pages translated.</p>
-<p>This script changes the MUI setting for a user within the User Information List to update the user with the appropriate language tag.</p>
-<p><img src="assets/example.png" alt="Example Screenshot"></p>
+<p>With Graph SDK 2, the connection method has changed slightly.  This function will connect to either V1 or V2 via a query</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_pnpps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_pnpps" data-tab="pnpps" tabindex="0" aria-selected="true">PnP PowerShell</a>
-</li>
-<li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_cli-m365-ps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_cli-m365-ps" data-tab="cli-m365-ps" tabindex="-1">CLI for Microsoft 365</a>
+<a href="#tabpanel_CeZOj-G++Q_graphps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_graphps" data-tab="graphps" tabindex="0" aria-selected="true">Microsoft Graph PowerShell</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_pnpps" role="tabpanel" data-tab="pnpps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='pnpps'] pre">
+<section id="tabpanel_CeZOj-G++Q_graphps" role="tabpanel" data-tab="graphps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='graphps'] pre">
     <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
     <span class="article-clipboard__message done">Copied</span>
 </button>
 
 <pre><code class="lang-powershell">
-# SharePoint online site URL
-$siteUrl = &quot;https://contoso.sharepoint.com/sites/electronics&quot;
-
-# Connect to SharePoint online site
-Connect-PnPOnline -Url $siteUrl -Interactive
-
-# Get user details from User Information List to check what is my current language
-$item = Get-PnPListItem -List &quot;User Information List&quot; -Id 7 # 7 is Me
-
-# -OR- #
-
-$userEmail = &quot;paul.bullock@mytenant.co.uk&quot;
-$CamlQuery = @&quot;
-&lt;View&gt;
-    &lt;Query&gt;
-        &lt;Where&gt;
-            &lt;Eq&gt;
-                &lt;FieldRef Name='EMail' /&gt;
-                &lt;Value Type='Text'&gt;$userEmail&lt;/Value&gt;
-            &lt;/Eq&gt;
-        &lt;/Where&gt;
-    &lt;/Query&gt;
-&lt;/View&gt;
-&quot;@
-
-$item = Get-PnPListItem -List &quot;User Information List&quot; -Query $CamlQuery
-
-# Language Reference: https://capacreative.co.uk/resources/reference-sharepoint-online-languages-ids/
-$newLang = &quot;cy-GB&quot; #&quot;en-GB&quot;
-
-# Making the language change
-Set-PnPListItem -List &quot;User Information List&quot; -Id 7 -Values @{&quot;MUILanguages&quot; = $newLang}
-
-# Disconnect SharePoint online connection
-Disconnect-PnPOnline
-
-</code></pre>
-<div class="highlight-tool">
-<p>Check out the <strong>PnP PowerShell</strong> to learn more at: <a href="https://aka.ms/pnp/powershell">https://aka.ms/pnp/powershell</a></p>
-</div>
-</section>
-<section id="tabpanel_CeZOj-G++Q_cli-m365-ps" role="tabpanel" data-tab="cli-m365-ps" aria-hidden="true" hidden="hidden"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='cli-m365-ps'] pre">
-    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
-    <span class="article-clipboard__message done">Copied</span>
-</button>
-
-<pre><code class="lang-powershell">
-# SharePoint online site URL
-$siteURL = &quot;https://tenanttocheck.sharepoint.com/sites/hr-life&quot;
-
-$userInformationList = &quot;User Information List&quot;
-
-# Get Credentials to connect
-$m365Status = m365 status
-if ($m365Status -match &quot;Logged Out&quot;) {
-    m365 login
+##Install Modules if missing
+if (Get-Module -ListAvailable -Name microsoft.graph.authentication) {
+    Write-Host &quot;Microsoft Graph Authentication Module Already Installed&quot;
+} 
+else {
+    try {
+        Install-Module -Name microsoft.graph.authentication -Scope CurrentUser -Repository PSGallery -Force -AllowClobber 
+    }
+    catch [Exception] {
+        $_.message 
+    }
 }
 
-# Get user details from User Information List to check what is my current language
-m365 spo listitem get --listTitle $userInformationList --id 7 --webUrl $siteURL --properties &quot;MUILanguages&quot; # 7 is Me
+##Import Module
+Import-Module Microsoft.Graph.authentication
 
-# -OR- #
 
-$userEmail = &quot;Adam@tenanttocheck.onmicrosoft.com&quot;
-$camlQuery = @&quot;
-&lt;View&gt;
-    &lt;Query&gt;
-        &lt;Where&gt;
-            &lt;Eq&gt;
-                &lt;FieldRef Name='EMail' /&gt;
-                &lt;Value Type='Text'&gt;$userEmail&lt;/Value&gt;
-            &lt;/Eq&gt;
-        &lt;/Where&gt;
-    &lt;/Query&gt;
-&lt;/View&gt;
-&quot;@
+Function Connect-ToGraph {
+    &lt;#
+.SYNOPSIS
+Authenticates to the Graph API via the Microsoft.Graph.Authentication module.
+ 
+.DESCRIPTION
+The Connect-ToGraph cmdlet is a wrapper cmdlet that helps authenticate to the Intune Graph API using the Microsoft.Graph.Authentication module. It leverages an Azure AD app ID and app secret for authentication or user-based auth.
+ 
+.PARAMETER Tenant
+Specifies the tenant (e.g. contoso.onmicrosoft.com) to which to authenticate.
+ 
+.PARAMETER AppId
+Specifies the Azure AD app ID (GUID) for the application that will be used to authenticate.
+ 
+.PARAMETER AppSecret
+Specifies the Azure AD app secret corresponding to the app ID that will be used to authenticate.
 
-m365 spo listitem list --listTitle $userInformationList --webUrl $siteURL --camlQuery $camlQuery
+.PARAMETER Scopes
+Specifies the user scopes for interactive authentication.
+ 
+.EXAMPLE
+Connect-ToGraph -TenantId $tenantID -AppId $app -AppSecret $secret
+ 
+-#&gt;
+    [cmdletbinding()]
+    param
+    (
+        [Parameter(Mandatory = $false)] [string]$Tenant,
+        [Parameter(Mandatory = $false)] [string]$AppId,
+        [Parameter(Mandatory = $false)] [string]$AppSecret,
+        [Parameter(Mandatory = $false)] [string]$scopes
+    )
 
-# Making the language change
-$newLang = &quot;cy-GB&quot; #&quot;en-GB&quot;
-m365 spo listitem set --listTitle $userInformationList --id 7 --webUrl $siteURL --MUILanguages $newLang
+    Process {
+        Import-Module Microsoft.Graph.Authentication
+        $version = (get-module microsoft.graph.authentication | Select-Object -expandproperty Version).major
 
-# Disconnect SharePoint online connection
-m365 logout
-
+        if ($AppId -ne &quot;&quot;) {
+            $body = @{
+                grant_type    = &quot;client_credentials&quot;;
+                client_id     = $AppId;
+                client_secret = $AppSecret;
+                scope         = &quot;https://graph.microsoft.com/.default&quot;;
+            }
+     
+            $response = Invoke-RestMethod -Method Post -Uri https://login.microsoftonline.com/$Tenant/oauth2/v2.0/token -Body $body
+            $accessToken = $response.access_token
+     
+            $accessToken
+            if ($version -eq 2) {
+                write-host &quot;Version 2 module detected&quot;
+                $accesstokenfinal = ConvertTo-SecureString -String $accessToken -AsPlainText -Force
+            }
+            else {
+                write-host &quot;Version 1 Module Detected&quot;
+                Select-MgProfile -Name Beta
+                $accesstokenfinal = $accessToken
+            }
+            $graph = Connect-MgGraph  -AccessToken $accesstokenfinal 
+            Write-Host &quot;Connected to Intune tenant $TenantId using app-based authentication (Azure AD authentication not supported)&quot;
+        }
+        else {
+            if ($version -eq 2) {
+                write-host &quot;Version 2 module detected&quot;
+            }
+            else {
+                write-host &quot;Version 1 Module Detected&quot;
+                Select-MgProfile -Name Beta
+            }
+            $graph = Connect-MgGraph -scopes $scopes
+            Write-Host &quot;Connected to Intune tenant $($graph.TenantId)&quot;
+        }
+    }
+}    
+       
 </code></pre>
 <div class="highlight-tool">
-<p>Check out the <strong>CLI for Microsoft 365</strong> to learn more at: <a href="https://aka.ms/cli-m365">https://aka.ms/cli-m365</a></p>
+<p>Check out the <strong>Microsoft Graph PowerShell SDK</strong> to learn more at: <a href="https://docs.microsoft.com/en-us/graph/powershell/get-started">https://docs.microsoft.com/en-us/graph/powershell/get-started</a></p>
 </div>
 </section>
 </div>
-<h2 id="source-credit">Source Credit</h2>
-<p>Article first appeared on <a href="https://capacreative.co.uk/2020/05/31/testing-user-preferred-language-of-sharepoint-site-with-pnp-powershell/">Testing user preferred language of SharePoint site | CaPa Creative Ltd</a></p>
 <h2 id="contributors">Contributors</h2>
 <table>
 <thead>
@@ -220,19 +219,13 @@ m365 logout
 </thead>
 <tbody>
 <tr>
-<td>Paul Bullock</td>
-</tr>
-<tr>
-<td><a href="https://github.com/Adam-it">Adam Wójcik</a></td>
-</tr>
-<tr>
-<td><a href="https://ganeshsanapblogs.wordpress.com/about">Ganesh Sanap</a></td>
+<td><a href="https://github.com/andrew-s-taylor">Andrew Taylor</a></td>
 </tr>
 </tbody>
 </table>
 <h2 id="disclaimer">Disclaimer</h2>
 <p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
-<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/user-language-for-site" aria-hidden="true">
+<img src="https://pnptelemetry.azurewebsites.net/script-samples/scripts/graph-connect-to-graph" aria-hidden="true">
 </article>
           </div>
         </div>

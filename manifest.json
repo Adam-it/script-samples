@@ -1382,6 +1382,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/graph-connect-to-graph/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "graph-connect-to-graph/README.html",
+          "hash": "IiP3zwXDOj4q2ddGD+fRnw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-connect-to-graph/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-connect-to-graph/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-connect-to-graph/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-connect-to-graph/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-connect-to-graph/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "graph-connect-to-graph/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/graph-create-test-users-with-chat-gpt/README.md",
       "output": {
         ".html": {
@@ -2105,6 +2151,52 @@
       "output": {
         "resource": {
           "relative_path": "onedrive-export-admins/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/openai-function-calling-tfl-status/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "openai-function-calling-tfl-status/README.html",
+          "hash": "iKDgoX+EIcQ2BH1hOjbe8w=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/openai-function-calling-tfl-status/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "openai-function-calling-tfl-status/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/openai-function-calling-tfl-status/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "openai-function-calling-tfl-status/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/openai-function-calling-tfl-status/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "openai-function-calling-tfl-status/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -4502,7 +4594,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-deploy-install-update-spfx-hubsite-associatedsites/README.html",
-          "hash": "lNMx0fqgaqdzTmgH5uo9eg=="
+          "hash": "1PHLhN1Rupag1hlbYQhdzg=="
         }
       },
       "is_incremental": false,
@@ -6248,6 +6340,41 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-get-customfields-lists/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-get-customfields-lists/README.html",
+          "hash": "CV0HGd03RF5Bg3/T044IOQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-customfields-lists/assets/Preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-customfields-lists/assets/Preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-customfields-lists/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-customfields-lists/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-get-files-and-creators-modifiers/README.md",
       "output": {
         ".html": {
@@ -6563,6 +6690,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-get-message-centre-announcements-and-post-to-teams-channel/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-get-storage-site-versionsrecyclebin/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-get-storage-site-versionsrecyclebin/README.html",
+          "hash": "ThnelXBte+EOoZmUmN60wA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-storage-site-versionsrecyclebin/assets/Preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-storage-site-versionsrecyclebin/assets/Preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-storage-site-versionsrecyclebin/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-storage-site-versionsrecyclebin/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -7424,6 +7586,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-modern-page-url-report/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-most-recent-update-report/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-most-recent-update-report/README.html",
+          "hash": "pNy3CdDdUGq2uHsiCfjVMA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-most-recent-update-report/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-most-recent-update-report/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-most-recent-update-report/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-most-recent-update-report/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-most-recent-update-report/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-most-recent-update-report/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -9392,7 +9600,7 @@
       "output": {
         ".html": {
           "relative_path": "user-language-for-site/README.html",
-          "hash": "8IlTetcEO//WpyXHzQ67Tg=="
+          "hash": "4OUwIbUkbighzP4W57pVsg=="
         }
       },
       "is_incremental": false,
@@ -10183,7 +10391,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "mMxayzAXjGFr/ofPRBrrjw=="
+          "hash": "a3L3jpY+XEp8jKs82t6EBw=="
         }
       },
       "is_incremental": false,
@@ -10316,7 +10524,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "1Oncen7Jv97+FfE6NhrWNA=="
+          "hash": "0kuvhHIrlVm5QbmMew6Q1g=="
         }
       },
       "is_incremental": false,
@@ -10328,7 +10536,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "oSRMszumkYcYotTQxZTKCg=="
+          "hash": "FTaVrMWjiQvKBmmHW59Naw=="
         }
       },
       "is_incremental": false,

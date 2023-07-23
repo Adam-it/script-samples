@@ -8671,6 +8671,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-tenant-site-inventory/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-tenant-site-inventory/README.html",
+          "hash": "MMG3I2hO8/rO6yspgY9S5g=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-tenant-site-inventory/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-tenant-site-inventory/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-tenant-site-inventory/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-tenant-site-inventory/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-tenant-site-inventory/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-tenant-site-inventory/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-translate-list/README.md",
       "output": {
         ".html": {
@@ -10391,7 +10437,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "250R9TiH1OhdrfP4Ha8/rw=="
+          "hash": "8ox+Or0IRIVY+EMKjJmguQ=="
         }
       },
       "is_incremental": false,
@@ -10524,7 +10570,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "avJl3Jj0yEbMu1XEi0u+OQ=="
+          "hash": "cqjojr3n7gNj6+wVEN/mqQ=="
         }
       },
       "is_incremental": false,
@@ -10536,7 +10582,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "KDwLEzkUDD1okgyRxnL2jg=="
+          "hash": "PvaiG24Pl41QJt1tiLaPxQ=="
         }
       },
       "is_incremental": false,

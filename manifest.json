@@ -3361,6 +3361,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-add-sppkg-ad-app-certificate/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-add-sppkg-ad-app-certificate/README.html",
+          "hash": "NBW6q4fcBGf/ESCUyG+zww=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-sppkg-ad-app-certificate/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-sppkg-ad-app-certificate/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-sppkg-ad-app-certificate/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-sppkg-ad-app-certificate/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-sppkg-ad-app-certificate/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-sppkg-ad-app-certificate/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-add-tenant-theme/README.md",
       "output": {
         ".html": {
@@ -3803,6 +3849,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-associate-multiple-sites-to-hub/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-bulk-delete-recyclebin-in-batch-avoid-lvt/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-bulk-delete-recyclebin-in-batch-avoid-lvt/README.html",
+          "hash": "eC4N70NDXmLjd6WAhmTwAA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-delete-recyclebin-in-batch-avoid-lvt/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-delete-recyclebin-in-batch-avoid-lvt/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-delete-recyclebin-in-batch-avoid-lvt/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-delete-recyclebin-in-batch-avoid-lvt/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-delete-recyclebin-in-batch-avoid-lvt/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-delete-recyclebin-in-batch-avoid-lvt/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -8818,6 +8910,41 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-update-largelist-pnpbatch-with-retry/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-update-largelist-pnpbatch-with-retry/README.html",
+          "hash": "X2+AIDOFI/4cDnsbD2upOg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-update-largelist-pnpbatch-with-retry/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-update-largelist-pnpbatch-with-retry/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-update-largelist-pnpbatch-with-retry/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-update-largelist-pnpbatch-with-retry/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-update-modern-webpart-properties/README.md",
       "output": {
         ".html": {
@@ -10437,7 +10564,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "8ox+Or0IRIVY+EMKjJmguQ=="
+          "hash": "v/xJ7rq9SJJimnY7pq5J+A=="
         }
       },
       "is_incremental": false,
@@ -10570,7 +10697,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "cqjojr3n7gNj6+wVEN/mqQ=="
+          "hash": "aqMBaF9ABazMevfAGwD0gg=="
         }
       },
       "is_incremental": false,
@@ -10582,7 +10709,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "PvaiG24Pl41QJt1tiLaPxQ=="
+          "hash": "EdiAvV6kT7RHs0A/TVW51g=="
         }
       },
       "is_incremental": false,

@@ -6789,6 +6789,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-get-sites-with-unique-permissions/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-get-sites-with-unique-permissions/README.html",
+          "hash": "3lzbI4PLxfH/DnwUmla36A=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-sites-with-unique-permissions/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-sites-with-unique-permissions/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-sites-with-unique-permissions/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-sites-with-unique-permissions/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-sites-with-unique-permissions/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-sites-with-unique-permissions/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-get-storage-site-versionsrecyclebin/README.md",
       "output": {
         ".html": {
@@ -9232,6 +9278,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/teams-archive-inactive-teams/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "teams-archive-inactive-teams/README.html",
+          "hash": "40eohV7Uzl6hK46pE0qAgQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-archive-inactive-teams/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-archive-inactive-teams/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-archive-inactive-teams/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-archive-inactive-teams/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-archive-inactive-teams/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "teams-archive-inactive-teams/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/teams-bulk-create-teams/README.md",
       "output": {
         ".html": {
@@ -10564,7 +10656,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "v/xJ7rq9SJJimnY7pq5J+A=="
+          "hash": "wgqY7kOIbQlKpX+urrpDqA=="
         }
       },
       "is_incremental": false,
@@ -10697,7 +10789,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "aqMBaF9ABazMevfAGwD0gg=="
+          "hash": "0MmvR63Y5Jr6uJePlVFVLQ=="
         }
       },
       "is_incremental": false,
@@ -10709,7 +10801,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "EdiAvV6kT7RHs0A/TVW51g=="
+          "hash": "g/mB+2bCSkzSfOsEj8CuHQ=="
         }
       },
       "is_incremental": false,

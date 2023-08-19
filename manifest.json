@@ -1386,7 +1386,7 @@
       "output": {
         ".html": {
           "relative_path": "graph-connect-to-graph/README.html",
-          "hash": "IiP3zwXDOj4q2ddGD+fRnw=="
+          "hash": "JkO6Pi5631DwnDWL8nAcfw=="
         }
       },
       "is_incremental": false,
@@ -2289,6 +2289,52 @@
       "output": {
         "resource": {
           "relative_path": "planner-migration-spo-list/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/power-automate-replace-owner/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "power-automate-replace-owner/README.html",
+          "hash": "T+EL4QyAoeD+bziE1j/6Ag=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/power-automate-replace-owner/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "power-automate-replace-owner/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/power-automate-replace-owner/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "power-automate-replace-owner/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/power-automate-replace-owner/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "power-automate-replace-owner/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -3860,7 +3906,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-bulk-delete-recyclebin-in-batch-avoid-lvt/README.html",
-          "hash": "eC4N70NDXmLjd6WAhmTwAA=="
+          "hash": "0SF4gLFqdzISn4OK8J7Q8Q=="
         }
       },
       "is_incremental": false,
@@ -4272,7 +4318,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-copy-list/README.html",
-          "hash": "zofdNjQb5w6mDetLfrF+nw=="
+          "hash": "xfp5fE3d2epi8Yc998LgyA=="
         }
       },
       "is_incremental": false,
@@ -6839,7 +6885,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-get-storage-site-versionsrecyclebin/README.html",
-          "hash": "ThnelXBte+EOoZmUmN60wA=="
+          "hash": "vHtmoo2Yej+U2mKiWYh4Pg=="
         }
       },
       "is_incremental": false,
@@ -8813,7 +8859,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-tenant-site-inventory/README.html",
-          "hash": "MMG3I2hO8/rO6yspgY9S5g=="
+          "hash": "ZjjZOVAnR3WdzNSoy/kCIw=="
         }
       },
       "is_incremental": false,
@@ -8960,7 +9006,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-update-largelist-pnpbatch-with-retry/README.html",
-          "hash": "X2+AIDOFI/4cDnsbD2upOg=="
+          "hash": "S4wXFaNc2obJOJoossyaMw=="
         }
       },
       "is_incremental": false,
@@ -9282,7 +9328,7 @@
       "output": {
         ".html": {
           "relative_path": "teams-archive-inactive-teams/README.html",
-          "hash": "40eohV7Uzl6hK46pE0qAgQ=="
+          "hash": "upaxbCSru+h+6FZj48tXMA=="
         }
       },
       "is_incremental": false,
@@ -10656,7 +10702,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "wgqY7kOIbQlKpX+urrpDqA=="
+          "hash": "t69JisJHP9d2PrcR60bT7g=="
         }
       },
       "is_incremental": false,
@@ -10789,7 +10835,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "0MmvR63Y5Jr6uJePlVFVLQ=="
+          "hash": "Y2KMVoxXAnV8eaogpa09kg=="
         }
       },
       "is_incremental": false,
@@ -10801,7 +10847,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "g/mB+2bCSkzSfOsEj8CuHQ=="
+          "hash": "7rLbVTery90VyxTFYEuF9w=="
         }
       },
       "is_incremental": false,

@@ -4522,6 +4522,41 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-create-library-add-contenttype/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-create-library-add-contenttype/README.html",
+          "hash": "MQfRIBPjD8U2vT5QSXv9VA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-create-library-add-contenttype/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-create-library-add-contenttype/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-create-library-add-contenttype/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-create-library-add-contenttype/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-create-modern-pages-add-web-parts/README.md",
       "output": {
         ".html": {
@@ -6320,7 +6355,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-generate-sp-storage-savings-report/README.html",
-          "hash": "OsM7B1C6NMaz86apBYcRGA=="
+          "hash": "x+RafA4jOMKZfTfevHIvcg=="
         }
       },
       "is_incremental": false,
@@ -10702,7 +10737,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "t69JisJHP9d2PrcR60bT7g=="
+          "hash": "PJRQVOvNYRlPaj01aXEi8Q=="
         }
       },
       "is_incremental": false,
@@ -10835,7 +10870,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "Y2KMVoxXAnV8eaogpa09kg=="
+          "hash": "CgmRp6+hEhfXVpLd/OTJ7g=="
         }
       },
       "is_incremental": false,
@@ -10847,7 +10882,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "7rLbVTery90VyxTFYEuF9w=="
+          "hash": "XHZ7oK2yApwYQfUMUhQ15Q=="
         }
       },
       "is_incremental": false,

@@ -2300,7 +2300,7 @@
       "output": {
         ".html": {
           "relative_path": "power-automate-replace-owner/README.html",
-          "hash": "T+EL4QyAoeD+bziE1j/6Ag=="
+          "hash": "lB5tvKdJDInER/IG0DoExQ=="
         }
       },
       "is_incremental": false,
@@ -2942,6 +2942,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-add-dummy-folders-and-files/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-add-fields-to-contenttypes/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-add-fields-to-contenttypes/README.html",
+          "hash": "jssibCe9TqpLIlrQ+TRCIQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-fields-to-contenttypes/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-fields-to-contenttypes/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-fields-to-contenttypes/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-fields-to-contenttypes/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -4469,6 +4504,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-create-bulk-libraries/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-create-colored-folder/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-create-colored-folder/README.html",
+          "hash": "nPrZzSd2K8gQ8VGE4Y6hDQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-create-colored-folder/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-create-colored-folder/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-create-colored-folder/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-create-colored-folder/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-create-colored-folder/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-create-colored-folder/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -6298,6 +6379,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-file-version-trimmer/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-find-web-part-in-pages/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-find-web-part-in-pages/README.html",
+          "hash": "+LV4DOG71uMLBOaS5cmWew=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-find-web-part-in-pages/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-find-web-part-in-pages/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-find-web-part-in-pages/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-find-web-part-in-pages/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-find-web-part-in-pages/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-find-web-part-in-pages/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -8491,7 +8618,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-remove-webpart-from-pages/README.html",
-          "hash": "nxKbqpH4yCuN/B+WipmSVw=="
+          "hash": "haPa+RrVGNe2N3eBrz09uw=="
         }
       },
       "is_incremental": false,
@@ -10737,7 +10864,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "PJRQVOvNYRlPaj01aXEi8Q=="
+          "hash": "W21aVDsIdHKiUkCGlFpwKA=="
         }
       },
       "is_incremental": false,
@@ -10870,7 +10997,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "CgmRp6+hEhfXVpLd/OTJ7g=="
+          "hash": "eAgBuoe1FjpvzcULuwKVyw=="
         }
       },
       "is_incremental": false,
@@ -10882,7 +11009,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "XHZ7oK2yApwYQfUMUhQ15Q=="
+          "hash": "S5Jvcvub43WaxLqZw3WD4Q=="
         }
       },
       "is_incremental": false,

@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Replace owner on every flow in a tenant | PnP Samples </title>
+    <title>Find Web Part in Pages e.g., Twitter Web Part | PnP Samples </title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" "="">
-    <meta name="title" content="Replace owner on every flow in a tenant | PnP Samples ">
+    <meta name="title" content="Find Web Part in Pages e.g., Twitter Web Part | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Replace owner on every flow in a tenant | PnP Samples ">
+    <meta property="og:title" content="Find Web Part in Pages e.g., Twitter Web Part | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -94,117 +94,140 @@
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/power-automate-replace-owner/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-find-web-part-in-pages/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="replace-owner-on-every-flow-in-a-tenant">Replace owner on every flow in a tenant</h1>
+                    <h1 id="find-web-part-in-pages-eg-twitter-web-part">Find Web Part in Pages e.g., Twitter Web Part</h1>
 
 <h2 id="summary">Summary</h2>
-<p>The script will go through all the Power Automate flows present in the default environment or a specfic environment if provided and replace the owner on every Power Automate flow its owner of.</p>
+<p>This script will find all instances of the specified Web Part on a page or (if chosen) in templates too. The scripe example produces a report of all of the occurances of the Twitter Web Part in a site. You can specify any web part ID to find, but there is a deprecation happening soon and this maybe useful to find any occurances of the web part.</p>
+<p>If you would like to delete the web parts, there is an existing script to do that here: <a href="https://pnp.github.io/script-samples/spo-remove-webpart-from-pages/README.html?tabs=pnpps">Delete Web Parts from Pages</a></p>
 <p><img src="assets/example.png" alt="Example Screenshot"></p>
-<h2 id="implementation">Implementation</h2>
-<p>Save this script to a PSM1 module file, like <code>replace-flowOnwers.psm1</code>. Then import the module file with Import-Module:</p>
-<pre><code class="lang-powershell">
-Import-Module replace-flowOnwers.psm1 -Verbose
-
-</code></pre>
-<p>The -Verbose switch lists the functions that are imported.</p>
-<p>Once the module is imported the function <code>Replace-PnPOwnerInFlows</code> will be loaded and ready to use.</p>
-<div class="WARNING">
-<h5>Warning</h5>
-<p>Please be aware this script contains a command that will remove or delete an artifact, ensure you test and understand the implications of running the script.</p>
-</div>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_cli-m365-ps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_cli-m365-ps" data-tab="cli-m365-ps" tabindex="0" aria-selected="true">CLI for Microsoft 365</a>
+<a href="#tabpanel_CeZOj-G++Q_pnpps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_pnpps" data-tab="pnpps" tabindex="0" aria-selected="true">PnP PowerShell</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_cli-m365-ps" role="tabpanel" data-tab="cli-m365-ps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='cli-m365-ps'] pre">
+<section id="tabpanel_CeZOj-G++Q_pnpps" role="tabpanel" data-tab="pnpps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='pnpps'] pre">
     <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
     <span class="article-clipboard__message done">Copied</span>
 </button>
 
-<pre><code class="lang-powershell">Function Replace-PnPOwnerInFlows {
-&lt;#
-.SYNOPSIS
-Script to replace an owner in all its flows
+<pre><code class="lang-powershell">
+&lt;# 
 
-.Description
-this script looks for all flows owned by a specified user and replaces them with a new owner. You can indicate whether this should happen in a certain environment. If no value is given for the environment parameter, the default environment is used. Please note that you cannot remove the original creator of a flow. In that case this script will only add the new owner
+Created:      Paul Bullock
+Date:         04/09/2023
+License:      MIT License (MIT)
 
-.PARAMETER oldOwner
-The UPN of the old owner
+.Synopsis
+    Lists out use of the twitter web part in a site, as an example, although you can specify any web part ID
+#&gt;
 
-.PARAMETER newOwner
-The UPN of the new owner
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = &quot;Source URL e.g. https://contoso.sharepoint.com/sites/SiteA&quot;)]
+    [string]$siteUrl,
+    [string]$ReportName = &quot;Twitter-WebPart-Report.csv&quot;,
+    [string]$WebPartId = &quot;f6fdf4f8-4a24-437b-a127-32e66a5dd9b4&quot;, # Twitter Web Part ID
+    [switch]$IncludeTemplates
+)
+begin{
 
-.Parameter environment
-The name of the environment. The default environment will be used if not provided
-
-.Example 
-Replace-PnPOwnerInFlows -oldOwner &quot;john.doe@contoso.com&quot; -newOwner &quot;sansa.stark@contoso.com&quot;
-
-.Example 
-Replace-PnPOwnerInFlows -oldOwner &quot;john.doe@contoso.com&quot; -newOwner &quot;sansa.stark@contoso.com&quot; -environment &quot;Default-0e943d12-6a07-4544-adaf-1e7c9ad82fa0&quot;
-
-#&gt;    
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        $oldOwner,
-        [Parameter(Mandatory = $true)]
-        $newOwner,
-        [Parameter(Mandatory = $false)]
-        $environment
-    )
-    
-    begin {
-        #Log in to Microsoft 365
-        Write-host &quot;Ensure being logged in&quot; -f Yellow
-        $m365Status = m365 status
-        if ($m365Status -match &quot;Logged Out&quot;) {
-           m365 login
-        }
-    }
-    
-    process {
-        $oldOwnerAsUser = m365 aad user get --userName $oldOwner | ConvertFrom-Json
-        $oldOwnerPrincipalId = $oldOwnerAsUser.id
-
-        if(!$environment){
-            $defaultEnvironment = m365 pp environment get | ConvertFrom-Json
-            $environment = $defaultEnvironment.name
-        }
-
-        $flows = m365 flow list --environmentName $environment | ConvertFrom-Json
-
-        foreach($flow in $flows) {
-             $owners = m365 flow owner list --environmentName $environment --flowName $($flow.name) | ConvertFrom-Json
-             foreach($owner in $owners){
-                if($owner.properties.principal.id -eq $oldOwnerPrincipalId){
-                    Write-Host &quot;$oldOwner found as owner in flow with name '$($flow.displayName)'&quot; -f DarkYellow
-                    if($owner.properties.roleName -eq &quot;Owner&quot;){
-                        Write-Host &quot;You cannot replace the original creator of a flow. Script continues to just add the new owner&quot; -f Gray
-                    } else {
-                        m365 flow owner remove --userId $oldOwnerPrincipalId --environmentName $environment --flowName $($flow.name) --confirm
-                        Write-Host &quot;Old owner '$oldOwner' successfully remove from the flow '$($flow.displayName)'&quot; -f Green
-                    }
-
-                    m365 flow owner ensure --userName $newOwner --environmentName $environment --flowName $($flow.name) --roleName &quot;CanEdit&quot;
-                    
-                    Write-Host &quot;New owner '$newOwner' successfully added to the flow '$($flow.displayName)'&quot; -f Green
-                }
-             }
-        }
-    }
-    
-    end {
+    Write-Host &quot;Connecting to &quot; $siteUrl
         
+    # For MFA Tenants - Interactive opens a browser window
+    $sourceConnection = Connect-PnPOnline -Url $siteUrl  -ReturnConnection -Interactive
+    
+    # Caml to find just the pages, not folders or templates
+    $filter = '&lt;View&gt;' +
+                '&lt;Query&gt;' +
+                    '&lt;Where&gt;' +
+                        '&lt;And&gt;' +
+                            '&lt;Eq&gt;'+
+                                '&lt;FieldRef Name=&quot;FSObjType&quot; /&gt;'+
+                                '&lt;Value Type=&quot;Integer&quot;&gt;0&lt;/Value&gt;'+
+                            '&lt;/Eq&gt;'+
+                            '&lt;Neq&gt;'+
+                                '&lt;FieldRef Name=&quot;_SPSitePageFlags&quot; /&gt;'+
+                                '&lt;Value Type=&quot;Text&quot;&gt;{Template}}&lt;/Value&gt;'+
+                            '&lt;/Neq&gt;'+
+                        '&lt;/And&gt;' +
+                    '&lt;/Where&gt;' +
+                '&lt;/Query&gt;' +
+            '&lt;/View&gt;'
+
+    # Caml to find pages and templates
+    if($IncludeTemplates){
+        $filter = '&lt;View&gt;' +
+                    '&lt;Query&gt;' +
+                        '&lt;Where&gt;' +                        
+                                '&lt;Eq&gt;'+
+                                    '&lt;FieldRef Name=&quot;FSObjType&quot; /&gt;'+
+                                    '&lt;Value Type=&quot;Integer&quot;&gt;0&lt;/Value&gt;'+
+                                '&lt;/Eq&gt;'+
+                        '&lt;/Where&gt;' +
+                    '&lt;/Query&gt;' +
+                '&lt;/View&gt;'
     }
+    
+    $reportPath = &quot;$($ReportName)&quot;
+    $WebPartList = @()
+
 }
+process{
+
+    Write-Host &quot;Reading pages in site...&quot;
+
+    $web = Get-PnPWeb -Includes Title,Url
+    $webTitle = $web.Title
+    $webUrl = $web.Url
+    
+    $pages = Get-PnPListItem -List &quot;SitePages&quot; -Connection $sourceConnection -Query $filter
+            
+    Foreach($page in $pages){
+
+        $file = $page.FieldValues[&quot;FileLeafRef&quot;]
+
+        Write-Host &quot; Processing Page $($file)&quot; -ForegroundColor Cyan
+
+        $components = Get-PnPPageComponent -Page $file
+        
+        # To find the Web Part ID (type, not instance):
+        # Get-PnPPageComponent -Page &quot;MyPage.aspx&quot; -ListAvailable
+
+        # You can filter based on type of web part
+        $webPartInstances = $components | Where-Object { $_.WebPartId -eq $WebPartId}
+        Write-Host &quot; - Found $($webPartInstances.Count) Occurrances of that web part&quot; -ForegroundColor Yellow
+
+        $webPartInstances | Foreach-Object{
+
+            $wpTitle = $_.title
+            Write-Host &quot;    Web Part Title: $($wpTitle)&quot;
+            $webPartProps = $_.PropertiesJson
+
+            $webPartLogItem = [PSCustomObject]@{
+
+                    &quot;WebTitle&quot; = $webTitle
+                    &quot;WebUrl&quot; = $webUrl
+                    &quot;PageFileName&quot; = $page.title
+                    &quot;WebPartTitle&quot; = $_.title
+                    &quot;WebPartProperties&quot; = $webPartProps
+                }
+                                
+            $WebPartList += $webPartLogItem
+        }
+    }
+
+    $WebPartList | Export-Csv -Path $reportPath -NoTypeInformation
+
+    Write-Host &quot;Report saved to $reportPath&quot; -ForegroundColor Green
+    Write-Host &quot;Script Complete :-)&quot; -ForegroundColor Green
+}  
+
 </code></pre>
 <div class="highlight-tool">
-<p>Check out the <strong>CLI for Microsoft 365</strong> to learn more at: <a href="https://aka.ms/cli-m365">https://aka.ms/cli-m365</a></p>
+<p>Check out the <strong>PnP PowerShell</strong> to learn more at: <a href="https://aka.ms/pnp/powershell">https://aka.ms/pnp/powershell</a></p>
 </div>
 </section>
 </div>
@@ -217,13 +240,13 @@ Replace-PnPOwnerInFlows -oldOwner &quot;john.doe@contoso.com&quot; -newOwner &qu
 </thead>
 <tbody>
 <tr>
-<td><a href="https://www.nicodecleyre.com">Nico De Cleyre</a></td>
+<td>Paul Bullock</td>
 </tr>
 </tbody>
 </table>
 <h2 id="disclaimer">Disclaimer</h2>
 <p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
-<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/power-automate-replace-owner" aria-hidden="true">
+<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-find-web-part-in-pages" aria-hidden="true">
 </article>
           </div>
         </div>

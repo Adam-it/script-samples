@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Reset files permissions unique to Inherited | PnP Samples </title>
+    <title>PnP Modern Search V3 usage scanner | PnP Samples </title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" "="">
-    <meta name="title" content="Reset files permissions unique to Inherited | PnP Samples ">
+    <meta name="title" content="PnP Modern Search V3 usage scanner | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Reset files permissions unique to Inherited | PnP Samples ">
+    <meta property="og:title" content="PnP Modern Search V3 usage scanner | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -94,19 +94,19 @@
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/reset-files-permission-unique-to-inherited/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/pnp-modern-searchv3-scanner/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="reset-files-permissions-unique-to-inherited">Reset files permissions unique to Inherited</h1>
+                    <h1 id="pnp-modern-search-v3-usage-scanner">PnP Modern Search V3 usage scanner</h1>
 
 <h2 id="summary">Summary</h2>
-<p>Reset bulk file permissions  from unique to parent folder inheritance.</p>
+<p>Unfortunaly the Modern Search V3 web parts are not automatically upgraded to V4. This script will scan your tenant for Modern Search V3 web parts and output a CSV file with the results.</p>
+<p>This script is based on an idea and a script from Marc Anderson, which can be found here: <a href="https://sympmarc.com/2021/04/06/upgrading-the-pnp-modern-search-web-parts-from-v3-to-v4-where-are-they/">https://sympmarc.com/2021/04/06/upgrading-the-pnp-modern-search-web-parts-from-v3-to-v4-where-are-they/</a></p>
+<p><img src="assets/example.png" alt="Example Screenshot"></p>
+<p>Connect to SharePoint Online using any of the options, even Username + keyword might work,  if you do not have MFA enabled.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
 <a href="#tabpanel_CeZOj-G++Q_pnpps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_pnpps" data-tab="pnpps" tabindex="0" aria-selected="true">PnP PowerShell</a>
-</li>
-<li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_cli-m365-ps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_cli-m365-ps" data-tab="cli-m365-ps" tabindex="-1">CLI for Microsoft 365</a>
 </li>
 </ul>
 <section id="tabpanel_CeZOj-G++Q_pnpps" role="tabpanel" data-tab="pnpps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='pnpps'] pre">
@@ -115,102 +115,83 @@
 </button>
 
 <pre><code class="lang-powershell">
-# Make sure necessary modules are installed
-# PnP PowerShell to get access to M365 tenent
+# ModernSearchWebPartsUpgradev3tov4.ps1 - Inventory PnP Modern Search Web Parts usage to upgrade from v3 to v4
+# Connect to your tenant here. This should be the only change you need to make to use this script.
 
-Install-Module PnP.PowerShell
-$siteURL = &quot;https://tenent.sharepoint.com/sites/Dataverse&quot;
-Connect-PnPOnline -Url $siteURL -Credentials (Get-Credential)
-$listName = &quot;Document Library&quot;
-#Get the Context
-$Context = Get-PnPContext
+#I use an App Reg here as I can assign the Application permission &quot;Sites.Read.All&quot; (SharePoint section) in the app formerly known as Azure AD.
+#This script doesn't any further permissions and thus shouldn't have any further permissions.:-)
+$clientId = &quot;clientSecret&quot;
+$clientSecret = &quot;clientSecret&quot;
 
-try {
-    ## Get all folders from given list
-    $folders = Get-PnPFolder -List $listName
-}
-catch {
-    ## Do this if a terminating exception happens
-    Write-Host &quot;Error: $($_.Exception.Message)&quot; -ForegroundColor Red
-    try {
-        Write-Host &quot;Trying to use Get-PnPListItem&quot; -ForegroundColor Yellow
-        #Treat the folder as item, and the item attribute is Folder (FileSystemObjectType -eq &quot;Folder&quot;)  
-    $folders = Get-PnPListItem -List $listName -PageSize 500 -Fields FileLeafRef | Where {$_.FileSystemObjectType -eq &quot;Folder&quot;}
+$Url = &quot;AnySiteUrl&quot;
+$encoding = &quot;UTF8&quot;  #could be replaced with the output looks funny, UTF8BOM for scandinavian characters
+Connect-PnPOnline -Url $portalUrl  -ClientId  $clientId -ClientSecret $clientSecret -WarningAction Ignore
+
+#If you want to use the interactive login, use this instead:
+#Connect-PnPOnline -Url $SharePointAdminSiteURL -UseWebLogin
+#OR
+#Connect-PnPOnline -Url $SharePointAdminSiteURL -Interactive
+
+# You can get the Ids for the v3 Web Parts by adding them to a page and running:
+# Get-PnPClientSideComponent -Page &quot;page-name&quot; | Where-Object { Title -ne $null } | Select-Object Title, WebPartId
+
+# Title            WebPartId
+# -----            ---------
+# Search Filters   e899ac12-9256-4c8d-a8ad-dbd20fc459c3
+# Search Box       096b96cc-8a44-41fa-9b4d-c0ab2ab2a779
+# Search Verticals 9d441773-f735-46a3-9ca0-9e2eb4bef203
+# Search Results   42ad2740-3c60-49cf-971a-c44e33511b93
+
+
+#$findAllWebPartsquery = 'SPFxExtensionJson:&quot;e899ac12-9256-4c8d-a8ad-dbd20fc459c3&quot; OR SPFxExtensionJson:&quot;096b96cc-8a44-41fa-9b4d-c0ab2ab2a779&quot; OR SPFxExtensionJson:&quot;9d441773-f735-46a3-9ca0-9e2eb4bef203&quot; OR SPFxExtensionJson:&quot;9d441773-f735-46a3-9ca0-9e2eb4bef203&quot; OR SPFxExtensionJson:&quot;42ad2740-3c60-49cf-971a-c44e33511b93&quot;'
+$query = 'SPFxExtensionJson:&quot;42ad2740-3c60-49cf-971a-c44e33511b93&quot;'
+$pages = Submit-PnPSearchQuery -Query $query -All -RelevantResults -ErrorAction SilentlyContinue -SelectProperties LinkOfficeChild,SPWebUrl,OriginalPath, Filename 
+
+$outputarray = @()
+foreach($page in $pages)
+{
+    #get the URL of the site
+    $siteUrl = $page.SPWebUrl
+    #
+    if($page.OriginalPath -ne &quot;&quot;)
+    {
+        $pageUrl = $page.OriginalPath
     }
-    catch {
-        Write-Host &quot;Error: $($_.Exception.Message)&quot; -ForegroundColor Red
-    }
-}
+    else
+    {
+        #it seems like sometimes the OriginalPath is empty, so we need to get the page name from the filename and the library from the LinkOfficeChild
+        $LinkOfficeChild = $page.LinkOfficeChild
+        if($LinkOfficeChild)
+        {
+            $listId = $LinkOfficeChild.Substring($LinkOfficeChild.IndexOf(&quot;listid=&quot;)+8 )
+            $listId = $listId.Substring(0, $listId.IndexOf(&quot;}&quot;))
+            $listQuery = &quot;SPSiteURL:$siteUrl* AND ListId:$listId&quot;
+            $listInfo = Submit-PnPSearchQuery -Query $listQuery -All -RelevantResults -ErrorAction SilentlyContinue -SelectProperties Title,SiteId,WebId,WebTemplate,WebTemplateId,WebUrl, ListUrl
+            $pageUrl = $listInfo.ListUrl
+        }
+        else
+        {
 
-Write-Output &quot;Total Folder found $($folders.Count)&quot;
-## Traverse all files from all folders.
-foreach($folder in $folders){
-    Write-Host &quot;get all files from folder '$($folder.Name)'&quot; -ForegroundColor DarkGreen
-    $files = Get-PnPListItem -List $listName -FolderServerRelativeUrl $folder.ServerRelativeUrl -PageSize 500 
-    Write-Host &quot;Total Files found $($Files.Count) in folder $($folder.Name)&quot; -ForegroundColor DarkGreen
-    foreach ($file in $files){
-        ## Check object type is file or folder.If file than do process else do nothing.
-        if($file.FileSystemObjectType.ToString() -eq &quot;File&quot;){
-            #Check File is unique permission or inherited permission.
-            # If File has Unique Permission than below line return True else False
-            $hasUniqueRole = Get-PnPProperty -ClientObject $file -Property HasUniqueRoleAssignments
-            if($hasUniqueRole -eq $true){
-                ## If File has Unique Permission than reset it to inherited permission from parent folder.
-                Write-Host &quot;Reset Permisison starting for file with id $($file.Id)&quot; -ForegroundColor DarkGreen
-                $file.ResetRoleInheritance()
-                $file.update()
-                $Context.ExecuteQuery()
-            }
+            $listInfo = &quot;unknown&quot;
         }
     }
+    #the page name
+    $pageName = $page.FileName
+    
+    
+    $outputarray+= [PSCustomObject]@{
+        &quot;PageName&quot; = $pageName
+        &quot;LibraryUrl&quot; = $pageUrl
+        &quot;SiteUrl&quot; = $siteUrl
+        
+       
+    }
 }
-## Disconnect PnP Connection.
-Disconnect-PnPOnline
+$outputarray | Export-Csv -Path &quot;C:\temp\ModernSearchWebParts.csv&quot; -NoTypeInformation -Delimiter &quot;|&quot; -Encoding $encoding
+
 </code></pre>
 <div class="highlight-tool">
 <p>Check out the <strong>PnP PowerShell</strong> to learn more at: <a href="https://aka.ms/pnp/powershell">https://aka.ms/pnp/powershell</a></p>
-</div>
-</section>
-<section id="tabpanel_CeZOj-G++Q_cli-m365-ps" role="tabpanel" data-tab="cli-m365-ps" aria-hidden="true" hidden="hidden"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='cli-m365-ps'] pre">
-    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
-    <span class="article-clipboard__message done">Copied</span>
-</button>
-
-<pre><code class="lang-powershell">#Log in to Microsoft 365
-Write-Host &quot;Connecting to Tenant&quot; -f Yellow
-
-$m365Status = m365 status
-if ($m365Status -match &quot;Logged Out&quot;) {
-    m365 login
-}
-
-$siteURL = Read-Host &quot;Please enter Site URL&quot;
-$listName = Read-Host &quot;Please enter list name&quot;
-
-# Get the list
-$list  = m365 spo list get --title $listName --webUrl $siteURL --withPermissions --output json | ConvertFrom-Json
-
-
-# Get all files in the list
-$files = m365 spo file list --webUrl $siteURL --folder $listName --recursive --output json | ConvertFrom-Json
-foreach ($file in $files) {
-    # Avoid error: Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated keys 'Id' and 'ID'
-    $fileProperties = m365 spo file get --webUrl $siteURL --id $file.UniqueId --asListItem --output json | ForEach-Object { $_.replace(&quot;Id&quot;, &quot;_Id&quot;) } | ConvertFrom-Json
-    
-    if ($fileProperties.ID) {
-        Write-Host &quot;Processing file $($file.ServerRelativeUrl)&quot;
-
-        # Get the list item
-        $listItem = m365 spo listitem get --webUrl $siteURL --listId $list.Id --id $fileProperties.ID --properties &quot;HasUniqueRoleAssignments&quot; | ConvertFrom-Json
-        if ($listItem.HasUniqueRoleAssignments) {
-            Write-Host &quot;Restoring the role inheritance of list item: $($file.ServerRelativeUrl)&quot;
-            m365 spo listitem roleinheritance reset --webUrl $siteURL --listItemId $fileProperties.ID --listId $list.Id
-        }
-    }
-}
-</code></pre>
-<div class="highlight-tool">
-<p>Check out the <strong>CLI for Microsoft 365</strong> to learn more at: <a href="https://aka.ms/cli-m365">https://aka.ms/cli-m365</a></p>
 </div>
 </section>
 </div>
@@ -223,22 +204,13 @@ foreach ($file in $files) {
 </thead>
 <tbody>
 <tr>
-<td><a href="https://github.com/dips365">Dipen Shah</a></td>
-</tr>
-<tr>
-<td><a href="https://github.com/nanddeepn">Nanddeep Nachan</a></td>
-</tr>
-<tr>
-<td><a href="https://github.com/ValerasNarbutas">Valeras Narbutas</a></td>
-</tr>
-<tr>
-<td><a href="https://github.com/ee61re">Rob Ellis</a></td>
+<td>Kasper Larsen</td>
 </tr>
 </tbody>
 </table>
 <h2 id="disclaimer">Disclaimer</h2>
 <p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
-<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/reset-files-permission-unique-to-inherited" aria-hidden="true">
+<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/pnp-modern-searchv3-scanner" aria-hidden="true">
 </article>
           </div>
         </div>

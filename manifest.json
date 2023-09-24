@@ -613,6 +613,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/azure-open-ai-byod-powershell/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "azure-open-ai-byod-powershell/README.html",
+          "hash": "gxwLJCOZD3TwJUUJx0RQPA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/azure-open-ai-byod-powershell/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "azure-open-ai-byod-powershell/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/azure-open-ai-byod-powershell/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "azure-open-ai-byod-powershell/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/azure-open-ai-byod-powershell/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "azure-open-ai-byod-powershell/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/bulk-restore-from-recyclebin/README.md",
       "output": {
         ".html": {
@@ -836,7 +882,7 @@
       "output": {
         ".html": {
           "relative_path": "export-inactive-sites-based-on-days-to-csv/README.html",
-          "hash": "rdSML1uTdJXwZvPLzWe8Fw=="
+          "hash": "xbefki0OdybpRO/oHaGThQ=="
         }
       },
       "is_incremental": false,
@@ -849,6 +895,17 @@
       "output": {
         "resource": {
           "relative_path": "export-inactive-sites-based-on-days-to-csv/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/export-inactive-sites-based-on-days-to-csv/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "export-inactive-sites-based-on-days-to-csv/assets/preview.png"
         }
       },
       "is_incremental": false,
@@ -2331,6 +2388,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/pnp-modern-searchv3-scanner/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "pnp-modern-searchv3-scanner/README.html",
+          "hash": "RGptgQkLGLk+sorKDrdG4g=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/pnp-modern-searchv3-scanner/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "pnp-modern-searchv3-scanner/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/pnp-modern-searchv3-scanner/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "pnp-modern-searchv3-scanner/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/pnp-modern-searchv3-scanner/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "pnp-modern-searchv3-scanner/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/power-automate-replace-owner/README.md",
       "output": {
         ".html": {
@@ -2587,7 +2690,7 @@
       "output": {
         ".html": {
           "relative_path": "reset-files-permission-unique-to-inherited/README.html",
-          "hash": "IWgZUZGWFZP2SaFjp/4ang=="
+          "hash": "whAUsXQ3Y3kiuDrybQIwGA=="
         }
       },
       "is_incremental": false,
@@ -5875,6 +5978,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-export-people-web-part-users/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-export-report-files-incidents/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-export-report-files-incidents/README.html",
+          "hash": "Vx7AicnVveAn/KtFb2nRLg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-report-files-incidents/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-report-files-incidents/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-report-files-incidents/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-report-files-incidents/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-report-files-incidents/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-report-files-incidents/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -9727,6 +9876,63 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/teams-export-channel-conversations-to-html/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "teams-export-channel-conversations-to-html/README.html",
+          "hash": "sa2h4XGDlBGeF8uf0JOftQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-channel-conversations-to-html/assets/20230913-174449.html",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-channel-conversations-to-html/assets/20230913-174449.html"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-channel-conversations-to-html/assets/Output.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-channel-conversations-to-html/assets/Output.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-channel-conversations-to-html/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-channel-conversations-to-html/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-channel-conversations-to-html/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-channel-conversations-to-html/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/teams-export-teams-information/README.md",
       "output": {
         ".html": {
@@ -10899,7 +11105,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "KTDRRwKfrXOFadcBv1C76A=="
+          "hash": "1kcYKdCjOKWrbQq8g0Ntrw=="
         }
       },
       "is_incremental": false,
@@ -11032,7 +11238,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "Q6drM0LPWVbAyaOQ7BNueA=="
+          "hash": "GOcJ1vMXDXUSSkieBUirQQ=="
         }
       },
       "is_incremental": false,
@@ -11044,7 +11250,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "rVn6JbhhPG7eolvacHiGWw=="
+          "hash": "71S8fRB7qzvSzvrOlSoP+Q=="
         }
       },
       "is_incremental": false,

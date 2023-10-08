@@ -3168,6 +3168,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-add-language-settings/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-add-language-settings/README.html",
+          "hash": "XVOPn8Oh5ykDNd2Q1FgT6g=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-language-settings/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-language-settings/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-language-settings/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-language-settings/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-add-language-settings/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-add-language-settings/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-add-list-template-with-custom-library/README.md",
       "output": {
         ".html": {
@@ -4068,6 +4114,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-associate-multiple-sites-to-hub/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-bulk-creation-sharepoint-sites-csv/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-bulk-creation-sharepoint-sites-csv/README.html",
+          "hash": "s86a5dBYMmCaqv0KhACFQg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-creation-sharepoint-sites-csv/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-creation-sharepoint-sites-csv/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-creation-sharepoint-sites-csv/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-creation-sharepoint-sites-csv/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-creation-sharepoint-sites-csv/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-creation-sharepoint-sites-csv/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -5540,6 +5632,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-enable-site-collection-app-catalog/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-export-all-customformatting/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-export-all-customformatting/README.html",
+          "hash": "ssfxOgnhhcoByDIf9DNFmg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-all-customformatting/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-all-customformatting/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-all-customformatting/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-all-customformatting/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -8162,6 +8289,41 @@
       "output": {
         "resource": {
           "relative_path": "spo-most-recent-update-report/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-move-files-library-sites/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-move-files-library-sites/README.html",
+          "hash": "dkpv+TgWO34XiMZLKfU57A=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-move-files-library-sites/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-move-files-library-sites/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-move-files-library-sites/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-move-files-library-sites/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -11105,7 +11267,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "1kcYKdCjOKWrbQq8g0Ntrw=="
+          "hash": "47m+e9PvIahzXLjlcf2uGQ=="
         }
       },
       "is_incremental": false,
@@ -11225,7 +11387,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "zMY4b/7RlZAliHMU7ulSyw=="
+          "hash": "yEtME/jWBd1rp7ZSm6oDRQ=="
         }
       },
       "is_incremental": false,
@@ -11238,7 +11400,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "GOcJ1vMXDXUSSkieBUirQQ=="
+          "hash": "x9WKsGshADlLnAPkZPS/7g=="
         }
       },
       "is_incremental": false,
@@ -11250,7 +11412,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "71S8fRB7qzvSzvrOlSoP+Q=="
+          "hash": "J2IsKUFVMllzTt1BfCvtAQ=="
         }
       },
       "is_incremental": false,

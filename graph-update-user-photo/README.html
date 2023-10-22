@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Archive inactive Teams | PnP Samples </title>
+    <title>Add or Update User Photo | PnP Samples </title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" "="">
-    <meta name="title" content="Archive inactive Teams | PnP Samples ">
+    <meta name="title" content="Add or Update User Photo | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Archive inactive Teams | PnP Samples ">
+    <meta property="og:title" content="Add or Update User Photo | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -94,133 +94,93 @@
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/teams-archive-inactive-teams/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/graph-update-user-photo/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="archive-inactive-teams">Archive inactive Teams</h1>
+                    <h1 id="add-or-update-user-photo">Add or Update User Photo</h1>
 
 <h2 id="summary">Summary</h2>
-<p>This function, <code>Archive-PnPInactiveTeams</code>, gets a list of all the inactive Teams, based on the given number of days and archives them one by one.</p>
+<p>The script streamlines the process of updating user photos of images stored locally. It ensures efficient handling of both successful updates and errors, providing an organized approach to managing user photos within Microsoft 365.</p>
 <p><img src="assets/example.png" alt="Example Screenshot"></p>
-<h2 id="implementation">Implementation</h2>
-<p>Save this script to a PSM1 module file, like <code>archive-inactiveTeams.psm1</code>. Then import the module file with <code>Import-Module</code>:</p>
-<pre><code class="lang-powershell">
-Import-Module archive-inactiveTeams.psm1 -Verbose
-
-</code></pre>
-<p>The <code>-Verbose</code> switch lists the functions that are imported.</p>
-<p>Once the module is imported the function <code>Archive-PnPInactiveTeams</code> will be loaded and ready to use.</p>
+<h2 id="limitations">Limitations</h2>
+<p>Maximum FileSize is 4MB (REST request limit is 4MB)</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_ps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_ps" data-tab="ps" tabindex="0" aria-selected="true">PowerShell</a>
+<a href="#tabpanel_CeZOj-G++Q_graphps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_graphps" data-tab="graphps" tabindex="0" aria-selected="true">Microsoft Graph PowerShell</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_ps" role="tabpanel" data-tab="ps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='ps'] pre">
+<section id="tabpanel_CeZOj-G++Q_graphps" role="tabpanel" data-tab="graphps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='graphps'] pre">
     <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
     <span class="article-clipboard__message done">Copied</span>
 </button>
 
+<p>Config parameter:
+<code>$imageSourcePath</code>
+<code>$upnDomain</code>
+name of the image file has to be the username without the domain</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Filename</th>
+<th>UPN</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>John Doe</td>
+<td>j.doe.jpg</td>
+<td>j.doe@contoso.com</td>
+</tr>
+</tbody>
+</table>
 <pre><code class="lang-powershell">
-&lt;# Script to archive inactive Teams
-Author: Nico De Cleyre - @nicodecleyre
-Blog: https://www.nicodecleyre.com
-v1.0 - 8/6/2023
+$upnDomain=&quot;@contoso.com&quot;
+$imageSourcePath=&quot;c:\temp\images\&quot;
+$completeFolder=&quot;Done&quot;
+$errorFolder=&quot;Error&quot;
 
-#&gt;
-Function Archive-PnPInactiveTeams {
-    &lt;#
-.SYNOPSIS
-Script to archive the inactive Teams
+Connect-MgGraph -Scopes &quot;User.ReadWrite&quot;
 
-.Description
-By inputting a designated timeframe for inactivity, the script automatically identifies Teams that have remained dormant beyond the specified period. These Teams are then archived
+if(-not(Test-Path $imageSourcePath)){
+ Write-Host &quot;Image Source Path not exists, Please Check the ConfigValue imageSourcePath&quot;
+ exit(2)
+}
+$imageFiles=Get-ChildItem -Path $imageSourcePath -Filter *.jpg
+Import-Module Microsoft.Graph.Users
 
-This solution requires an Azure App registration with the following permissions:
-- Reports.Read.All
-- TeamSettings.ReadWrite.All
-
-.Parameter TenandId
-The ID of your tenant
-
-.PARAMETER ClientId
-The ID of your Azure app registration
-
-.PARAMETER ClientSecret
-The secret of your Azure app registration
-
-.PARAMETER InactiveDays
-The minimum number of days that a Team must be active in order to be archived otherwise. Possible values: 7, 30, 90 or 180
-
-.Example 
-Archive-PnPInactiveTeams -TenandId &quot;XXXXXX&quot; -ClientId &quot;XXXXXX&quot; -ClientSecret &quot;XXXXXX&quot; -InactiveDays 30
-
-.Example 
-Archive-PnPInactiveTeams -TenandId &quot;XXXXXX&quot; -ClientId &quot;XXXXXX&quot; -ClientSecret &quot;XXXXXX&quot; -InactiveDays 180
-
-#&gt;
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        $TenantId,
-        [Parameter(Mandatory = $true)]
-        $ClientId,
-        [Parameter(Mandatory = $true)]
-        $ClientSecret,
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [ValidateSet(&quot;7&quot;, &quot;30&quot;, &quot;90&quot;, &quot;180&quot;)]
-        $InactiveDays
-    )
-
-    begin {
-        #Log in to Microsoft Graph
-        Write-Host &quot;Connecting to Microsoft Graph&quot; -ForegroundColor Yellow
-
-        $uri = &quot;https://login.microsoftonline.com/$TenantId/oauth2/v2.0/token&quot;
-
-        $body = @{
-            client_id     = $ClientId
-            client_secret = $ClientSecret
-            grant_type    = &quot;client_credentials&quot;
-            scope         = &quot;https://graph.microsoft.com/.default&quot;
+foreach($imageFile in $imageFiles){
+    $username=$imageFile.Name.Substring(0,$imageFile.Name.lastIndexof('.'));
+    $content=Get-Content $imageFile.VersionInfo.FileName;
+    $upn =&quot;$username$upnDomain&quot;
+        try{
+        $Error.Clear()
+        Set-MgUserPhotoContent -UserId $upn -InFile $imageFile.VersionInfo.FileName
+        if($Error.Count -gt 0){
+            throw &quot;Error in Set-MgUserPhotoContent&quot;
         }
-
-        $response = Invoke-RestMethod -Uri $uri -Method Post -Body $body
-        $accessToken = $response.access_token
-    }
-
-    process {
-        $today = Get-Date
-        # Get the Teams Team activity detail
-        $inactiveTeamsUri = &quot;https://graph.microsoft.com/v1.0/reports/getTeamsTeamActivityDetail(period='D$InactiveDays')&quot;
-
-        $inactiveTeamsHeader = @{
-            Authorization = &quot;Bearer $accessToken&quot;
-        }
-
-        $inactiveTeamsResponse = Invoke-RestMethod -Uri $inactiveTeamsUri -Method Get -Headers $inactiveTeamsHeader
-
-        $teams = $inactiveTeamsResponse | ConvertFrom-Csv | Where-Object { $_.'Last Activity Date' -ne &quot;&quot; }
-
-        foreach ($team in $teams) {
-            $lastActivityDate = $team.'Last Activity Date'
-            $timeSpan = New-TimeSpan -Start $lastActivityDate -End $today
-            if ($timeSpan.Days -gt $InactiveDays) {
-                $teamId = $team.'Team Id'
-                $teamName = $team.'Team Name'
-                Write-Host &quot;Team $teamName ($teamId) is inactive since $($timeSpan.Days) days&quot; -ForegroundColor DarkYellow
-
-                $archiveTeamUri = &quot;https://graph.microsoft.com/v1.0/teams/$teamId/archive&quot;
-                Invoke-RestMethod -Uri $archiveTeamUri -Method Post -Headers $inactiveTeamsHeader
-                Write-Host &quot;Team $teamName ($teamId) is archived&quot; -ForegroundColor Green
+        $completePath = Join-Path -Path $imageSourcePath -ChildPath $completeFolder
+            if(-not(Test-Path $completePath)){
+            New-Item -ItemType Directory  -Path $completePath
             }
+        Move-Item -Path $imageFile.VersionInfo.FileName -Destination $completePath -Force
+        }catch{
+       # Write-Host $error
+        $errorPath = Join-Path -Path $imageSourcePath -ChildPath $errorFolder
+            if(-not(Test-Path $errorPath)){
+            New-Item -ItemType Directory  -Path $errorPath
+            }
+        $Error|Set-Content -Path &quot;$errorPath\$username.error.txt&quot; 
+        Move-Item -Path $imageFile.VersionInfo.FileName -Destination $errorPath -Force
         }
-    }
-
-    end {
-    }
 }
 
 </code></pre>
+<div class="highlight-tool">
+<p>Check out the <strong>Microsoft Graph PowerShell SDK</strong> to learn more at: <a href="https://docs.microsoft.com/en-us/graph/powershell/get-started">https://docs.microsoft.com/en-us/graph/powershell/get-started</a></p>
+</div>
+</section>
+</div>
 <h2 id="contributors">Contributors</h2>
 <table>
 <thead>
@@ -230,18 +190,13 @@ Archive-PnPInactiveTeams -TenandId &quot;XXXXXX&quot; -ClientId &quot;XXXXXX&quo
 </thead>
 <tbody>
 <tr>
-<td><a href="https://www.nicodecleyre.com">Nico De Cleyre</a></td>
-</tr>
-<tr>
-<td>Heinrich Krause</td>
+<td><a href="https://github.com/petkir">Peter Paul Kirschner</a></td>
 </tr>
 </tbody>
 </table>
 <h2 id="disclaimer">Disclaimer</h2>
 <p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
-<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/teams-archive-inactive-teams" aria-hidden="true">
-</section>
-</div>
+<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/graph-update-user-photo" aria-hidden="true">
 </article>
           </div>
         </div>

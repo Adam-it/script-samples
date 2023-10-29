@@ -4,15 +4,15 @@
   
   <head>
     <meta charset="utf-8">
-    <title>Create Site Columns and add to Content Types | PnP Samples </title>
+    <title>Disable Quick property editing (Grid view) from SharePoint list | PnP Samples </title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" "="">
-    <meta name="title" content="Create Site Columns and add to Content Types | PnP Samples ">
+    <meta name="title" content="Disable Quick property editing (Grid view) from SharePoint list | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
   
     <!-- Social Media -->
     <meta property="og:locale" content="en_GB">
-    <meta property="og:title" content="Create Site Columns and add to Content Types | PnP Samples ">
+    <meta property="og:title" content="Disable Quick property editing (Grid view) from SharePoint list | PnP Samples ">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pnp.github.io/script-samples">
     <meta property="og:image" content="https://pnp.github.io/script-samples/assets/social-media-screenshot.png">
@@ -94,12 +94,13 @@
           <div class="col-md-12">
             <article class="content wrap" id="_content" data-uid="">
                   <div class="contribution-panel mobile-hide pull-right">
-                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-add-fields-to-contenttypes/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a href="https://github.com/Adam-it/script-samples/blob/main/scripts/spo-list-disable-quick-property-editing/README.md/#L1" title="Improve this Doc" class="improve-doc-lg"><i class="glyphicon glyphicon-pencil"></i></a>
                   </div>
-                    <h1 id="create-site-columns-and-add-to-content-types">Create Site Columns and add to Content Types</h1>
+                    <h1 id="disable-quick-property-editing-grid-view-from-sharepoint-list">Disable Quick property editing (Grid view) from SharePoint list</h1>
 
 <h2 id="summary">Summary</h2>
-<p>The script will create a Site Columns by checking whether it exists or not. Adds the site columns to the existing Content Types.</p>
+<p>This sample script will show you how to disable the Quick property editing (Grid view) from SharePoint list.</p>
+<p><img src="assets/example.png" alt="Example Screenshot"></p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
@@ -115,82 +116,22 @@
 </button>
 
 <pre><code class="lang-powershell">
-function CreateField {
-    param ([string] $FieldName, [string] $FieldXML)
+# Display name of SharePoint online list or document library
+$listName = &quot;My SharePoint List&quot;
 
-    try {
-        #Check the field and create
-        $field = Get-PnPField -Identity $FieldName -ErrorAction SilentlyContinue
+# SharePoint online site URL
+$siteUrl = Read-Host -Prompt &quot;Enter your SharePoint site URL (e.g https://contoso.sharepoint.com/sites/pnppowershell)&quot;
 
-        If ($Null -eq $field) {
-            Add-PnPFieldFromXml -FieldXml $FieldXML
-            Write-host &quot;Successfully created field '$FieldName'&quot; -ForegroundColor Green
-        }
-        Else {
-            Write-host &quot;Field '$FieldName' already exists. Skipping creation&quot; -f Green
-        }
-    }
-    catch {
-        Write-Error &quot;Error in CreateField - $_&quot;
-        throw
-    }
-}
+# Connect to SharePoint online site
+Connect-PnPOnline -Url $siteUrl -Interactive
 
-function CreateAndAddFieldsToCTs {
-    param ([string[]] $ContentTypes)
+# Disable Quick property editing (Grid view) from SharePoint list
+Set-PnPList -Identity $listName -DisableGridEditing $true
 
-    try {
+Write-Host &quot;Done! :-)&quot; -ForegroundColor Green
 
-        #region Create Site Columns
-        $fieldsToCreate = @(
-            @{
-                FieldName = &quot;admin_review&quot;
-                FieldXML  = &quot;&lt;Field Type='User' DisplayName='Admin Reviewer' Required='false' EnforceUniqueValues='false' Hidden='false' UserSelectionMode='PeopleAndGroups' Group='My Site Columns' ID='{3eccccb1-9789-40e9-bee8-0e27a2b0ea9f}' StaticName='admin_review' Name='admin_review' /&gt;&quot;
-            },
-            @{
-                FieldName = &quot;admin_reviewdate&quot;
-                FieldXML  = &quot;&lt;Field Type='DateTime' DisplayName='Admin Review Date' Required='false' EnforceUniqueValues='false' Hidden='false' Group='My Site Columns' ID='{bee79067-c92c-4d9c-b80c-63a75a468b16}' StaticName='admin_reviewdate' Name='admin_reviewdate' /&gt;&quot;
-            }
-        )
-
-        foreach ($fieldToCreate in $fieldsToCreate) {
-            Write-Host &quot;Creating the field - $($fieldToCreate.FieldName)&quot; -ForegroundColor Yellow
-            CreateField -FieldName $($fieldToCreate.FieldName) -FieldXML $($fieldToCreate.FieldXML)
-        }
-        Write-Host `n `n
-        #endregion
-
-        foreach ($contentType in $ContentTypes) {
-            foreach ($fieldToCreate in $fieldsToCreate) {
-                Write-Host &quot;Adding field - $($fieldToCreate.FieldName) to CT $contentType&quot; -ForegroundColor Yellow
-                Add-PnPFieldToContentType -Field $($fieldToCreate.FieldName) -ContentType $contentType
-            }
-            Write-Host &quot;Successfully added fields to CT $contentType&quot; -ForegroundColor Green
-            Write-Host `n
-        }
-    }
-    catch {
-        Write-Error &quot;Error in CreateAndAddFieldsToCTs - $_&quot;
-    }
-}
-
-try {
-    $clientId = &quot;&quot;
-    $clientSecret = &quot;&quot;
-    $siteUrl = &quot;&quot;
-    Connect-PnPOnline -Url $siteUrl -ClientId $clientId -ClientSecret $clientSecret
-
-    CreateAndAddFieldsToCTs -ContentTypes @(&quot;My Review CT&quot;, &quot;Global User Review CT&quot;)
-}
-catch {
-    Write-Error &quot;Something wrong: &quot; $_
-}
-finally {
-    $pnpConnection = Get-PnPConnection -ErrorAction SilentlyContinue
-    if ($pnpConnection) {
-        Disconnect-PnPOnline
-    }
-}
+# Disconnect SharePoint online connection
+Disconnect-PnPOnline
 
 </code></pre>
 <div class="highlight-tool">
@@ -203,98 +144,25 @@ finally {
 </button>
 
 <pre><code class="lang-powershell">
-function CreateField {
-    param ([string] $FieldName, [string] $FieldXML)
+# Display name of SharePoint online list or document library
+$listName = &quot;My SharePoint List&quot;
 
-    try {
-        # Check if the field exists and create
-        $field = m365 spo field get --webUrl $siteUrl --title $FieldName | ConvertFrom-Json
+# SharePoint online site URL
+$siteUrl = Read-Host -Prompt &quot;Enter your SharePoint site URL (e.g https://contoso.sharepoint.com/sites/cliformicrosoft365)&quot;
 
-        if ($null -eq $field) {
-            # Add new field based on XML
-            m365 spo field add --webUrl $siteUrl --xml $FieldXML
-            Write-Host &quot;Successfully created field '$FieldName'&quot; -ForegroundColor Green
-        }
-        else {
-            Write-Host &quot;Field '$FieldName' already exists. Skipping creation&quot; -f Green
-        }
-    }
-    catch {
-        Write-Error &quot;Error in CreateField - $_&quot;
-        throw
-    }
+# Get Credentials to connect
+$m365Status = m365 status
+if ($m365Status -match &quot;Logged Out&quot;) {
+    m365 login
 }
 
-function CreateAndAddFieldsToCTs {
-    param ([string[]] $ContentTypes)
+# Disable Quick property editing (Grid view) from SharePoint list
+m365 spo list set --webUrl $siteUrl --title $listName --disableGridEditing true
 
-    try {
-        #region Create SharePoint Site Columns
-        $fieldsToCreate = @(
-            @{
-                FieldName = &quot;admin_review&quot;
-                FieldID   = &quot;3eccccb1-9789-40e9-bee8-0e27a2b0ea9f&quot; 
-                FieldXML  = &quot;&lt;Field Type='User' DisplayName='Admin Reviewer' Required='false' EnforceUniqueValues='false' Hidden='false' UserSelectionMode='PeopleAndGroups' Group='My Site Columns' ID='{3eccccb1-9789-40e9-bee8-0e27a2b0ea9f}' StaticName='admin_review' Name='admin_review'&gt;&lt;/Field&gt;&quot;
-            },
-            @{
-                FieldName = &quot;admin_reviewdate&quot;
-                FieldID   = &quot;bee79067-c92c-4d9c-b80c-63a75a468b16&quot;
-                FieldXML  = &quot;&lt;Field Type='DateTime' DisplayName='Admin Review Date' Required='false' EnforceUniqueValues='false' Hidden='false' Group='My Site Columns' ID='{bee79067-c92c-4d9c-b80c-63a75a468b16}' StaticName='admin_reviewdate' Name='admin_reviewdate'&gt;&lt;/Field&gt;&quot;
-            }
-        )
+Write-Host &quot;Done! :-)&quot; -ForegroundColor Green
 
-        foreach ($fieldToCreate in $fieldsToCreate) {
-            Write-Host &quot;Creating the field - $($fieldToCreate.FieldName)&quot; -ForegroundColor Yellow
-            CreateField -FieldName $($fieldToCreate.FieldName) -FieldXML $($fieldToCreate.FieldXML)
-        }
-        Write-Host `n `n
-        #endregion
-
-        #region Add Site Columns to Content Types
-        foreach ($contentType in $ContentTypes) {
-            $contentTypeObj = m365 spo contenttype get --webUrl $siteUrl --name $contentType | ConvertFrom-Json
-            if ($contentTypeObj.StringId) {
-                foreach ($fieldToCreate in $fieldsToCreate) {
-                    Write-Host &quot;Adding field - $($fieldToCreate.FieldName) to CT $contentType&quot; -ForegroundColor Yellow
-                
-                    m365 spo contenttype field set --webUrl $siteUrl --contentTypeId $contentTypeObj.StringId --id $fieldToCreate.FieldID
-                    Write-Host &quot;Successfully added fields to CT $contentType&quot; -ForegroundColor Green
-                    Write-Host `n
-                }
-            } 
-            else {
-                Write-Host &quot;Content Type not found: $contentType&quot; -ForegroundColor Green
-                Write-Host `n
-            }
-
-        }
-        #endregion
-    }
-    catch {
-        Write-Error &quot;Error in CreateAndAddFieldsToCTs - $_&quot;
-    }
-}
-
-try {
-    # SharePoint Online Site Url
-    $siteUrl = &quot;https://contoso.sharepoint.com/sites/CLIForM365&quot;
-
-    # Get Credentials to connect
-    $m365Status = m365 status
-    if ($m365Status -match &quot;Logged Out&quot;) {
-        m365 login
-    }
-
-    # Create and add fields to SharePoint content types
-    CreateAndAddFieldsToCTs -ContentTypes @(&quot;My Review CT&quot;, &quot;Global User Review CT&quot;)
-}
-catch {
-    Write-Error &quot;Something wrong: &quot; $_
-}
-finally {
-    # Disconnect SharePoint online connection
-    m365 logout
-}
+# Disconnect SharePoint online connection
+m365 logout
 
 </code></pre>
 <div class="highlight-tool">
@@ -311,16 +179,13 @@ finally {
 </thead>
 <tbody>
 <tr>
-<td>Ahamed Fazil Buhari</td>
-</tr>
-<tr>
 <td><a href="https://ganeshsanapblogs.wordpress.com/about">Ganesh Sanap</a></td>
 </tr>
 </tbody>
 </table>
 <h2 id="disclaimer">Disclaimer</h2>
 <p><strong>THESE SAMPLES ARE PROVIDED <em>AS IS</em> WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.</strong></p>
-<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-add-fields-to-contenttypes" aria-hidden="true">
+<img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-list-disable-quick-property-editing" aria-hidden="true">
 </article>
           </div>
         </div>

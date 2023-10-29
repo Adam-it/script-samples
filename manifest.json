@@ -1623,6 +1623,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/graph-delay-message-delivery/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "graph-delay-message-delivery/README.html",
+          "hash": "WjnAq9HvS6YHyxVUhU/XyA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-delay-message-delivery/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-delay-message-delivery/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-delay-message-delivery/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "graph-delay-message-delivery/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/graph-delay-message-delivery/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "graph-delay-message-delivery/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/graph-disable-user-license/README.md",
       "output": {
         ".html": {
@@ -3183,7 +3229,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-add-fields-to-contenttypes/README.html",
-          "hash": "jssibCe9TqpLIlrQ+TRCIQ=="
+          "hash": "O+CFcoPAskBVAZ9AlEeLGw=="
         }
       },
       "is_incremental": false,
@@ -4217,7 +4263,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-bulk-creation-sharepoint-sites-csv/README.html",
-          "hash": "s86a5dBYMmCaqv0KhACFQg=="
+          "hash": "Dgd+llgvLPmed+IZKqvIEA=="
         }
       },
       "is_incremental": false,
@@ -7301,7 +7347,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-get-lists-libraries-item-count-permissions/README.html",
-          "hash": "jksZM587odeSi7ADzV8zlg=="
+          "hash": "kBRNMXVlu6msmTElWUvpKw=="
         }
       },
       "is_incremental": false,
@@ -7945,6 +7991,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-large-list-items-to-pnp-template/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-list-disable-quick-property-editing/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-list-disable-quick-property-editing/README.html",
+          "hash": "7On1oHn67xtPSKAkB9p9ig=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-list-disable-quick-property-editing/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-list-disable-quick-property-editing/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-list-disable-quick-property-editing/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-list-disable-quick-property-editing/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-list-disable-quick-property-editing/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-list-disable-quick-property-editing/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -10222,6 +10314,120 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/teams-export-direct-routing-calls/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "teams-export-direct-routing-calls/README.html",
+          "hash": "mbLAEdITr/ZW1xHNrOb2yw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-direct-routing-calls/assets/API_Permissions.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-direct-routing-calls/assets/API_Permissions.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-direct-routing-calls/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-direct-routing-calls/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-direct-routing-calls/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-direct-routing-calls/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-direct-routing-calls/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-direct-routing-calls/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/teams-export-pstn-call-logs/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "teams-export-pstn-call-logs/README.html",
+          "hash": "496gTpsUG+kgkrhfKSrLKA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-pstn-call-logs/assets/API_Permissions.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-pstn-call-logs/assets/API_Permissions.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-pstn-call-logs/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-pstn-call-logs/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-pstn-call-logs/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-pstn-call-logs/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-pstn-call-logs/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-pstn-call-logs/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/teams-export-teams-information/README.md",
       "output": {
         ".html": {
@@ -11394,7 +11600,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "4IrJbRarlDsqSJrsTpitSw=="
+          "hash": "b6YzH1K1Dj1zG5gfJ8ynqw=="
         }
       },
       "is_incremental": false,
@@ -11527,7 +11733,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "A2RCkrq4H2BEnJuwk1Onlg=="
+          "hash": "3uVzRD0wdYCCy0CTbXk6Xw=="
         }
       },
       "is_incremental": false,
@@ -11539,7 +11745,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "Rm+9nNMcjki4Cf3BSOYjUA=="
+          "hash": "Y7IZM+MpUL8mHhAjCtTISw=="
         }
       },
       "is_incremental": false,

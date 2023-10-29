@@ -1,16 +1,16 @@
 [
   {
-    "name": "spo-add-fields-to-contenttypes",
+    "name": "spo-list-disable-quick-property-editing",
     "source": "pnp",
-    "title": "Create fields and add to Content Types",
-    "shortDescription": "Script to create site columns and add them to content types",
-    "url": "https://pnp.github.io/script-samples/spo-add-fields-to-contenttypes/README.html",
-    "longDescription": [
-      "Script to create site columns and add them to content types"
+    "title": "Disable Quick property editing (Grid view) from SharePoint list",
+    "shortDescription": "This sample script will show you how to disable the Quick property editing (Grid view) from SharePoint list.",
+    "url": "https://pnp.github.io/script-samples/spo-list-disable-quick-property-editing/README.html",
+    "longDescription": [],
+    "creationDateTime": "2023-10-26",
+    "updateDateTime": "2023-10-26",
+    "products": [
+      "SharePoint"
     ],
-    "creationDateTime": "2023-09-06",
-    "updateDateTime": "2023-10-24",
-    "products": ["SharePoint"],
     "metadata": [
       {
         "key": "PNP-POWERSHELL",
@@ -21,26 +21,25 @@
         "value": "7.0.0"
       }
     ],
-    "categories": ["Provision"],
+    "categories": [
+      "Configure"
+    ],
     "tags": [
+      "SharePoint Online",
       "Connect-PnPOnline",
-      "Get-PnPField",
-      "Add-PnPFieldFromXml",
-      "Add-PnPFieldToContentType",
+      "Set-PnPList",
+      "Disconnect-PnPOnline",
       "m365 status",
       "m365 login",
-      "m365 logout",
-      "m365 spo field get",
-      "m365 spo field add",
-      "m365 spo contenttype get",
-      "m365 spo contenttype field set"
+      "m365 spo list set",
+      "m365 logout"
     ],
     "thumbnails": [
       {
         "type": "image",
         "order": 100,
-        "url": "https://raw.githubusercontent.com/pnp/script-samples/main/scripts/spo-add-fields-to-contenttypes/assets/preview.png",
-        "alt": "Create fields and add to Content Types"
+        "url": "https://raw.githubusercontent.com/pnp/script-samples/main/scripts/spo-list-disable-quick-property-editing/assets/preview.png",
+        "alt": "Image preview of the Quick property editing (Grid view) option in SharePoint list"
       }
     ],
     "authors": [
@@ -49,12 +48,6 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/25476310?v=4",
         "name": "Ganesh Sanap"
-      },
-      {
-        "gitHubAccount": "ahamedfazil",
-        "company": "",
-        "pictureUrl": "https://github.com/ahamedfazil.png",
-        "name": "Ahamed Fazil Buhari"
       }
     ],
     "references": [

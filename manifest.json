@@ -315,6 +315,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/aad-ensure-ownersaremembers-m365groups/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "aad-ensure-ownersaremembers-m365groups/README.html",
+          "hash": "f++kCptd6vugtJ0li2ywFQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/aad-ensure-ownersaremembers-m365groups/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "aad-ensure-ownersaremembers-m365groups/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/aad-ensure-ownersaremembers-m365groups/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "aad-ensure-ownersaremembers-m365groups/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/aad-ensure-ownersaremembers-m365groups/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "aad-ensure-ownersaremembers-m365groups/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/aad-get-app-permission/README.md",
       "output": {
         ".html": {
@@ -1090,6 +1136,63 @@
       "output": {
         "resource": {
           "relative_path": "flow-get-flows-connected-to-sharepoint/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/flow-how-to-automate-your-flow-test/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "flow-how-to-automate-your-flow-test/README.html",
+          "hash": "YUuuayTjLlkgpd7YAbn5XQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/flow-how-to-automate-your-flow-test/assets/flow_build.png",
+      "output": {
+        "resource": {
+          "relative_path": "flow-how-to-automate-your-flow-test/assets/flow_build.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/flow-how-to-automate-your-flow-test/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "flow-how-to-automate-your-flow-test/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/flow-how-to-automate-your-flow-test/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "flow-how-to-automate-your-flow-test/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/flow-how-to-automate-your-flow-test/assets/sharepoint_listview.png",
+      "output": {
+        "resource": {
+          "relative_path": "flow-how-to-automate-your-flow-test/assets/sharepoint_listview.png"
         }
       },
       "is_incremental": false,
@@ -5488,6 +5591,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-disable-template-dialog/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-disable-template-dialog/README.html",
+          "hash": "Xv0eyUzToxu5Jqf8tZXo7A=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-disable-template-dialog/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-disable-template-dialog/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-disable-template-dialog/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-disable-template-dialog/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-disable-template-dialog/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-disable-template-dialog/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-document-sets-modern-new-form/README.md",
       "output": {
         ".html": {
@@ -6158,6 +6307,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-export-hub-site-hierarchy/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-export-hub-site-hierarchy/README.html",
+          "hash": "5OkMesXIquWZeepLkCwgpQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-hub-site-hierarchy/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-hub-site-hierarchy/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-hub-site-hierarchy/assets/execution-screen.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-hub-site-hierarchy/assets/execution-screen.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-hub-site-hierarchy/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-hub-site-hierarchy/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-export-hub-sites-details-to-csv/README.md",
       "output": {
         ".html": {
@@ -6197,6 +6392,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-export-hub-sites-details-to-csv/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-export-page-html/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-export-page-html/README.html",
+          "hash": "X1iPMcoxxrSrmd7OuD6B6A=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-page-html/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-page-html/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-page-html/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-page-html/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-page-html/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-page-html/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -11600,7 +11841,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "b6YzH1K1Dj1zG5gfJ8ynqw=="
+          "hash": "HMTCunavYFuDBpDwv7+LuQ=="
         }
       },
       "is_incremental": false,
@@ -11733,7 +11974,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "3uVzRD0wdYCCy0CTbXk6Xw=="
+          "hash": "tpnnOUuxtLWOhx7grbCl9w=="
         }
       },
       "is_incremental": false,
@@ -11745,7 +11986,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "Y7IZM+MpUL8mHhAjCtTISw=="
+          "hash": "CB40AB/fqnCLCWLlJTK3Xw=="
         }
       },
       "is_incremental": false,

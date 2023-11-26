@@ -10158,7 +10158,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-update-highlightcontentwebpart-seeall/README.html",
-          "hash": "9subAE6IHCxl24XXJC05xg=="
+          "hash": "cltwEoNFF6KubP8CaA3cFA=="
         }
       },
       "is_incremental": false,
@@ -10785,6 +10785,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/teams-export-details-using-teams-cli/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "teams-export-details-using-teams-cli/README.html",
+          "hash": "L75FywcnM73EsmPteaqOsg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-details-using-teams-cli/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-details-using-teams-cli/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-details-using-teams-cli/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-details-using-teams-cli/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-export-details-using-teams-cli/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "teams-export-details-using-teams-cli/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/teams-export-direct-routing-calls/README.md",
       "output": {
         ".html": {
@@ -11166,6 +11212,63 @@
       "output": {
         "resource": {
           "relative_path": "teams-list-guestusers/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/teams-list-installed-apps/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "teams-list-installed-apps/README.html",
+          "hash": "qE+lPgCuiZrtryjiiMshTQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-list-installed-apps/assets/API_Permissions.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-list-installed-apps/assets/API_Permissions.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-list-installed-apps/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-list-installed-apps/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-list-installed-apps/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "teams-list-installed-apps/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/teams-list-installed-apps/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "teams-list-installed-apps/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -12071,7 +12174,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "1g3IbcbQMW5B6SyHU1qGiw=="
+          "hash": "szfrU7mnKl5h50SPzuqijg=="
         }
       },
       "is_incremental": false,
@@ -12204,7 +12307,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "CZHE4mb76n1Ziskj1MM6TA=="
+          "hash": "2oGAbDtGdStm1T25LbS8Dw=="
         }
       },
       "is_incremental": false,
@@ -12216,7 +12319,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "ODwVUIxE/sMT/3iATBapFw=="
+          "hash": "EfV2Q67iKlyr1I6UoZ8WpA=="
         }
       },
       "is_incremental": false,

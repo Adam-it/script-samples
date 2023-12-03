@@ -7433,6 +7433,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-get-checkedoutfiles-nocheckedinversion/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-get-checkedoutfiles-nocheckedinversion/README.html",
+          "hash": "FMjhPPBFZsHyab1SM+uk5g=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-checkedoutfiles-nocheckedinversion/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-checkedoutfiles-nocheckedinversion/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-checkedoutfiles-nocheckedinversion/assets/preview.PNG",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-checkedoutfiles-nocheckedinversion/assets/preview.PNG"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-checkedoutfiles-nocheckedinversion/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-checkedoutfiles-nocheckedinversion/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-get-contenttype-usage-listitem-listversion/README.md",
       "output": {
         ".html": {
@@ -12174,7 +12220,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "szfrU7mnKl5h50SPzuqijg=="
+          "hash": "XwTAUpRKlYOUIDjRdWblWw=="
         }
       },
       "is_incremental": false,
@@ -12307,7 +12353,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "2oGAbDtGdStm1T25LbS8Dw=="
+          "hash": "aLBsTOBfzsbw71EtIDcD+A=="
         }
       },
       "is_incremental": false,
@@ -12319,7 +12365,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "EfV2Q67iKlyr1I6UoZ8WpA=="
+          "hash": "uD98J0LWiL47OZKUvq/BoQ=="
         }
       },
       "is_incremental": false,

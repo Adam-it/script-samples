@@ -5906,7 +5906,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-enable-disable-search-crawling/README.html",
-          "hash": "kepHhpu1S/pGTe/JQFoeyA=="
+          "hash": "l/evvD4tATq30WBgcboSrA=="
         }
       },
       "is_incremental": false,
@@ -6495,7 +6495,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-export-import-folderstructure/README.html",
-          "hash": "bs4WuyTH5wFIDxjZIadGRA=="
+          "hash": "PG4pasawTU7FUULU0NwGlw=="
         }
       },
       "is_incremental": false,
@@ -7437,7 +7437,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-get-checkedoutfiles-nocheckedinversion/README.html",
-          "hash": "FMjhPPBFZsHyab1SM+uk5g=="
+          "hash": "yvOV2Em+Zcs9y13I0buaOQ=="
         }
       },
       "is_incremental": false,
@@ -7457,10 +7457,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "../scripts/spo-get-checkedoutfiles-nocheckedinversion/assets/preview.PNG",
+      "source_relative_path": "../scripts/spo-get-checkedoutfiles-nocheckedinversion/assets/preview.png",
       "output": {
         "resource": {
-          "relative_path": "spo-get-checkedoutfiles-nocheckedinversion/assets/preview.PNG"
+          "relative_path": "spo-get-checkedoutfiles-nocheckedinversion/assets/preview.png"
         }
       },
       "is_incremental": false,
@@ -12220,7 +12220,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "XwTAUpRKlYOUIDjRdWblWw=="
+          "hash": "Vvnm+fSvcheHlB1jnDW21g=="
         }
       },
       "is_incremental": false,
@@ -12353,7 +12353,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "aLBsTOBfzsbw71EtIDcD+A=="
+          "hash": "Py3d8aITD2/z05FHWa0IJQ=="
         }
       },
       "is_incremental": false,
@@ -12365,7 +12365,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "uD98J0LWiL47OZKUvq/BoQ=="
+          "hash": "RbKe3rAyQQD+GVkD/vZLYQ=="
         }
       },
       "is_incremental": false,

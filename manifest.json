@@ -2839,7 +2839,7 @@
       "output": {
         ".html": {
           "relative_path": "powerapps-get-app-users-list-csv/README.html",
-          "hash": "rUBLnruQrn7PlxKHx+Ed5A=="
+          "hash": "DSkiE6BRojjwkvktZ4Nw6Q=="
         }
       },
       "is_incremental": false,
@@ -4585,6 +4585,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-bulk-publish-syntex-model/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-bulk-remove-retention-labels/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-bulk-remove-retention-labels/README.html",
+          "hash": "AmxPY59SCSeCYMnYfglO1w=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-remove-retention-labels/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-remove-retention-labels/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-remove-retention-labels/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-remove-retention-labels/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-bulk-remove-retention-labels/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-bulk-remove-retention-labels/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -7380,6 +7426,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-get-all-apps-from-appcatalog/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-get-all-hub-site-main-sites-and-navigation-nodes/README.html",
+          "hash": "PhBQaYi833mUFIBotmJJdA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-all-hub-site-main-sites-and-navigation-nodes/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-all-hub-site-main-sites-and-navigation-nodes/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-all-hub-site-main-sites-and-navigation-nodes/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -12220,7 +12312,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "Vvnm+fSvcheHlB1jnDW21g=="
+          "hash": "AcBFYXVyalMTtL8pWrLk9g=="
         }
       },
       "is_incremental": false,
@@ -12353,7 +12445,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "Py3d8aITD2/z05FHWa0IJQ=="
+          "hash": "DgmgCEs5VfqZk34Xd+gJ+Q=="
         }
       },
       "is_incremental": false,
@@ -12365,7 +12457,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "RbKe3rAyQQD+GVkD/vZLYQ=="
+          "hash": "6Q6EvuH46vFI3g1WqOVjdQ=="
         }
       },
       "is_incremental": false,

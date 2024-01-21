@@ -5499,11 +5499,11 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantAppCatalog/README.md",
+      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/README.md",
       "output": {
         ".html": {
-          "relative_path": "spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantAppCatalog/README.html",
-          "hash": "sRTWfS1VfDrzVUwE1obz1A=="
+          "relative_path": "spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/README.html",
+          "hash": "B+0/GLFVVfC7P4NfD0SPyA=="
         }
       },
       "is_incremental": false,
@@ -5512,10 +5512,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantAppCatalog/assets/example.png",
+      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/assets/example.png",
       "output": {
         "resource": {
-          "relative_path": "spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantAppCatalog/assets/example.png"
+          "relative_path": "spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/assets/example.png"
         }
       },
       "is_incremental": false,
@@ -5523,10 +5523,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantAppCatalog/assets/preview.png",
+      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/assets/preview.png",
       "output": {
         "resource": {
-          "relative_path": "spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantAppCatalog/assets/preview.png"
+          "relative_path": "spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/assets/preview.png"
         }
       },
       "is_incremental": false,
@@ -5534,10 +5534,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantAppCatalog/assets/sample.json",
+      "source_relative_path": "../scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/assets/sample.json",
       "output": {
         "resource": {
-          "relative_path": "spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantAppCatalog/assets/sample.json"
+          "relative_path": "spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -9880,6 +9880,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-replace-people-in-people-web-part/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-replace-people-in-people-web-part/README.html",
+          "hash": "dvPUUFA/Jdhh+oLVRweY3w=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-replace-people-in-people-web-part/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-replace-people-in-people-web-part/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-replace-people-in-people-web-part/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-replace-people-in-people-web-part/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-replace-people-in-people-web-part/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-replace-people-in-people-web-part/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-request-pnp-reindex-user-profile/README.md",
       "output": {
         ".html": {
@@ -12404,7 +12450,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "BB+sEJrhEFTNzdR6lnGnmg=="
+          "hash": "arsKPVjAigHIjeyFN5VgAA=="
         }
       },
       "is_incremental": false,
@@ -12537,7 +12583,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "/h26cGSPr1d7TNREMdBGag=="
+          "hash": "XGueJBlOcFi1KfnLXZVSPg=="
         }
       },
       "is_incremental": false,
@@ -12549,7 +12595,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "bugA7656x1iYlle4TGIrZw=="
+          "hash": "WDJS/l6+dRI6fKChoyOuXA=="
         }
       },
       "is_incremental": false,

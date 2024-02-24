@@ -2256,7 +2256,7 @@
       "output": {
         ".html": {
           "relative_path": "m365-get-unifiedlog-spo-dlp-exchange-entra/README.html",
-          "hash": "edK17alfArklEaJpNYvxTQ=="
+          "hash": "gFXh1w4XFTRtHWKk5M9WmA=="
         }
       },
       "is_incremental": false,
@@ -9582,6 +9582,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-reindex-sites/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-reindex-sites/README.html",
+          "hash": "MYgJxu9Zl+vY1K2cksVEIg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-reindex-sites/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-reindex-sites/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-reindex-sites/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-reindex-sites/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-reindex-sites/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-reindex-sites/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-remove-custom-themes/README.md",
       "output": {
         ".html": {
@@ -12590,7 +12636,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "aQSJQmXzvlNVczvAsDi5LQ=="
+          "hash": "jTfhSnMMZk/Gc+g71n9U5w=="
         }
       },
       "is_incremental": false,
@@ -12723,7 +12769,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "QXehidq5vcpvu6CKygHdww=="
+          "hash": "swD09y3pZZ0ubA6W82NiRw=="
         }
       },
       "is_incremental": false,
@@ -12735,7 +12781,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "cRIB9HRdOMltnnEG/BdraA=="
+          "hash": "9+ACKVIaF7+a5BXV3qQxnA=="
         }
       },
       "is_incremental": false,

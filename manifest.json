@@ -4765,6 +4765,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-check-unaccessable-homepages/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-check-unaccessable-homepages/README.html",
+          "hash": "giCrjF4Hvz2p9hB9FuhQrw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-check-unaccessable-homepages/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-check-unaccessable-homepages/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-check-unaccessable-homepages/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-check-unaccessable-homepages/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-check-unaccessable-homepages/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-check-unaccessable-homepages/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-cleanup-site-column-usage/README.md",
       "output": {
         ".html": {
@@ -4951,6 +4997,52 @@
       "output": {
         "resource": {
           "relative_path": "spo-copy-directory-structure-to-sharepoint-list/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-copy-hubsite-navigation/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-copy-hubsite-navigation/README.html",
+          "hash": "UMos2DvrcdzjP9kC5Zf+LQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-copy-hubsite-navigation/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-copy-hubsite-navigation/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-copy-hubsite-navigation/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-copy-hubsite-navigation/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-copy-hubsite-navigation/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-copy-hubsite-navigation/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -6526,6 +6618,52 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-export-content-type-details-to-csv/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-export-content-type-details-to-csv/README.html",
+          "hash": "AD2bJb/jVUu+42O0OG/MoA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-content-type-details-to-csv/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-content-type-details-to-csv/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-content-type-details-to-csv/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-content-type-details-to-csv/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-export-content-type-details-to-csv/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-export-content-type-details-to-csv/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-export-data-to-sharepoint-lists/README.md",
       "output": {
         ".html": {
@@ -6657,7 +6795,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-export-hub-site-hierarchy/README.html",
-          "hash": "5OkMesXIquWZeepLkCwgpQ=="
+          "hash": "wJOCZOvz7EP05/JMDLeKUg=="
         }
       },
       "is_incremental": false,
@@ -8287,6 +8425,41 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-get-termstores-hierarchy-using-csom/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-get-termstores-hierarchy-using-csom/README.html",
+          "hash": "SRZq04zzHkzSW85/Oo5yMA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-termstores-hierarchy-using-csom/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-termstores-hierarchy-using-csom/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-get-termstores-hierarchy-using-csom/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-get-termstores-hierarchy-using-csom/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-get-usage-from-audit-logs/README.md",
       "output": {
         ".html": {
@@ -9632,7 +9805,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-reindex-sites/README.html",
-          "hash": "MYgJxu9Zl+vY1K2cksVEIg=="
+          "hash": "0MeleKITf94lTpYpzz3GPA=="
         }
       },
       "is_incremental": false,
@@ -12682,7 +12855,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "rGJcyRZj1omxQzCTyTB4hQ=="
+          "hash": "0DtiUJ60qo39sDkDVHxn8g=="
         }
       },
       "is_incremental": false,
@@ -12815,7 +12988,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "nHKGNU5pFuytfJMspx8a8w=="
+          "hash": "wmk4aLg4/1zpfjSucF9QYw=="
         }
       },
       "is_incremental": false,
@@ -12827,7 +13000,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "muiJB5OamuZDJqXEROyqbA=="
+          "hash": "h+hvKYP6NdabmNEoo/oQJQ=="
         }
       },
       "is_incremental": false,

@@ -1170,6 +1170,17 @@
 <td style="text-align: center;">1</td>
 </tr>
 <tr>
+<td><a href="spo-check-unaccessable-homepages/README.html">Scan for potential inaccessible site collection homepages</a></td>
+<td style="text-align: center;">SharePoint</td>
+<td style="text-align: center;">Report, Security</td>
+<td style="text-align: center;">Get-PnPHomePage,Get-PnPListItem,Get-PnPListItemPermission</td>
+<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
 <td><a href="spo-cleanup-site-column-usage/README.html">Clean Up Unwanted Site Columns from Content Types and Lists/Libraries</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Configure, Report</td>
@@ -1197,6 +1208,17 @@
 <td style="text-align: center;">Configure</td>
 <td style="text-align: center;">Unified Audit Logs, ULS, PDF</td>
 <td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td><a href="spo-copy-hubsite-navigation/README.html">Copy a hub navigation from a source site to any desired target hub site</a></td>
+<td style="text-align: center;">SharePoint</td>
+<td style="text-align: center;">Data, Provision, Configure</td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPConnection, Add-PnPNavigationNode, Get-PnPNavigationNode, Remove-PnPNavigationNode</td>
+<td style="text-align: center;">PNP-POWERSHELL, POWERSHELL</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">-</td>
@@ -1599,6 +1621,17 @@
 <td style="text-align: center;">1</td>
 </tr>
 <tr>
+<td><a href="spo-export-content-type-details-to-csv/README.html">Export Content Type Details To CSV</a></td>
+<td style="text-align: center;">SharePoint</td>
+<td style="text-align: center;">Report, Data</td>
+<td style="text-align: center;">SharePoint Online, Connect-PnPOnline, Get-PnPContentType, Get-PnPProperty, Export-Csv</td>
+<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
 <td><a href="spo-export-data-to-sharepoint-lists/README.html">Export CSV To SharePoint List Data</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Data</td>
@@ -1635,12 +1668,12 @@
 <td><a href="spo-export-hub-site-hierarchy/README.html">Export of the Hierarchy of Hub Sites</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Report</td>
-<td style="text-align: center;">Connect-PnPOnline, Get-PnPTenantSite, Get-PnPHubSite, Disconnect-PnPOnline</td>
-<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPTenantSite, Get-PnPHubSite, Disconnect-PnPOnline, m365 login, m365 status, m365 spo site list, m365 spo hubsite list, m365 logout</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">2</td>
 </tr>
 <tr>
 <td><a href="spo-export-hub-sites-details-to-csv/README.html">Get Hub Sites Information And Export It To CSV</a></td>
@@ -2028,6 +2061,17 @@
 <td style="text-align: center;">1</td>
 </tr>
 <tr>
+<td><a href="spo-get-termstores-hierarchy-using-csom/README.html">How to retrieve the hierarchy of all term stores for all levels?</a></td>
+<td style="text-align: center;">SharePoint, SharePoint Online, Termstores</td>
+<td style="text-align: center;">Data</td>
+<td style="text-align: center;">Microsoft.SharePoint.Client.ClientContext, Microsoft.SharePoint.Client.SharePointOnlineCredentials, GetTaxonomySession</td>
+<td style="text-align: center;">POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
 <td><a href="spo-get-usage-from-audit-logs/README.html">Gets usage from a particular user(s) or site(s) from the Unified Audit Log</a></td>
 <td style="text-align: center;">SharePoint, Graph</td>
 <td style="text-align: center;">Report</td>
@@ -2328,12 +2372,12 @@
 <td><a href="spo-reindex-sites/README.html">Reindex SharePoint sites</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Configure</td>
-<td style="text-align: center;">Connect-PnPOnline, Get-PnPTenantSite, Request-PnPReIndexWeb</td>
-<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPTenantSite, Request-PnPReIndexWeb, Disconnect-PnPOnline, m365 status, m365 login, m365 spo site list, m365 spo web reindex, m365 logout</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">2</td>
 </tr>
 <tr>
 <td><a href="spo-remove-custom-themes/README.html">Delete custom color themes from SharePoint</a></td>
@@ -2854,7 +2898,7 @@
 </tr>
 </tbody>
 </table>
-<p>There are <strong>249</strong> script scenarios with metadata in the site | Generated: 03 Mar 2024 12:31:56</p>
+<p>There are <strong>253</strong> script scenarios with metadata in the site | Generated: 10 Mar 2024 02:36:57</p>
 </article>
           </div>
         </div>

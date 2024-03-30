@@ -1371,7 +1371,7 @@
 <td><a href="spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/README.html">Deploying SPFx Packages from Tenant App Catalog to Hub Site and Associated Sites</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Modernize, Deploy, Provision, SPFx, Hub Site</td>
-<td style="text-align: center;">modern, Connect-PnPOnline, Disconnect-PnPOnline, Get-PnPTenantSite, Add-PnPApp, Get-PnPApp, Install-PnPApp, Update-PnPApp, Get-PnPHubSite, Get-PnPSite, Get-PnPTenant, Get-PnPWeb, Invoke-PnPSPRestMethod</td>
+<td style="text-align: center;">modern, Connect-PnPOnline, Disconnect-PnPOnline, Get-PnPTenantSite, Add-PnPApp, Get-PnPApp, Install-PnPApp, Update-PnPApp, Get-PnPHubSiteChild, Get-PnPWeb, Invoke-PnPSPRestMethod, Get-PnPTenantServicePrincipalPermissionRequests, Approve-PnPTenantServicePrincipalPermissionRequest</td>
 <td style="text-align: center;">PNP-POWERSHELL</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
@@ -1943,12 +1943,12 @@
 <td><a href="spo-get-customfields-lists/README.html">Get custom fields within lists and libraries within a site</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Data</td>
-<td style="text-align: center;">Connect-PnPOnline, Get-PnPList, Get-PnPField, Disconnect-PnPOnline</td>
-<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">Connect-PnPOnline, Get-PnPList, Get-PnPField, Disconnect-PnPOnline, m365 login, m365 status, m365 spo list list, m365 spo field list, m365 logout</td>
+<td style="text-align: center;">PNP-POWERSHELL, CLI-FOR-MICROSOFT365</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
-<td style="text-align: center;">-</td>
-<td style="text-align: center;">1</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">2</td>
 </tr>
 <tr>
 <td><a href="spo-get-files-and-creators-modifiers/README.html">Get all files in a Document Library along with Created By and Modified By</a></td>
@@ -2600,10 +2600,43 @@
 <td style="text-align: center;">1</td>
 </tr>
 <tr>
+<td><a href="spo-time-based-file-reports/README.html">M365 Consultant's Script Kit</a></td>
+<td style="text-align: center;">SharePoint</td>
+<td style="text-align: center;">Report</td>
+<td style="text-align: center;"><cmdlets-used>, Add-PnPFile, Connect-PnPOnline, Get-PnPList, Get-PnPListItem</cmdlets-used></td>
+<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
 <td><a href="spo-translate-list/README.html">Translate columns in a SharePoint list</a></td>
 <td style="text-align: center;">SharePoint</td>
 <td style="text-align: center;">Configure</td>
 <td style="text-align: center;">Document Library, Conversion, PDF, Add-PnPListItem, Connect-PnPOnline, Get-PnPList, Get-PnPListItem, Remove-PnPList, Remove-PnPListItem</td>
+<td style="text-align: center;">PNP-POWERSHELL</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td><a href="spo-trim-and-m365-archive-sitecollection/README.html">Trim file versions and archive Site Collection using Microsoft365 Archive</a></td>
+<td style="text-align: center;">SharePoint</td>
+<td style="text-align: center;">Provision, Configure</td>
+<td style="text-align: center;">Set-PnPSiteArchiveState, Remove-PnPFileVersion, Get-PnPFileVersion, Governance, SharePoint Premium</td>
+<td style="text-align: center;">pnp-powerShell</td>
+<td style="text-align: center;">👍</td>
+<td style="text-align: center;">🤷</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td><a href="spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/README.html">Retracting SPFx Solutions from Hub Site and associated sites</a></td>
+<td style="text-align: center;">SharePoint</td>
+<td style="text-align: center;">Modernize, Deploy, Remove, SPFx, Hub Site</td>
+<td style="text-align: center;">modern, Connect-PnPOnline, Disconnect-PnPOnline, Get-PnPHubSiteChild, Invoke-PnPSPRestMethod, Get-PnPApp, Uninstall-PnPApp, Remove-PnPApp, Get-PnPWeb, Get-PnPTenantSite, Invoke-PnPSPRestMethod</td>
 <td style="text-align: center;">PNP-POWERSHELL</td>
 <td style="text-align: center;">👍</td>
 <td style="text-align: center;">👍</td>
@@ -2898,7 +2931,7 @@
 </tr>
 </tbody>
 </table>
-<p>There are <strong>253</strong> script scenarios with metadata in the site | Generated: 17 Mar 2024 01:40:54</p>
+<p>There are <strong>256</strong> script scenarios with metadata in the site | Generated: 30 Mar 2024 09:49:04</p>
 </article>
           </div>
         </div>

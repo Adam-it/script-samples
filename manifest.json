@@ -5630,7 +5630,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/README.html",
-          "hash": "B+0/GLFVVfC7P4NfD0SPyA=="
+          "hash": "QrrcscGZ407jAljiJE6cCA=="
         }
       },
       "is_incremental": false,
@@ -7956,7 +7956,7 @@
       "output": {
         ".html": {
           "relative_path": "spo-get-customfields-lists/README.html",
-          "hash": "CV0HGd03RF5Bg3/T044IOQ=="
+          "hash": "O5T4UcSndCI2h+9CeajLwg=="
         }
       },
       "is_incremental": false,
@@ -10734,6 +10734,129 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-time-based-file-reports/README.html",
+          "hash": "rmznhyNddo2cSs5LZ/FO0A=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/APIPermissions.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/APIPermissions.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/CertificateSetup.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/CertificateSetup.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/CustomSPUrls.csv",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/CustomSPUrls.csv"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/OneDriveURLs.csv",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/OneDriveURLs.csv"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/OneDrivecsv.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/OneDrivecsv.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/Script2SPUrls.csv",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/Script2SPUrls.csv"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/runningexample.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/runningexample.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-time-based-file-reports/assets/singleLibrary.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-time-based-file-reports/assets/singleLibrary.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "../scripts/spo-translate-list/README.md",
       "output": {
         ".html": {
@@ -10828,6 +10951,98 @@
       "output": {
         "resource": {
           "relative_path": "spo-translate-list/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-trim-and-m365-archive-sitecollection/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-trim-and-m365-archive-sitecollection/README.html",
+          "hash": "j2AArGJODdeaYPFk+FBgVg=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-trim-and-m365-archive-sitecollection/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-trim-and-m365-archive-sitecollection/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-trim-and-m365-archive-sitecollection/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-trim-and-m365-archive-sitecollection/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-trim-and-m365-archive-sitecollection/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-trim-and-m365-archive-sitecollection/assets/sample.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../scripts/spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/README.html",
+          "hash": "+gOfxDmtS/MYZbs+RjJwOw=="
+        }
+      },
+      "is_incremental": false,
+      "version": "",
+      "plugin": "add-to-gallery"
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/assets/example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/assets/example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/assets/preview.png",
+      "output": {
+        "resource": {
+          "relative_path": "spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/assets/preview.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../scripts/spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/assets/sample.json",
+      "output": {
+        "resource": {
+          "relative_path": "spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/assets/sample.json"
         }
       },
       "is_incremental": false,
@@ -12855,7 +13070,7 @@
       "output": {
         ".html": {
           "relative_path": "cmdusage.html",
-          "hash": "yGm5lNsT+qXfaDD+6uEi5w=="
+          "hash": "vsz/J+TIAszVPRx8wR4NvQ=="
         }
       },
       "is_incremental": false,
@@ -12988,7 +13203,7 @@
       "output": {
         ".html": {
           "relative_path": "matrix.html",
-          "hash": "EmshyMIDv+T7TBDCVLjvGQ=="
+          "hash": "GODxfD8agXFbW5keO7rovQ=="
         }
       },
       "is_incremental": false,
@@ -13000,7 +13215,7 @@
       "output": {
         ".html": {
           "relative_path": "metadata.html",
-          "hash": "GT+T0WShwTkhTVQqhmn6wA=="
+          "hash": "e5urQGFXcSNJwS811HxMZA=="
         }
       },
       "is_incremental": false,

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8">
     <title>Sample on a report showing how much SharePoint Storage you can save by trimming document versions once the site is no longer active | PnP Samples </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" "="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="title" content="Sample on a report showing how much SharePoint Storage you can save by trimming document versions once the site is no longer active | PnP Samples ">
     <meta name="generator" content="docfx 2.56.7.0">
     <meta name="description" content="A sample gallery of scripts to manage all things Microsoft 365.">
@@ -116,15 +116,9 @@
 <a href="#tabpanel_CeZOj-G++Q_pnpps" role="tab" aria-controls="tabpanel_CeZOj-G++Q_pnpps" data-tab="pnpps" tabindex="0" aria-selected="true">PnP.PowerShell</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_pnpps" role="tabpanel" data-tab="pnpps"><button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="section[id^='tabpanel'][data-tab='pnpps'] pre">
-    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
-    <span class="article-clipboard__message done">Copied</span>
-</button>
+<section id="tabpanel_CeZOj-G++Q_pnpps" role="tabpanel" data-tab="pnpps">
 
 <pre><code class="lang-powershell">
-
-
-
 #The purpose of this script is to crete an overview: The total amount of SharePoint Storage used by this Site Collection, and how much could be saved by trimming the versions
 
 #Set Variables
@@ -328,9 +322,25 @@ Try {
                 HandleWeb -site $Site -web $web -root $false 
             
             }
-            if($outputArray.Count -gt 0)
+             if($outputArray.Count -gt 0)
             {
-                $outputArray  | Export-Csv -Path &quot;$outputPath/$index.csv&quot; -Force -Encoding utf8BOM -Delimiter &quot;|&quot;
+                #calculate the total size of the potential savings
+                $totalSize = 0
+                $totalSizeReduced = 0
+                foreach($element in $outputArray)
+                {
+                    $totalSize = $totalSize + $element.TotalFileSize
+                    $totalSizeReduced = $totalSizeReduced + $element.TotalFileSizeReduced
+                }
+                $totalSize = [Math]::Round($totalSize,2)
+                $totalSizeReduced = [Math]::Round($totalSizeReduced,2)
+                $savings = $totalSize - $totalSizeReduced
+                $savings=[Math]::Round($savings,0)
+
+                #$outputArray  | Export-Csv -Path &quot;$outputPath/$index.csv&quot; -Force -Encoding utf8BOM -Delimiter &quot;|&quot;
+                $shortSiteUrl = $SiteURL.Split(&quot;/&quot;)[-1]
+                $outputArray  | Export-Csv -Path &quot;$outputPath/$shortSiteUrl($savings).csv&quot; -Force -Encoding utf8BOM -Delimiter &quot;|&quot;
+                
             }
             
         }
@@ -348,16 +358,12 @@ Catch {
 }
 
 
-
-
-
-
-
-
-
 </code></pre>
 <div class="highlight-tool">
 <p>Check out the <strong>PnP PowerShell</strong> to learn more at: <a href="https://aka.ms/pnp/powershell">https://aka.ms/pnp/powershell</a></p>
+</div>
+<div class="highlight-tool">
+<p>The way you login into PnP PowerShell has changed please read <a href="https://github.com/pnp/powershell/discussions/4249">PnP Management Shell EntraID app is deleted : what should I do ?</a></p>
 </div>
 </section>
 </div>

@@ -348,6 +348,12 @@ $(function () {
         $('#navbar ul a.active').parents('li').addClass(active);
         renderBreadcrumb();
         showSearch();
+
+        // if window url is site root then set first item in navbar to active
+        if (window.location.pathname === '/' || window.location.pathname === '/script-samples/') {
+          $('#navbar ul li:first-child').addClass(active);
+        }
+
       }
       
       function showSearch() {
@@ -1196,4 +1202,29 @@ $(function () {
           $('a:not([data-tab])').click(function (e) { delegateAnchors(e); });
       });
     }
+
+    // Hide the contribution panel on home page, by-tool, by-product pages
+    if (window.location.pathname === '/' || window.location.pathname === '/index.html'  || window.location.pathname === '/by-tool.html' 
+        || window.location.pathname === '/by-product.html' || window.location.pathname === '/compact-view.html' ||
+        window.location.pathname === '/script-samples/' || window.location.pathname === '/script-samples/index.html'  || window.location.pathname === '/script-samples/by-tool.html' 
+        || window.location.pathname === '/script-samples/by-product.html' || window.location.pathname === '/script-samples/compact-view.html') {
+      $('.contribution-panel').hide();
+    }
+
+    // Note: THis will be redundant in newer versions of docfx, check and remove if not needed
+    // Add Clipboard Icon
+    var clipboardHtmlTemplate = '<button class="article-clipboard" title="Copy to clipboard" data-toggle="tooltip" data-placement="top" data-clipboard-target="{{targetElement}}">'+
+        '<span class="glyphicon glyphicon-copy" aria-hidden="true"></span>' +
+        '<span class="article-clipboard__message done">Copied</span>' +
+    '</button>';
+
+    // Find all section[id^='tabpanel'] elements and add clipboard icon to them
+    $('section[id^="tabpanel"]').each(function() {
+      var targetElement = $(this).attr('data-tab');
+      var targetId = "section[id^='tabpanel'][data-tab='" + targetElement + "'] pre";
+      var clipboardScriptInstanceHtml = clipboardHtmlTemplate.replace(/{{targetElement}}/g, targetId); 
+      $(this).prepend(clipboardScriptInstanceHtml);
+    });
+
+
   });

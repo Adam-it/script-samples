@@ -18,7 +18,8 @@
       "Teams",
       "Power Automate",
       "Microsoft Todo",
-      "Azure"
+      "Azure",
+      "Microsoft 365 Copilot"
     ],
     "metadata": [
       {
@@ -56,6 +57,14 @@
       {
         "key": "MICROSOFTWHITEBOARDADMIN",
         "value": "1.5.0"
+      },
+      {
+        "key": "BASH",
+        "value": "NA"
+      },
+      {
+        "key": "PYTHON",
+        "value": "3.13.3"
       }
     ],
     "categories": [
@@ -65,7 +74,9 @@
       "Provision",
       "Configure",
       "Report",
-      "Security"
+      "Security",
+      "AI",
+      "Microsoft 365 Copilot"
     ],
     "tags": [
       "<Cmdlets-Used>"
@@ -91,7 +102,7 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
-      },
+      },      
       {
         "name": "Want to learn more about CLI for Microsoft 365 and the commands",
         "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
@@ -126,6 +137,11 @@
         "name":"Want to learn more about Whiteboard Admin cmdlets",
         "description":"Check out the Whiteboard Admin cmdlets documentation site to get started and for the reference to the commands.",
         "url": "https://learn.microsoft.com/powershell/module/whiteboard"
+      },
+      {
+        "name":"Want to learn more about Teams Toolkit CLI",
+        "description":"Check out the documentation site to get started and for the reference on performing operations on agents",
+        "url": "https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/teams-toolkit-cli?pivots=version-three"
       }
     ]
   }

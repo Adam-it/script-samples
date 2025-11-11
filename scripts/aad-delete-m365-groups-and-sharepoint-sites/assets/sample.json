@@ -7,7 +7,7 @@
     "title": "Delete all Microsoft 365 groups and SharePoint sites",
     "url": "https://pnp.github.io/script-samples/aad-delete-m365-groups-and-sharepoint-sites/README.html",
     "creationDateTime": "2021-03-15",
-    "updateDateTime": "2024-03-10",
+    "updateDateTime": "2025-11-10",
     "shortDescription": "Sample shows how you can delete Microsoft 365 Groups and associated SharePoint Online sites in your development environment",
     "longDescription": null,
     "products": [
@@ -40,7 +40,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "7.5.0"
+        "value": "11.0.0"
       }
     ],
     "thumbnails": [
@@ -64,6 +64,12 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
         "name": "Reshmee Auckloo"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

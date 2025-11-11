@@ -1,5 +1,3 @@
-
-
 # Delete all Microsoft 365 groups and SharePoint sites
 
 ## Summary
@@ -50,28 +48,82 @@ Disconnect-PnPOnline
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 
 ```powershell
-#Get Credentials to connect
-$m365Status = m365 status
-if ($m365Status -match "Logged Out") {
-    m365 login
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $false, ValueFromPipeline, ValueFromPipelineByPropertyName, HelpMessage = "Display name filter used to select Microsoft 365 groups for deletion.")]
+    [string[]]$DisplayNameFilter = @("Permission"),
+    [Parameter(Mandatory = $false, HelpMessage = "Skip interactive confirmation before deleting groups.")]
+    [switch]$Force,
+    [Parameter(Mandatory = $false, HelpMessage = "Permanently delete groups without placing them in the recycle bin.")]
+    [switch]$HardDelete
+)
+
+begin {
+    try {
+        m365 login --ensure
+    }
+    catch {
+        Write-Error "Unable to establish a CLI for Microsoft 365 session. $_"
+        return
+    }
+
+    $script:totalMatched = 0
+    $script:totalDeleted = 0
+    $script:totalFailed = 0
 }
 
-#Retrieve all M365 groups where display name starts with "Permission" (you can use filter as per your requirements)
-$groups = m365 entra m365group list --displayName Permission | ConvertFrom-Json
+process {
+    foreach ($filter in $DisplayNameFilter) {
+        $groups = m365 entra m365group list --displayName "$filter" --output json | ConvertFrom-Json
+        $groups = @($groups)
 
-#Displaying the M365 groups returned to be deleted
-$groups | Format-Table displayName, id, mail
+        if (-not $groups) {
+            Write-Warning "No Microsoft 365 groups found matching display name filter: $filter"
+            continue
+        }
 
-Read-Host -Prompt "Press Enter to start deleting M365 groups and associated SharePoint sites (CTRL + C to exit)"
+        $script:totalMatched += $groups.Count
 
-$groups | ForEach-Object {
-	#Permanently delete M365 group and associated SharePoint site without prompting for confirmation and without moving it to the Recycle Bin
-	Write-Host "Deleting M365 group: $($_.displayName)"
-	m365 entra m365group remove --id $_.id --force --skipRecycleBin
+        Write-Host "Microsoft 365 groups scheduled for deletion using filter '$filter':"
+        $groups | Format-Table displayName, id, mail
+
+        if ($HardDelete.IsPresent) {
+            Write-Warning "Hard delete is enabled. Groups will be permanently removed and cannot be recovered."
+        }
+
+        if (-not $Force.IsPresent) {
+            Read-Host -Prompt "Press Enter to start deleting M365 groups and associated SharePoint sites for filter '$filter' (CTRL + C to exit)"
+        }
+
+        $groups | ForEach-Object {
+            $removeArgs = @('entra', 'm365group', 'remove', '--id', $_.id, '--force')
+            if ($HardDelete.IsPresent) {
+                $removeArgs += '--skipRecycleBin'
+                Write-Host "Permanently deleting M365 group: $($_.displayName)"
+            }
+            else {
+                Write-Host "Soft deleting M365 group (moved to recycle bin): $($_.displayName)"
+            }
+
+            & m365 @removeArgs
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to delete M365 group: $($_.displayName) ($($_.id)). Exit code: $LASTEXITCODE"
+                $script:totalFailed++
+                continue
+            }
+            Write-Host "Deleted M365 group: $($_.displayName)"
+            $script:totalDeleted++
+        }
+    }
 }
 
-#Disconnect SharePoint online connection
-m365 logout
+end {
+    Write-Host "Deletion summary:"
+    Write-Host (" - Matched groups: {0}" -f $script:totalMatched)
+    Write-Host (" - Successfully deleted: {0}" -f $script:totalDeleted)
+    Write-Host (" - Failed deletions: {0}" -f $script:totalFailed)
+}
+
 ```
 
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
@@ -84,6 +136,7 @@ m365 logout
 |-----------|
 | Reshmee Auckloo |
 | [Ganesh Sanap](https://ganeshsanapblogs.wordpress.com/) |
+| Adam Wójcik |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/aad-delete-m365-groups-and-sharepoint-sites" aria-hidden="true" />

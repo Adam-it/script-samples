@@ -143,6 +143,123 @@ catch
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
 ***
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+    [Parameter(Mandatory, HelpMessage = "URL of the SharePoint site that hosts the library.")]
+    [string]$SiteUrl,
+
+    [Parameter(Mandatory, HelpMessage = "Server- or site-relative URL of the target library or folder.")]
+    [string]$TargetFolderUrl,
+
+    [Parameter(Mandatory, HelpMessage = "Local path to the seed file that will be duplicated.")]
+    [string]$SourceFilePath,
+
+    [Parameter(Mandatory, HelpMessage = "Number of dummy files (or folders) to create.")]
+    [ValidateRange(1, [int]::MaxValue)]
+    [int]$ItemCount,
+
+    [Parameter(HelpMessage = "When provided, a folder will be created per item before uploading the file.")]
+    [switch]$CreateFolders
+)
+
+begin {
+    if (-not (Test-Path -Path $SourceFilePath -PathType Leaf)) {
+        throw "Seed file not found at path: $SourceFilePath"
+    }
+
+    m365 login --ensure
+
+    $script:Summary = [ordered]@{
+        ItemsRequested  = $ItemCount
+        FoldersCreated  = 0
+        FilesUploaded   = 0
+        ItemsSimulated  = 0
+        Failures        = 0
+    }
+
+    $script:SeedFile = Get-Item -Path $SourceFilePath
+    $script:SeedBase = [System.IO.Path]::GetFileNameWithoutExtension($SeedFile.Name)
+    $script:SeedExt  = $SeedFile.Extension
+
+    Write-Host "Preparing to create $ItemCount item(s) in '$TargetFolderUrl'"
+    if ($CreateFolders) {
+        Write-Host "Each item will reside in its own folder."
+    }
+}
+
+process {
+    for ($index = 1; $index -le $ItemCount; $index++) {
+        $safeIndex = '{0:D4}' -f $index
+        $folderUrl = $TargetFolderUrl
+
+        if ($CreateFolders) {
+            $folderName = "$SeedBase-$safeIndex"
+            $folderUrl = if ($TargetFolderUrl.StartsWith('/')) {
+                "$TargetFolderUrl/$folderName"
+            } else {
+                "$TargetFolderUrl/$folderName"
+            }
+
+            if ($PSCmdlet.ShouldProcess($folderUrl, 'Create folder')) {
+                $folderResult = m365 spo folder add --webUrl $SiteUrl --parentFolderUrl $TargetFolderUrl --name $folderName --output json 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Warning "Failed to create folder '$folderName'. CLI: $folderResult"
+                    $Summary.Failures++
+                    continue
+                }
+                $Summary.FoldersCreated++
+            } else {
+                Write-Host "  WhatIf: folder creation skipped."
+            }
+        }
+
+        $newFileName = "$SeedBase-$safeIndex$SeedExt"
+        $targetDescription = "$folderUrl/$newFileName"
+
+        if ($PSCmdlet.ShouldProcess($targetDescription, 'Upload file')) {
+            $tempFile = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath $newFileName
+            try {
+                Copy-Item -Path $SeedFile.FullName -Destination $tempFile -Force
+
+                $uploadResult = m365 spo file add --webUrl $SiteUrl --folder $folderUrl --path $tempFile --output json 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Warning "Failed to upload file '$newFileName'. CLI: $uploadResult"
+                    $Summary.Failures++
+                    continue
+                }
+
+                $Summary.FilesUploaded++
+            }
+            finally {
+                Remove-Item -Path $tempFile -ErrorAction SilentlyContinue
+            }
+        } else {
+            Write-Host "  WhatIf: upload skipped."
+            $Summary.ItemsSimulated++
+        }
+    }
+}
+
+end {
+    Write-Host "Creation summary:" -ForegroundColor Cyan
+    Write-Host ("  Items requested : {0}" -f $Summary.ItemsRequested)
+    if ($CreateFolders) {
+        Write-Host ("  Folders created : {0}" -f $Summary.FoldersCreated)
+    }
+    Write-Host ("  Files uploaded  : {0}" -f $Summary.FilesUploaded)
+    if ($Summary.ItemsSimulated -gt 0) {
+        Write-Host ("  Items simulated : {0}" -f $Summary.ItemsSimulated)
+    }
+    Write-Host ("  Failures        : {0}" -f $Summary.Failures)
+}
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+***
+
 
 ## Contributors
 

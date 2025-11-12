@@ -9,7 +9,7 @@
       "This script sample can be useful to upload dummy documents to SP library by auto incrementing file name based up until maxCount"
     ],
     "creationDateTime": "2021-12-15",
-    "updateDateTime": "2021-12-15",
+    "updateDateTime": "2025-11-11",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.6.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -25,7 +29,10 @@
     "tags": [
       "Connect-PnPOnline",
       "Add-PnPFile",
-      "Add-PnPFolder"
+      "Add-PnPFolder",
+      "m365 login",
+      "m365 spo folder add",
+      "m365 spo file add"
     ],
     "thumbnails": [
       {
@@ -40,6 +47,11 @@
         "gitHubAccount": "siddharth-vaghasia",
         "pictureUrl": "https://avatars.githubusercontent.com/u/9557557?s=400&u=cbb0afefedb5a1d5db510a2e5e6579c8e6fc66ad&v=4",
         "name": "Siddharth Vaghasia"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/45694692?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -47,6 +59,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

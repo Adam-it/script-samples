@@ -9,7 +9,7 @@
       ""
     ],
     "creationDateTime": "2021-06-25",
-    "updateDateTime": "2022-03-31",
+    "updateDateTime": "2025-11-11",
     "products": [
       "SharePoint"
     ],
@@ -19,8 +19,8 @@
         "value": "1.5.0"
       },
       {
-        "key": "cli-for-microsoft365",
-        "value": "5.1.0"
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -33,7 +33,6 @@
       "Get-PnPRecycleBinItem",
       "Restore-PnPRecycleBinItem",
       "m365 login",
-      "m365 status",
       "m365 spo site recyclebinitem list",
       "m365 spo site recyclebinitem restore"
     ],

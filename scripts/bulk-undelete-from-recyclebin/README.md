@@ -34,22 +34,102 @@ Connect-PnPOnline -Url  $siteUrl
 
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 ```powershell
-# aim of this script is to restore items which were deleted by specific user
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+    [Parameter(Mandatory, HelpMessage = "URL of the SharePoint site recycle bin to inspect.")]
+    [string]$SiteUrl,
 
-$siteURL = "https://tenant.sharepoint.com/sites/Dataverse"
-$userEmailAddress = "user@tenant.onmicrosoft.com"
+    [Parameter(HelpMessage = "Filter results to items deleted by this email address.")]
+    [string]$DeletedByEmail,
 
-$m365Status = m365 status
-if ($m365Status -match "Logged Out") {
-    m365 login
+    [switch]$IncludeSecondStage
+)
+
+begin {
+    m365 login --ensure
+
+    $script:CollectedItems = [System.Collections.Generic.List[psobject]]::new()
+    $script:Summary = [ordered]@{
+        Site              = $SiteUrl
+        StagesQueried     = if ($IncludeSecondStage) { 'FirstStage,SecondStage' } else { 'FirstStage' }
+        DeletedByFilter   = if ($DeletedByEmail) { $DeletedByEmail } else { 'None' }
+        ItemsFound        = 0
+        ItemsRestored     = 0
+        ItemsFailed       = 0
+        ItemsSimulated    = 0
+    }
+
+    Write-Host "Gathering recycle bin items from $SiteUrl"
+    if ($DeletedByEmail) {
+        Write-Host "Filtering to items deleted by $DeletedByEmail"
+    }
 }
 
-$deletedItems = m365 spo site recyclebinitem list --siteUrl $siteURL --query "[?DeletedByEmail == '$userEmailAddress']" | ConvertFrom-Json
-$deletedItemsIdList = [String]::Join(',', $deletedItems.Id)
+process {
+    $stages = if ($IncludeSecondStage) { 'FirstStage', 'SecondStage' } else { 'FirstStage' }
 
-Write-Host "Restoring is in progress for Items: $deletedItemsIdList"
-m365 spo site recyclebinitem restore --siteUrl $siteURL --ids $deletedItemsIdList
-Write-Host "Done"
+    foreach ($stage in $stages) {
+        Write-Host "Retrieving $stage items..."
+        $listArgs = @('spo', 'site', 'recyclebinitem', 'list', '--siteUrl', $SiteUrl, '--stage', $stage, '--output', 'json')
+        if ($DeletedByEmail) {
+            $listArgs += @('--query', "[?DeletedByEmail == '$DeletedByEmail']")
+        }
+
+        $listOutput = & m365 @listArgs 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to list $stage items. CLI: $listOutput"
+            continue
+        }
+
+        $items = if ([string]::IsNullOrWhiteSpace($listOutput)) { @() } else { @($listOutput | ConvertFrom-Json) }
+        foreach ($item in $items) {
+            $CollectedItems.Add([pscustomobject]@{
+                Stage          = $stage
+                Id             = $item.Id
+                Title          = $item.Title
+                ItemType       = $item.ItemType
+                DeletedByEmail = $item.DeletedByEmail
+            })
+        }
+    }
+}
+
+end {
+    if ($CollectedItems.Count -eq 0) {
+        Write-Host "No recycle bin items matched the provided criteria. Nothing to restore."
+        return
+    }
+
+    $uniqueItems = $CollectedItems | Sort-Object Id -Unique
+    $Summary.ItemsFound = $uniqueItems.Count
+
+    Write-Host "Items ready for restore ($($uniqueItems.Count)):"
+    foreach ($item in $uniqueItems) {
+        Write-Host "  [$($item.Stage)] Id=$($item.Id) Title=$($item.Title)"
+    }
+
+    $ids = ($uniqueItems | Select-Object -ExpandProperty Id) -join ','
+    $actionDescription = "Restore {0} recycle bin item(s)" -f $uniqueItems.Count
+
+    if (-not $PSCmdlet.ShouldProcess($SiteUrl, $actionDescription)) {
+        $Summary.ItemsSimulated = $uniqueItems.Count
+        Write-Host "WhatIf: restore skipped."
+    } else {
+        Write-Host "Submitting restore request..."
+        $restoreArgs = @('spo', 'site', 'recyclebinitem', 'restore', '--siteUrl', $SiteUrl, '--ids', $ids, '--output', 'json')
+        $restoreOutput = & m365 @restoreArgs 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to restore items. CLI: $restoreOutput"
+            $Summary.ItemsFailed = $uniqueItems.Count
+        } else {
+            $Summary.ItemsRestored = $uniqueItems.Count
+            Write-Host "Restore complete."
+        }
+    }
+
+    Write-Host ("Summary: {0} items found, {1} restored, {2} simulated, {3} failed." -f `
+        $Summary.ItemsFound, $Summary.ItemsRestored, $Summary.ItemsSimulated, $Summary.ItemsFailed)
+}
 ```
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
 

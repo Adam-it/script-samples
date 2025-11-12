@@ -59,6 +59,92 @@ foreach($hit in $hits)
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
 ***
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+    [Parameter(Mandatory, HelpMessage = "Name of the Microsoft Search external connection.")]
+    [string]$ConnectionName,
+
+    [Parameter(Mandatory, HelpMessage = "Entity type to filter on (for example externalItem).")]
+    [ValidateNotNullOrEmpty()]
+    [string]$EntityType,
+
+    [Parameter(HelpMessage = "Maximum number of items to export (default 100).")]
+    [ValidateRange(1, 10000)]
+    [int]$Top = 100,
+
+    [Parameter(HelpMessage = "Comma separated list of additional fields to include in the export.")]
+    [string[]]$Fields,
+
+    [Parameter(HelpMessage = "Local path of the CSV file that will contain the exported data.")]
+    [string]$OutputPath = (Join-Path -Path (Get-Location) -ChildPath 'search-export.csv')
+)
+
+begin {
+    $script:Summary = [ordered]@{
+        Connection   = $ConnectionName
+        EntityType   = $EntityType
+        ItemsFetched = 0
+        Failures     = 0
+    }
+
+    m365 login --ensure
+
+    if ($PSCmdlet.ShouldProcess($OutputPath, 'Initialize output file')) {
+        if (Test-Path -Path $OutputPath) {
+            Remove-Item -Path $OutputPath -Force
+        }
+    }
+
+    Write-Host "Exporting search data from '$ConnectionName' (entity type '$EntityType')" -ForegroundColor Cyan
+}
+
+process {
+    $arguments = [System.Collections.Generic.List[string]]::new()
+    $arguments.AddRange(@('search','external','item','list','--connection', $ConnectionName,'--entityType', $EntityType,'--top', "$Top",'--output','json'))
+
+    if ($Fields) {
+        $arguments.Add('--fields')
+        $arguments.Add($Fields -join ',')
+    }
+
+    $result = (& m365 $arguments.ToArray()) 2>&1
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to retrieve search data. CLI: $result"
+        $Summary.Failures++
+        return
+    }
+
+    $items = if ([string]::IsNullOrWhiteSpace($result)) { @() } else { $result | ConvertFrom-Json }
+
+    if (-not $items) {
+        Write-Host "No items returned for the specified query."
+        return
+    }
+
+    $Summary.ItemsFetched += $items.Count
+
+    if ($PSCmdlet.ShouldProcess($OutputPath, "Append $($items.Count) item(s)")) {
+        $items | ConvertTo-Csv -NoTypeInformation | Out-File -FilePath $OutputPath -Encoding UTF8 -Append
+    }
+}
+
+end {
+    Write-Host "Export complete." -ForegroundColor Green
+    Write-Host ("  Connection   : {0}" -f $Summary.Connection)
+    Write-Host ("  Entity Type  : {0}" -f $Summary.EntityType)
+    Write-Host ("  Items fetched: {0}" -f $Summary.ItemsFetched)
+    Write-Host ("  Failures     : {0}" -f $Summary.Failures)
+    Write-Host ("  Output file  : {0}" -f $OutputPath)
+}
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+***
+
 
 ## Contributors
 

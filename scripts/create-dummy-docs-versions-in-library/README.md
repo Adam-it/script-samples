@@ -199,112 +199,201 @@ catch
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 
 ```powershell
-# Usage example:
-#   .\Create-Bulk-Dummy-Documents.ps1 -WebUrl "https://contoso.sharepoint.com/sites/Intranet" -ListTitle "Documents" -ServerRelativeUrl "/sites/intranet/Shared Documents" -Type File -ItemsToCreate 5 -MajorVersions 6 -MinorVersionBeforeMajor 3 -FileToUse "D:\Temp\DummyFile.docx"
-#   .\Create-Bulk-Dummy-Documents.ps1 -WebUrl "https://contoso.sharepoint.com/sites/Intranet" -ListTitle "Documents" -ServerRelativeUrl "/sites/intranet/Shared Documents" -Type Folder -ItemsToCreate 5 -MajorVersions 6 -MinorVersionBeforeMajor 3 -FileToUse "D:\Temp\DummyFile.docx"
-[CmdletBinding()]
+# .\Create-DummyDocsWithVersions.ps1 -WebUrl "https://contoso.sharepoint.com/sites/Intranet" -ListTitle "Documents" -ServerRelativeUrl "/sites/intranet/Shared Documents" -ItemType File -ItemCount 5 -MajorVersions 3 -MinorVersionsPerMajor 2 -SourceFilePath "C:\\Temp\\Sample.docx"
+[CmdletBinding(SupportsShouldProcess = $true)]
 param (
-  [Parameter(Mandatory = $true, HelpMessage = "Web url from which to create the files, e.g. https://contoso.sharepoint.com/sites/Intranet")]
+  [Parameter(Mandatory = $true, HelpMessage = "SharePoint site URL hosting the library")]
+  [ValidateNotNullOrEmpty()]
   [string]$WebUrl,
-  [Parameter(Mandatory = $true, HelpMessage = "Title of the list on which to create the documents or files")]
+  [Parameter(Mandatory = $true, HelpMessage = "Display name of the target document library")]
+  [ValidateNotNullOrEmpty()]
   [string]$ListTitle,
-  [Parameter(Mandatory = $true, HelpMessage = "Server relative URL of the folder in which to create the documents")]
+  [Parameter(Mandatory = $true, HelpMessage = "Server-relative URL of the folder that will host the generated items")]
+  [ValidateNotNullOrEmpty()]
   [string]$ServerRelativeUrl,
-  [Parameter(Mandatory = $true, HelpMessage = "Type of content to create, possible values are 'file' or 'folder'")]
-  [ValidateSet("File","Folder","file","folder")]
-  [string]$Type,
-  [Parameter(Mandatory = $true, HelpMessage = "Amount of items to create")]
-  [int]$ItemsToCreate,
-  [Parameter(Mandatory = $true, HelpMessage = "Amount of major versions to create")]
+  [Parameter(Mandatory = $true, HelpMessage = "Type of item to generate")]
+  [ValidateSet('File','Folder', IgnoreCase = $true)]
+  [string]$ItemType,
+  [Parameter(Mandatory = $true, HelpMessage = "Number of items to create")]
+  [ValidateRange(1, [int]::MaxValue)]
+  [int]$ItemCount,
+  [Parameter(Mandatory = $true, HelpMessage = "Number of major version cycles per item")]
+  [ValidateRange(1, [int]::MaxValue)]
   [int]$MajorVersions,
-  [Parameter(Mandatory = $true, HelpMessage = "This will define the amount of minor versions that will be created before a major version is added")]
-  [int]$MinorVersionBeforeMajor,
-  [Parameter(Mandatory = $true, HelpMessage = "Path of the file to use when creating versions")]
-  [string]$FileToUse
+  [Parameter(Mandatory = $true, HelpMessage = "Number of minor versions created before each major version")]
+  [ValidateRange(1, [int]::MaxValue)]
+  [int]$MinorVersionsPerMajor,
+  [Parameter(Mandatory = $true, HelpMessage = "Local path to the template document used for uploads")]
+  [ValidateNotNullOrEmpty()]
+  [string]$SourceFilePath,
+  [Parameter(HelpMessage = "Prefix applied to generated file and folder names")]
+  [ValidateNotNullOrEmpty()]
+  [string]$NamePrefix = 'Dummy'
 )
+
 begin {
-  $m365Status = m365 status 
-  if ($m365Status -match "Logged Out") {
-    m365 login
+  Write-Host "Ensuring CLI for Microsoft 365 session..." -ForegroundColor Cyan
+  m365 login --ensure --output json | Out-Null
+  Write-Host "Authenticated. Resolving library context." -ForegroundColor Green
+
+  if (-not (Test-Path -LiteralPath $SourceFilePath -PathType Leaf)) {
+    throw "Source file '$SourceFilePath' not found."
   }
-  Write-Host "Initialization done, time to create versions!" -f Green 
+
+  $listRaw = m365 spo list get --webUrl $WebUrl --title $ListTitle --output json 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to retrieve list '$ListTitle'. CLI output: $listRaw"
+  }
+
+  $Script:List = $listRaw | ConvertFrom-Json
+
+  if (-not $Script:List.EnableVersioning -or -not $Script:List.EnableMinorVersions) {
+    Write-Host "Enabling major/minor versioning on '$ListTitle'." -ForegroundColor Yellow
+    $listUpdate = m365 spo list set --webUrl $WebUrl --id $Script:List.Id --enableVersioning $true --enableMinorVersions $true --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to update library settings. CLI output: $listUpdate"
+    }
+  }
+
+  $Script:TargetFolderUrl = $ServerRelativeUrl.TrimEnd('/')
+  $Script:FileExtension = [System.IO.Path]::GetExtension($SourceFilePath)
+  if ([string]::IsNullOrWhiteSpace($Script:FileExtension)) {
+    $Script:FileExtension = '.dat'
+  }
+
+  $Script:Summary = [ordered]@{
+    ItemsPlanned    = $ItemCount
+    FoldersCreated  = 0
+    FilesCreated    = 0
+    VersionsCreated = 0
+    Failures        = 0
+  }
+
+  Write-Host "Processing $ItemCount $ItemType item(s) inside '$ServerRelativeUrl'." -ForegroundColor Cyan
 }
+
 process {
-  
-  function New-Versions {
+  function Invoke-VersionAction {
     param (
       [Parameter(Mandatory = $true)]
       [string]$FileUrl,
       [Parameter(Mandatory = $true)]
-      [int]$Counter
+      [ValidateSet('Minor','Major')]
+      [string]$Type,
+      [string]$Comment = 'Auto-generated version'
     )
-  
-    # Have to first check out, else it throws an error 'Error: The file "Shared Documents/1.docx" is not checked out'
-    m365 spo file checkout --webUrl $WebUrl --fileUrl $FileUrl | Out-Null
-    m365 spo file checkin --webUrl $WebUrl --fileUrl $FileUrl --type Major --comment "First major version check in" | Out-Null
-    
-    # Creating versions
-    for ($i = 1; $i -lt ($MajorVersions + 1); $i++) {
-      Write-Progress -Activity "Creating versions" -Status "$Counter/$ItemsToCreate files created. Creating major version $i/$MajorVersions" -PercentComplete (($Counter / $ItemsToCreate) * 100)
-      for ($j = 1; $j -lt ($MinorVersionBeforeMajor + 1); $j++) {
-        Write-Progress -Activity "Creating versions" -Status "$Counter/$ItemsToCreate files created. Processing major version $i/$MajorVersions, Creating minor version $j/$MinorVersionBeforeMajor" -PercentComplete (($Counter / $ItemsToCreate) * 100)
-        # Create minor version here
-        m365 spo file checkout --webUrl $WebUrl --fileUrl $FileUrl | Out-Null
-        m365 spo file checkin --webUrl $WebUrl --fileUrl $FileUrl --type Minor --comment "Check in of minor version $j" | Out-Null
+
+    if (-not $PSCmdlet.ShouldProcess($FileUrl, "Create $Type version")) {
+      return $true
+    }
+
+    $checkout = m365 spo file checkout --webUrl $WebUrl --url $FileUrl --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      $Script:Summary.Failures++
+      Write-Warning "Failed to check out '$FileUrl'. CLI output: $checkout"
+      return $false
+    }
+
+    $checkin = m365 spo file checkin --webUrl $WebUrl --url $FileUrl --type $Type --comment $Comment --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      $Script:Summary.Failures++
+      Write-Warning "Failed to check in $Type version for '$FileUrl'. CLI output: $checkin"
+      return $false
+    }
+
+    $Script:Summary.VersionsCreated++
+    return $true
+  }
+
+  function Invoke-Upload {
+    param (
+      [Parameter(Mandatory = $true)]
+      [string]$DestinationFolder,
+      [Parameter(Mandatory = $true)]
+      [string]$LeafName,
+      [Parameter(Mandatory = $true)]
+      [string]$FileUrl
+    )
+
+    if (-not $PSCmdlet.ShouldProcess($FileUrl, 'Upload file')) {
+      return $true
+    }
+
+    $upload = m365 spo file add --webUrl $WebUrl --folder $DestinationFolder --path $SourceFilePath --FileLeafRef $LeafName --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      $Script:Summary.Failures++
+      Write-Warning "Failed to upload '$LeafName'. CLI output: $upload"
+      return $false
+    }
+
+    return $true
+  }
+
+  for ($index = 1; $index -le $ItemCount; $index++) {
+    $progressPercent = [math]::Round(($index / $ItemCount) * 100, 2)
+    Write-Progress -Activity "Creating items" -Status "Processing item $index of $ItemCount" -PercentComplete $progressPercent
+
+    $baseName = "{0}-{1}" -f $NamePrefix, $index
+    $destination = $Script:TargetFolderUrl
+
+    if ($ItemType.Equals('Folder', 'InvariantCultureIgnoreCase')) {
+      $destination = "$($Script:TargetFolderUrl)/$baseName"
+      if ($PSCmdlet.ShouldProcess($destination, 'Create folder')) {
+        $folder = m365 spo folder add --webUrl $WebUrl --parentFolderUrl $Script:TargetFolderUrl --name $baseName --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+          $Script:Summary.Failures++
+          Write-Warning "Failed to create folder '$baseName'. CLI output: $folder"
+          continue
+        }
+        $Script:Summary.FoldersCreated++
       }
-      m365 spo file checkout --webUrl $WebUrl --fileUrl $FileUrl | Out-Null
-      m365 spo file checkin --webUrl $WebUrl --fileUrl $FileUrl --type Major --comment "Check in of major version $i" | Out-Null
+      else {
+        $Script:Summary.FoldersCreated++
+      }
+    }
+
+    $leafName = "$baseName$($Script:FileExtension)"
+    $fileUrl = "$destination/$leafName"
+
+    if (-not (Invoke-Upload -DestinationFolder $destination -LeafName $leafName -FileUrl $fileUrl)) {
+      continue
+    }
+
+    $Script:Summary.FilesCreated++
+
+    if (-not (Invoke-VersionAction -FileUrl $fileUrl -Type Major -Comment 'Initial major version')) {
+      continue
+    }
+
+    for ($major = 1; $major -le $MajorVersions; $major++) {
+      $minorFailed = $false
+
+      for ($minor = 1; $minor -le $MinorVersionsPerMajor; $minor++) {
+        if (-not (Invoke-VersionAction -FileUrl $fileUrl -Type Minor -Comment "Minor version $minor for major cycle $major")) {
+          $minorFailed = $true
+          break
+        }
+      }
+
+      if ($minorFailed) {
+        break
+      }
+
+      if (-not (Invoke-VersionAction -FileUrl $fileUrl -Type Major -Comment "Major version $major")) {
+        break
+      }
     }
   }
+}
 
-  $FileExtension = $FileToUse.Split('.')[$FileToUse.Split('.').Count - 1]
-
-  Write-Host "Starting the script, we are going to create $ItemsToCreate $($type)s in the list with title $ListTitle. They will each have $MajorVersions major versions and $MinorVersionBeforeMajor minor versions before a new major version is added." -f Green
-  $list = m365 spo list get --webUrl $WebUrl --title $ListTitle | ConvertFrom-Json
-  Write-Host "Obtained the list with title $($list.Title)" -f Green
-
-  if (!$list.EnableMinorVersions) {
-    Write-Host "Have to set properties on list to enable versioning and enable the creation of minor versions" -f Red
-    m365 spo list set --webUrl $WebUrl -i $list.Id --enableVersioning $true --enableMinorVersions $true
-    Write-Host "List properties updated!" -f Green
-  }
-
-  Write-Host "Obtained the folder with server relative url $ServerRelativeUrl" -f Green
-  Write-Host "Time to start the creation process..." -f Green
-  if ($Type.ToLower() -eq "folder") {
-    $FolderCnt = 1
-    while ($FolderCnt -le $ItemsToCreate) {
-      Write-Progress -Activity "Creating folders" -Status "$FolderCnt/$ItemsToCreate folders created" -PercentComplete (($FolderCnt / $ItemsToCreate) * 100)
-   
-      $FileUrl = "$($ServerRelativeUrl)/$FolderCnt/$FolderCnt.$FileExtension" 
-
-      # Create the folder and add the file
-      m365 spo folder add --webUrl $WebUrl --parentFolderUrl $ServerRelativeUrl --name $FolderCnt | Out-Null
-      m365 spo file add --webUrl $WebUrl --folder "$($ServerRelativeUrl)/$FolderCnt" --path $FileToUse --FileLeafRef $FolderCnt | Out-Null
-
-      # Call function to create the versions
-      New-Versions -FileUrl $FileUrl -Counter $FolderCnt
-
-      $FolderCnt++
-    }
-  } elseif ($Type.ToLower() -eq "file") {
-    $FileCnt = 1
-    while ($FileCnt -le $ItemsToCreate) {
-      Write-Progress -Activity "Creating files" -Status "$FileCnt/$ItemsToCreate files created" -PercentComplete (($FileCnt / $ItemsToCreate) * 100)
-    
-      $FileUrl = "$($ServerRelativeUrl)/$FileCnt.$FileExtension" 
-
-      # Creating file
-      m365 spo file add --webUrl $WebUrl --folder $ServerRelativeUrl --path $FileToUse --FileLeafRef $FileCnt | Out-Null
-      
-      # Call function to create the versions
-      New-Versions -FileUrl $FileUrl -Counter $FileCnt
-
-      $FileCnt++
-    }
-  }
-
-  Write-Host "Script Complete! :)" -f Green
+end {
+  Write-Host "========== Summary ==========" -ForegroundColor Cyan
+  Write-Host "Items planned    : $($Script:Summary.ItemsPlanned)"
+  Write-Host "Folders created  : $($Script:Summary.FoldersCreated)"
+  Write-Host "Files created    : $($Script:Summary.FilesCreated)"
+  Write-Host "Versions created : $($Script:Summary.VersionsCreated)"
+  Write-Host "Failures         : $($Script:Summary.Failures)"
+  Write-Host "=============================" -ForegroundColor Cyan
 }
 ```
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]

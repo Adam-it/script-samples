@@ -103,6 +103,60 @@ Copy-Hubnavigation -SourceSiteRelativeUrl "/" -DestinationSiteRelativeUrl "/site
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
 ***
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+# .\Copy-HubNavigation.ps1 -SourceHubUrl "https://contoso.sharepoint.com/sites/Home" -DestinationHubUrl "https://contoso.sharepoint.com/sites/Learning" -WhatIf
+[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "Absolute URL of the source hub site whose navigation will be copied.")]
+    [ValidatePattern('^https://')]
+    [string]$SourceHubUrl,
+
+    [Parameter(Mandatory = $true, HelpMessage = "Absolute URL of the destination hub site that will receive the navigation.")]
+    [ValidatePattern('^https://')]
+    [string]$DestinationHubUrl
+)
+
+begin {
+    Write-Verbose "Ensuring CLI for Microsoft 365 session."
+    m365 login --ensure --output json | Out-Null
+
+    Write-Host "Fetching source hub navigation from '$SourceHubUrl'" -ForegroundColor Cyan
+    $sourceNavigationJson = m365 spo hubsite navigation get --webUrl $SourceHubUrl --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to retrieve hub navigation. CLI output: $sourceNavigationJson"
+    }
+
+    $Script:SourceNavigation = $sourceNavigationJson | ConvertFrom-Json
+    if (-not $Script:SourceNavigation) {
+        throw "Source navigation is empty. No items to copy."
+    }
+}
+
+process {}
+
+end {
+    Write-Host "Preparing navigation payload for '$DestinationHubUrl'" -ForegroundColor Cyan
+    $navigationPayload = $Script:SourceNavigation | ConvertTo-Json -Depth 10 -Compress
+
+    if (-not $PSCmdlet.ShouldProcess($DestinationHubUrl, 'Replace hub navigation')) {
+        Write-Host "WhatIf: navigation not updated on '$DestinationHubUrl'" -ForegroundColor Yellow
+        return
+    }
+
+    $setOutput = m365 spo hubsite navigation set --webUrl $DestinationHubUrl --navigation $navigationPayload --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to apply navigation to '$DestinationHubUrl'. CLI output: $setOutput"
+    }
+
+    Write-Host "Hub navigation successfully copied to '$DestinationHubUrl'" -ForegroundColor Green
+}
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+***
+
 ## Source Credit
 
 Sample taken from [https://github.com/tmaestrini/easyProvisioning/](https://github.com/tmaestrini/easyProvisioning)
@@ -112,6 +166,7 @@ Sample taken from [https://github.com/tmaestrini/easyProvisioning/](https://gith
 | Author(s) |
 |-----------|
 | [Tobias Maestrini](https://github.com/tmaestrini)|
+| Adam Wójcik |
 
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

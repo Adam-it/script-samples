@@ -144,11 +144,138 @@ Disconnect-PnPOnline
 
 ***
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+# .\Export-SPOAlerts.ps1 -AdminUrl "https://contoso-admin.sharepoint.com" -ReportPath ".\reports\spo-alerts.csv" -ErrorPath ".\reports\spo-alerts-errors.csv" -WhatIf
+[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "SharePoint Online Admin Center URL")]
+    [ValidatePattern('^https://')]
+    [string]$AdminUrl,
+
+    [Parameter(Mandatory = $true, HelpMessage = "CSV path for the alert report")]
+    [ValidateNotNullOrEmpty()]
+    [string]$ReportPath,
+
+    [Parameter(Mandatory = $true, HelpMessage = "CSV path for operation errors")]
+    [ValidateNotNullOrEmpty()]
+    [string]$ErrorPath
+)
+
+begin {
+    Write-Verbose "Ensuring CLI for Microsoft 365 session."
+    m365 login --ensure
+
+    $Script:AlertReport = [System.Collections.Generic.List[pscustomobject]]::new()
+    $Script:AlertErrors = [System.Collections.Generic.List[pscustomobject]]::new()
+}
+
+process {
+    Write-Verbose "Retrieving site collection inventory."
+    $sitesJson = m365 spo site list --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to list sites. CLI output: $sitesJson"
+    }
+    $sites = $sitesJson | ConvertFrom-Json
+
+    foreach ($site in $sites) {
+        Write-Verbose "Processing site $($site.Url)"
+
+        $alertJson = m365 spo web alert list --webUrl $site.Url --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            $Script:AlertErrors.Add([pscustomobject]@{
+                SiteUrl = $site.Url
+                Error   = $alertJson
+            })
+            continue
+        }
+
+        if ([string]::IsNullOrWhiteSpace(($alertJson | Out-String).Trim())) {
+            continue
+        }
+
+        try {
+            $alertObjects = $alertJson | ConvertFrom-Json
+        }
+        catch {
+            $Script:AlertErrors.Add([pscustomobject]@{
+                SiteUrl = $site.Url
+                Error   = "Failed to parse alert response. $_"
+            })
+            continue
+        }
+
+        if (-not $alertObjects) {
+            continue
+        }
+
+        foreach ($alert in @($alertObjects)) {
+            $user = $alert.User
+            $list = $alert.List
+            $item = $alert.Item
+
+            $Script:AlertReport.Add([pscustomobject]@{
+                SiteUrl           = $site.Url
+                Title             = $alert.Title
+                UserName          = if ($user) { $user.Title } else { $null }
+                UserPrincipalName = if ($user) { $user.UserPrincipalName } else { $null }
+                UserEmail         = if ($user) { $user.Email } else { $null }
+                AlertType         = $alert.AlertType
+                EventType         = $alert.EventType
+                Frequency         = $alert.AlertFrequency
+                Status            = $alert.Status
+                DeliveryChannels  = $alert.DeliveryChannels
+                ListTitle         = if ($list) { $list.Title } else { $null }
+                ListUrl           = if ($list -and $list.RootFolder) { $list.RootFolder.ServerRelativeUrl } else { $null }
+                ItemUrl           = if ($item) { $item.FileRef } else { $null }
+                LastModified      = $alert.LastModified
+            })
+        }
+    }
+}
+
+end {
+    if ($Script:AlertReport.Count -gt 0) {
+        if ($PSCmdlet.ShouldProcess($ReportPath, 'Export alert report')) {
+            $reportDir = Split-Path -Path $ReportPath -Parent
+            if ($reportDir -and -not (Test-Path $reportDir)) {
+                New-Item -ItemType Directory -Path $reportDir -Force | Out-Null
+            }
+            $Script:AlertReport | Sort-Object SiteUrl, Title | Export-Csv -Path $ReportPath -NoTypeInformation
+            Write-Host "Alert report exported to '$ReportPath'" -ForegroundColor Green
+        }
+    }
+    else {
+        Write-Host "No classic SharePoint alerts were discovered." -ForegroundColor Yellow
+    }
+
+    if ($Script:AlertErrors.Count -gt 0) {
+        if ($PSCmdlet.ShouldProcess($ErrorPath, 'Export alert errors')) {
+            $errorDir = Split-Path -Path $ErrorPath -Parent
+            if ($errorDir -and -not (Test-Path $errorDir)) {
+                New-Item -ItemType Directory -Path $errorDir -Force | Out-Null
+            }
+            $Script:AlertErrors | Export-Csv -Path $ErrorPath -NoTypeInformation
+            Write-Host "Errors encountered; see '$ErrorPath'" -ForegroundColor Yellow
+        }
+    }
+    else {
+        Write-Host "No errors encountered." -ForegroundColor Green
+    }
+}
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
+***
+
 ## Contributors
 
 | Author |
 |-----------|
 | [Tanel Vahk](https://www.linkedin.com/in/tvahk/) |
+| Adam Wójcik |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-sharepoint-alerts-audit" aria-hidden="true" />

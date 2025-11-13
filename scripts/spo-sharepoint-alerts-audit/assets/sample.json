@@ -3,13 +3,13 @@
     "name": "spo-sharepoint-alerts-audit",
     "source": "pnp",
     "title": "SharePoint Online - Export SharePoint Alerts",
-    "shortDescription": "This PowerShell script scans your SharePoint Online environment and exports a list of all classic SharePoint Alerts configured by users across all site collections.",
+    "shortDescription": "Audit classic SharePoint alerts across all site collections.",
     "url": "https://pnp.github.io/script-samples/spo-sharepoint-alerts-audit/README.html",
     "longDescription": [
-      ""
+      "Scan SharePoint Online sites, collect classic alerts configured by users, and export the results for migration planning."
     ],
     "creationDateTime": "2025-06-08",
-    "updateDateTime": "2025-06-08",
+    "updateDateTime": "2025-11-13",
     "products": [
       "SharePoint"
     ],
@@ -17,20 +17,26 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "3.1.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
       "Report"
     ],
     "tags": [
-      "<Cmdlets-Used>"
+      "m365 login",
+      "m365 spo site list",
+      "m365 request"
     ],
     "thumbnails": [
       {
         "type": "image",
         "order": 100,
         "url": "https://raw.githubusercontent.com/pnp/script-samples/main/scripts/spo-sharepoint-alerts-audit/assets/preview.png",
-        "alt": "Preview of the sample SharePoint Online - Export SharePoint Alerts"
+        "alt": "SharePoint Alerts Audit"
       }
     ],
     "authors": [
@@ -39,6 +45,11 @@
         "company": "",
         "pictureUrl": "https://github.com/tvahk.png",
         "name": "Tanel Vahk"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -46,6 +57,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

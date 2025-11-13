@@ -157,45 +157,126 @@ StartProcessing
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 
 ```powershell
-# Get Credentials to connect
-$m365Status = m365 status
-if ($m365Status -match "Logged Out") {
-    m365 login
+# .\Add-BulkUsers.ps1 -CsvPath ".\assets\DummyInput.csv" -WhatIf
+[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "Path to the CSV file containing SiteURL, GroupName, and Users columns.")]
+    [ValidateScript({ Test-Path -LiteralPath $_ -PathType Leaf })]
+    [string]$CsvPath,
+
+    [Parameter(HelpMessage = "Skip login and rely on an existing CLI session.")]
+    [switch]$SkipLogin
+)
+
+begin {
+    if (-not $SkipLogin) {
+        Write-Verbose "Ensuring CLI for Microsoft 365 login session."
+        m365 login --ensure --output json | Out-Null
+    }
+
+    Write-Host "Reading CSV input from '$CsvPath'" -ForegroundColor Cyan
+    $Script:CsvData = Import-Csv -LiteralPath $CsvPath
+    if (-not $Script:CsvData) {
+        throw "The CSV file '$CsvPath' is empty or could not be parsed."
+    }
+
+    $Script:Results = [System.Collections.Generic.List[pscustomobject]]::new()
 }
 
-Write-Host "Reading CSV file..." -ForegroundColor Yellow
-$CSVPath = "E:\Contribution\PnP-Scripts\bulk-add-users-to-group\SP-Users.csv"
-$CSVData = Import-Csv $CSVPath
-Write-Host "Read CSV file successfully!" -ForegroundColor Green
+process {
+    $rowIndex = 0
+    foreach ($row in $Script:CsvData) {
+        $rowIndex++
+        Write-Progress -Activity "Processing groups" -Status "Item $rowIndex of $($Script:CsvData.Count)" -PercentComplete (($rowIndex / $Script:CsvData.Count) * 100)
 
-ForEach ($CurrentItem in $CSVData) {
-	Try {
-		# Get the SharePoint group
-		$Group = m365 spo group get --webUrl $CurrentItem.SiteURL --name $CurrentItem.GroupName | ConvertFrom-Json
+        try {
+            $groupJson = m365 spo group get --webUrl $row.SiteURL --name $row.GroupName --output json 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                throw "Failed to retrieve group '$($row.GroupName)': $groupJson"
+            }
 
-		# Get SharePoint group members
-		$GroupMembers = m365 spo group member list --webUrl $CurrentItem.SiteURL --groupName $CurrentItem.GroupName | ConvertFrom-Json | select Email
-		
-		# Check if user exists in SharePoint group or not
-		$IsUserExists = $GroupMembers -match $CurrentItem.Users
-		if ($IsUserExists.Length) {
-            # User already exists in SharePoint group
-			Write-Host "User $($CurrentItem.Users) already exists in $($Group.Title)" -ForegroundColor Yellow
-		}
-		else {
-            # Add user to SharePoint group
-			Write-Host "Adding User $($CurrentItem.Users) to $($Group.Title)" -ForegroundColor Yellow
-			m365 spo group member add --webUrl $CurrentItem.SiteURL --groupName $CurrentItem.GroupName --emails $CurrentItem.Users
-			Write-host "Added User $($CurrentItem.Users) to $($Group.Title)" -ForegroundColor Green
-		}
-	}
-	Catch {
-		write-host "Error Adding User to Group:" $_.Exception.Message -ForegroundColor Red
-	}
+            $membersJson = m365 spo group member list --webUrl $row.SiteURL --groupName $row.GroupName --output json 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                throw "Failed to retrieve group members: $membersJson"
+            }
+
+            $existingMembers = @()
+            if ($membersJson.Trim()) {
+                $existingMembers = $membersJson | ConvertFrom-Json
+            }
+            $existingEmails = @($existingMembers | ForEach-Object { $_.Email })
+
+            $targetEmails = $row.Users -split ';' | Where-Object { $_ -and $_.Trim() } | ForEach-Object { $_.Trim() }
+            if (-not $targetEmails) {
+                $Script:Results.Add([pscustomobject]@{
+                    SiteUrl   = $row.SiteURL
+                    GroupName = $row.GroupName
+                    Email     = $null
+                    Status    = 'Skipped'
+                    Message   = 'No user specified in CSV row'
+                })
+                continue
+            }
+
+            foreach ($email in $targetEmails) {
+                if ($existingEmails -contains $email) {
+                    $Script:Results.Add([pscustomobject]@{
+                        SiteUrl   = $row.SiteURL
+                        GroupName = $row.GroupName
+                        Email     = $email
+                        Status    = 'Skipped'
+                        Message   = 'Already a member'
+                    })
+                    continue
+                }
+
+                if (-not $PSCmdlet.ShouldProcess($email, "Add to $($row.GroupName)")) {
+                    $Script:Results.Add([pscustomobject]@{
+                        SiteUrl   = $row.SiteURL
+                        GroupName = $row.GroupName
+                        Email     = $email
+                        Status    = 'WhatIf'
+                        Message   = 'WhatIf: membership not changed'
+                    })
+                    continue
+                }
+
+                $addOutput = m365 spo group member add --webUrl $row.SiteURL --groupName $row.GroupName --emails $email --output json 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Failed to add member '$email': $addOutput"
+                }
+
+                $Script:Results.Add([pscustomobject]@{
+                    SiteUrl   = $row.SiteURL
+                    GroupName = $row.GroupName
+                    Email     = $email
+                    Status    = 'Added'
+                    Message   = 'User added successfully'
+                })
+            }
+        }
+        catch {
+            $Script:Results.Add([pscustomobject]@{
+                SiteUrl   = $row.SiteURL
+                GroupName = $row.GroupName
+                Email     = $row.Users
+                Status    = 'Failed'
+                Message   = $_.Exception.Message
+            })
+        }
+    }
 }
 
-# Disconnect SharePoint online connection
-m365 logout
+end {
+    $summary = $Script:Results | Group-Object Status | Select-Object @{Name='Status';Expression={$_.Name}}, @{Name='Count';Expression={$_.Count}}
+    Write-Host "========== Summary ==========" -ForegroundColor Cyan
+    foreach ($item in $summary) {
+        Write-Host ("{0,-10}: {1}" -f $item.Status, $item.Count)
+    }
+    Write-Host "=============================" -ForegroundColor Cyan
+
+    $Script:Results | Sort-Object SiteUrl, GroupName, Email | Format-Table -AutoSize
+}
 ```
 
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]

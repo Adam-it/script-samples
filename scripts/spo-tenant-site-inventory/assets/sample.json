@@ -9,7 +9,7 @@
       ""
     ],
     "creationDateTime": "2023-07-13",
-    "updateDateTime": "2023-07-13",
+    "updateDateTime": "2025-11-16",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.11.0"
+      },
+      {
+        "key": "cli-microsoft365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -26,7 +30,9 @@
       "Connect-PnPOnline",
       "Get-PnPTenantSite",
       "Get-PnPSiteCollectionAdmin",
-      "Disconnect-PnPOnline"
+      "Disconnect-PnPOnline",
+      "m365 spo site list",
+      "m365 spo site admin list"
     ],
     "thumbnails": [
       {
@@ -42,6 +48,12 @@
         "company": "",
         "pictureUrl": "https://github.com/Diksha-Bhura.png",
         "name": "Diksha Bhura"
+      },
+      {
+        "gitHubAccount": "adam-it",
+        "company": "",
+        "pictureUrl": "https://github.com/adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -49,6 +61,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "CLI for Microsoft 365 documentation",
+        "description": "Review the CLI for Microsoft 365 reference to explore available commands and options.",
+        "url": "https://pnp.github.io/cli-microsoft365/"
       }
     ]
   }

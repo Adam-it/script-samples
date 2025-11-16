@@ -9,7 +9,7 @@
       "This script exports all inactive sites based on certain number of days to CSV."
     ],
     "creationDateTime": "2023-09-13",
-    "updateDateTime": "2023-09-15",
+    "updateDateTime": "2025-11-16",
     "products": [
       "SharePoint"
     ],
@@ -21,6 +21,10 @@
       {
         "key": "SPO-MANAGEMENT-SHELL",
         "value": "16.0.21116.12000"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -30,9 +34,11 @@
     "tags": [
       "SharePoint Online",
       "Connect-PnPOnline",
-      "Get-PnPTenantSite",      
+      "Get-PnPTenantSite",
       "Connect-SPOService",
-      "Get-SPOSite"
+      "Get-SPOSite",
+      "m365 login",
+      "m365 spo site list"
     ],
     "thumbnails": [
       {
@@ -48,6 +54,12 @@
         "company": "Rapid Circle",
         "pictureUrl": "https://avatars.githubusercontent.com/u/52065929?v=4",
         "name": "Chandani Prajapati"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/37133813?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -60,6 +72,11 @@
         "name": "Introduction to the SharePoint Online Management Shell",
         "description": "Check out the SPO Management Shell documentation site to get started and for the reference to the cmdlets.",
         "url": "https://learn.microsoft.com/powershell/sharepoint/sharepoint-online/introduction-sharepoint-online-management-shell"
+      },
+      {
+        "name": "CLI for Microsoft 365 documentation",
+        "description": "Review the CLI for Microsoft 365 command reference for SharePoint Online sites.",
+        "url": "https://pnp.github.io/cli-microsoft365/cmd/spo/site/site-list/"
       }
     ]
   }

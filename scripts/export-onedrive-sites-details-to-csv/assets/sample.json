@@ -3,13 +3,13 @@
     "name": "export-onedrive-sites-details-to-csv",
     "source": "pnp",
     "title": "Export OneDrive Sites",
-    "shortDescription": "This script exports all onedrive sites to CSV",
+    "shortDescription": "This script exports all OneDrive for Business sites to CSV",
     "url": "https://pnp.github.io/script-samples/export-onedrive-sites-details-to-csv/README.html",
     "longDescription": [
-      "This script exports all onedrive sites."
+      "This script exports key metadata about OneDrive for Business sites to a CSV report."
     ],
     "creationDateTime": "2022-10-18",
-    "updateDateTime": "2022-10-19",
+    "updateDateTime": "2025-11-16",
     "products": [
       "SharePoint"
     ],
@@ -21,6 +21,10 @@
       {
         "key": "SPO-MANAGEMENT-SHELL",
         "value": "16.0.21116.12000"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -31,14 +35,16 @@
       "Connect-SPOService",
       "Connect-PnPOnline",
       "Get-SPOSite",
-      "Get-PnPTenantSite"
+      "Get-PnPTenantSite",
+      "m365 login",
+      "m365 spo site list"
     ],
     "thumbnails": [
       {
         "type": "image",
         "order": 100,
         "url": "https://raw.githubusercontent.com/pnp/script-samples/main/scripts/export-onedrive-sites-details-to-csv/assets/example.png",
-        "alt": "Preview of the sample <title>"
+        "alt": "Preview of the sample Export OneDrive Sites"
       }
     ],
     "authors": [
@@ -46,6 +52,11 @@
         "gitHubAccount": "chandaniprajapati",
         "pictureUrl": "https://avatars.githubusercontent.com/u/52065929?v=4",
         "name": "Chandani Prajapati"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/37133813?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -58,6 +69,11 @@
         "name": "Introduction to the SharePoint Online Management Shell",
         "description": "Check out the SPO Management Shell documentation site to get started and for the reference to the cmdlets.",
         "url": "https://learn.microsoft.com/powershell/sharepoint/sharepoint-online/introduction-sharepoint-online-management-shell"
+      },
+      {
+        "name": "CLI for Microsoft 365 documentation",
+        "description": "Review the CLI for Microsoft 365 site list command reference.",
+        "url": "https://pnp.github.io/cli-microsoft365/cmd/spo/site/site-list/"
       }
     ]
   }

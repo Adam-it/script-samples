@@ -9,7 +9,7 @@
       "Converts all blog pages in a site"
     ],
     "creationDateTime": "2021-05-11",
-    "updateDateTime": "2021-05-11",
+    "updateDateTime": "2025-11-16",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.5.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -26,7 +30,10 @@
       "Connect-PnPOnline",
       "ConvertTo-PnPClientSidePage",
       "Get-PnPList",
-      "Get-PnPListItem"
+      "Get-PnPListItem",
+      "m365 login",
+      "m365 spo listitem list",
+      "m365 spo page add"
     ],
     "thumbnails": [
       {
@@ -42,6 +49,11 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/8781041?v=4",
         "name": "Paul Bullock"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/37133813?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -49,6 +61,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "CLI for Microsoft 365 documentation",
+        "description": "Review the CLI for Microsoft 365 command reference for usage details and examples.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

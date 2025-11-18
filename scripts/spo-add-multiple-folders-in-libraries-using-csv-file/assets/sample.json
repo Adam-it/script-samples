@@ -7,7 +7,7 @@
     "title": "Add multiple folders in libraries using a CSV file",
     "url": "https://pnp.github.io/script-samples/spo-add-multiple-folders-in-libraries-using-csv-file/README.html",
     "creationDateTime": "2021-05-10",
-    "updateDateTime": "2024-01-25",
+    "updateDateTime": "2025-11-16",
     "shortDescription": "This script will create the folders (not nested) into the libraries provided in the CSV file.",
     "longDescription": null,
     "products": [
@@ -23,11 +23,9 @@
       "Get-PnPWeb",
       "Get-PnPList",
       "Resolve-PnPFolder",
-      "m365 status",
       "m365 login",
       "m365 spo list get",
-      "m365 spo folder add",
-      "m365 logout"
+      "m365 spo folder add"
     ],
     "metadata": [
       {
@@ -35,8 +33,8 @@
         "value": "1.10.0"
       },
       {
-          "key":"CLI-FOR-MICROSOFT365",
-          "value":"7.3.0"
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "thumbnails": [
@@ -60,6 +58,12 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7124132?v=4",
         "name": "Jiten Parmar"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/37133813?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

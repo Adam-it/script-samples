@@ -227,52 +227,118 @@ Stop-Transcript
 
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 ```powershell
-###### Declare and Initialize Variables ######  
+function Invoke-SiteDesignProvisioning {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string] $SiteUrl,
+        [Parameter(Mandatory)][ValidateScript({ Test-Path $_ })][string] $PrimaryScriptPath,
+        [Parameter(Mandatory)][ValidateScript({ Test-Path $_ })][string] $ListScriptPath,
+        [Parameter()][ValidateNotNullOrEmpty()][string] $SiteDesignTitle = "PowerShell Samples site design",
+        [Parameter()][ValidateNotNullOrEmpty()][string] $SiteScriptDescription = "Provision content types and list",
+        [Parameter()][ValidateNotNullOrEmpty()][string] $ListScriptDescription = "Create list and custom view"
+    )
 
-#Destination site collection url
-$url="https://<tenant>.sharepoint.com/sites/siteurl"
+    begin {
+        Write-Verbose "Ensuring CLI session is authenticated."
+        $loginOutput = m365 login --ensure 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to ensure CLI login. CLI output: $loginOutput"
+        }
 
-Write-host 'setup script example'
+        Write-Verbose "Retrieving target site information."
+        $siteJson = m365 spo site get --url $SiteUrl --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Unable to read site metadata. CLI output: $siteJson"
+        }
 
-Write-host 'ensure logged in'
-$m365Status = m365 status
-if ($m365Status -match "Logged Out") {
-  m365 login --authType browser
+        try {
+            $script:TargetSite = $siteJson | ConvertFrom-Json -ErrorAction Stop
+        }
+        catch {
+            throw "Failed to parse site metadata response. $($_.Exception.Message)"
+        }
+
+        $script:Summary = [ordered]@{
+            SiteScriptsCreated = 0
+            SiteDesignsCreated = 0
+            SiteDesignsApplied = 0
+            Failures = 0
+        }
+    }
+
+    process {
+        Write-Host "Creating site scripts from '$PrimaryScriptPath' and '$ListScriptPath'."
+
+        $primaryJson = m365 spo sitescript add --title "Primary site script" --description $SiteScriptDescription --content "@$PrimaryScriptPath" --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            $script:Summary.Failures++
+            throw "Failed to create primary site script. CLI output: $primaryJson"
+        }
+
+        $listJson = m365 spo sitescript add --title "List provisioning script" --description $ListScriptDescription --content "@$ListScriptPath" --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            $script:Summary.Failures++
+            throw "Failed to create list site script. CLI output: $listJson"
+        }
+
+        try {
+            $primaryScript = $primaryJson | ConvertFrom-Json -ErrorAction Stop
+            $listScript = $listJson | ConvertFrom-Json -ErrorAction Stop
+        }
+        catch {
+            $script:Summary.Failures++
+            throw "Unable to parse site script creation response. $($_.Exception.Message)"
+        }
+
+        $script:Summary.SiteScriptsCreated += 2
+
+        $scriptIds = "$($primaryScript.Id),$($listScript.Id)"
+
+        if ($PSCmdlet.ShouldProcess($SiteUrl, 'Create site design')) {
+            Write-Host "Creating site design '$SiteDesignTitle'."
+            $designJson = m365 spo sitedesign add --title $SiteDesignTitle --webTemplate TeamSite --siteScripts $scriptIds --description $SiteScriptDescription --output json 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                $script:Summary.Failures++
+                throw "Failed to create site design. CLI output: $designJson"
+            }
+
+            try {
+                $design = $designJson | ConvertFrom-Json -ErrorAction Stop
+            }
+            catch {
+                $script:Summary.Failures++
+                throw "Unable to parse site design creation response. $($_.Exception.Message)"
+            }
+
+            $script:Summary.SiteDesignsCreated++
+
+            Write-Host "Applying site design '$($design.Id)' to $SiteUrl."
+            $applyOutput = m365 spo sitedesign apply --id $design.Id --webUrl $SiteUrl 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                $script:Summary.Failures++
+                throw "Failed to apply site design. CLI output: $applyOutput"
+            }
+
+            $script:Summary.SiteDesignsApplied++
+        }
+        else {
+            Write-Verbose "WhatIf: Skipping site design creation and apply."
+        }
+    }
+
+    end {
+        Write-Host "\nProvisioning summary:" -ForegroundColor Cyan
+        Write-Host "  Site scripts created : $($script:Summary.SiteScriptsCreated)"
+        Write-Host "  Site designs created : $($script:Summary.SiteDesignsCreated)"
+        Write-Host "  Site designs applied : $($script:Summary.SiteDesignsApplied)"
+        Write-Host "  Failures             : $($script:Summary.Failures)"
+    }
 }
 
+# Example usage:
+# Invoke-SiteDesignProvisioning -SiteUrl "https://contoso.sharepoint.com/sites/marketing" -PrimaryScriptPath "./firstscript.json" -ListScriptPath "./secondscript.json"
 
-## Connect to SharePoint Online site  
-$site = m365 spo site get --url $url 
-$site = $site | ConvertFrom-Json
-
-
-#Site design script
-# - Set site regionalsettings (useful for formatting date type field)
-# - Apply custom theme
-# - Create site columns (text, number, person, choice)
-# - Create site content type with created site columns
-
-
- #add Script to SharePoint sharepoint tenant 
- $addScript = m365 spo sitescript add --title "This is first script CLI 1" --description "some description " --content "@firstscript.json"
- $addScript =  $addScript | ConvertFrom-Json
-
- $site_script_CreateAndUpdateSiteList = m365 spo sitescript add --title "This is second script for list CLI 2" --description "Create and Update list CLI2" --content "@secondscript.json"
- $site_script_CreateAndUpdateSiteList = $site_script_CreateAndUpdateSiteList | ConvertFrom-Json
- 
- #add site design to site collection with site script
- $siteDesign = m365 spo sitedesign add --title "DevGods site design CLI" --webTemplate "TeamSite" --siteScripts "$($addScript.Id),$($site_script_CreateAndUpdateSiteList.Id)"
- $siteDesign =$siteDesign | ConvertFrom-Json
- 
- 
- #set design on site collection
- m365 spo sitedesign set --id $siteDesign.Id --title "DevGods site design from cli" --version 2
- 
- #invoke site design
- m365 spo sitedesign apply --id $siteDesign.Id --webUrl  $url
- 
- m365 logout
-
+Invoke-SiteDesignProvisioning -SiteUrl "https://<tenant>.sharepoint.com/sites/siteurl" -PrimaryScriptPath "./firstscript.json" -ListScriptPath "./secondscript.json"
 ```
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
 

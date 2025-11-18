@@ -6,7 +6,7 @@
     "url": "https://pnp.github.io/script-samples/spo-add-update-image-column/README.html",
     "longDescription": [],
     "creationDateTime": "2022-10-14",
-    "updateDateTime": "2023-05-17",
+    "updateDateTime": "2025-11-18",
     "products": [
         "SharePoint"
     ],
@@ -16,7 +16,7 @@
     },
     {
       "key":"CLI-FOR-MICROSOFT365",
-      "value":"6.7.0"
+      "value":"11.0.0"
     }],
     "categories": [
         "Configure"
@@ -28,12 +28,10 @@
         "Add-PnPListItem",
         "Set-PnPListItem",
         "Disconnect-PnPOnline",
-        "m365 status",
         "m365 login",
         "m365 spo file get",
         "m365 spo listitem add",
-        "m365 spo listitem set",
-        "m365 logout"
+        "m365 spo listitem set"
     ],
     "thumbnails": [{
         "type": "image",
@@ -53,6 +51,12 @@
             "company": "",
             "pictureUrl": "https://github.com/mjimison.png",
             "name": "Matt Jimison"
+        },
+        {
+            "gitHubAccount": "Adam-it",
+            "company": "",
+            "pictureUrl": "",
+            "name": "Adam Wójcik"
         }
     ],
     "references": [{

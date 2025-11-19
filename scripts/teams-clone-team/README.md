@@ -208,12 +208,195 @@ process {
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
 ***
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+function Invoke-CloneTeamWithCli {
+    <#
+    .SYNOPSIS
+    Clones an existing Microsoft Teams team into a new team using CLI for Microsoft 365.
+
+    .DESCRIPTION
+    Resolves the source team, prepares target metadata, and invokes `m365 teams team clone` with the
+    specified parts. Defaults mirror the full clone (apps, tabs, settings, channels, members). The script
+    prompts before cloning unless `-Force` is provided.
+
+    .PARAMETER SourceTeamId
+    ID of the Microsoft Teams team to clone.
+
+    .PARAMETER SourceTeamName
+    Display name of the Microsoft Teams team to clone (alternative to SourceTeamId).
+
+    .PARAMETER NewTeamName
+    Display name for the cloned team.
+
+    .PARAMETER NewTeamDescription
+    Optional description for the cloned team. Defaults to source team description when omitted.
+
+    .PARAMETER Visibility
+    Visibility of the cloned team. Allowed values: Private, Public. Defaults to the source team visibility.
+
+    .PARAMETER Classification
+    Classification value to assign to the cloned team. Defaults to the source classification when empty.
+
+    .PARAMETER PartsToClone
+    Parts of the team to clone. Allowed values: apps, tabs, settings, channels, members. Defaults to all.
+
+    .PARAMETER Force
+    Executes without interactive confirmation prompts.
+
+    .EXAMPLE
+    Invoke-CloneTeamWithCli -SourceTeamId '2eaf7dcd-7e83-4c3a-94f7-932a1299c844' -NewTeamName 'Contoso Clone'
+
+    .EXAMPLE
+    Invoke-CloneTeamWithCli -SourceTeamName 'Engineering' -NewTeamName 'Engineering (Archive)' `
+        -Visibility Private -PartsToClone @('settings','channels','members') -Force
+    #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [Parameter(Mandatory = $true, ParameterSetName = 'ById', HelpMessage = 'ID of the Microsoft Teams team to clone.')]
+        [guid]$SourceTeamId,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'ByName', HelpMessage = 'Display name of the Microsoft Teams team to clone.')]
+        [string]$SourceTeamName,
+
+        [Parameter(Mandatory = $true, HelpMessage = 'Display name for the cloned team.')]
+        [string]$NewTeamName,
+
+        [Parameter(HelpMessage = 'Description for the cloned team. Defaults to source description when omitted.')]
+        [string]$NewTeamDescription,
+
+        [Parameter(HelpMessage = 'Team visibility. Allowed values: Private, Public.')]
+        [ValidateSet('Private','Public')]
+        [string]$Visibility,
+
+        [Parameter(HelpMessage = 'Classification to assign to the cloned team.')]
+        [string]$Classification,
+
+        [Parameter(HelpMessage = 'Parts of the team to clone. Allowed values: apps, tabs, settings, channels, members.')]
+        [ValidateSet('apps','tabs','settings','channels','members')]
+        [string[]]$PartsToClone = @('apps','tabs','settings','channels','members'),
+
+        [Parameter()]
+        [switch]$Force
+    )
+
+    begin {
+        $script:Summary = [ordered]@{
+            Cloned   = 0
+            Skipped  = 0
+            Failures = 0
+        }
+
+        Write-Host 'Ensuring Microsoft 365 CLI authentication.' -ForegroundColor Cyan
+        $loginOutput = m365 login --ensure 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "CLI login failed. Output: $loginOutput"
+        }
+    }
+
+    process {
+        $teamArgs = @('teams','team','get','--output','json','--query','{id:id,displayName:displayName,description:description,classification:classification,visibility:visibility,isArchived:isArchived}')
+        if ($PSCmdlet.ParameterSetName -eq 'ById') {
+            $teamArgs += @('--id', $SourceTeamId)
+        }
+        else {
+            $teamArgs += @('--name', $SourceTeamName)
+        }
+
+        Write-Host 'Retrieving source team details.' -ForegroundColor Cyan
+        $teamJson = m365 @teamArgs 2>&1
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace(($teamJson -as [string]).Trim())) {
+            throw "Failed to resolve source team. CLI output: $teamJson"
+        }
+
+        try {
+            $sourceTeam = $teamJson | ConvertFrom-Json -ErrorAction Stop
+        }
+        catch {
+            throw "Unable to parse source team information. $($_.Exception.Message)"
+        }
+
+        if ($sourceTeam.isArchived) {
+            throw "Source team '$($sourceTeam.displayName)' is archived. Unarchive it before cloning."
+        }
+
+        if (-not $NewTeamDescription) {
+            $NewTeamDescription = $sourceTeam.description
+        }
+
+        if (-not $Visibility) {
+            $Visibility = if ($sourceTeam.visibility) { $sourceTeam.visibility } else { 'Private' }
+        }
+
+        if (-not $Classification -and $sourceTeam.classification) {
+            $Classification = $sourceTeam.classification
+        }
+
+        $parts = $PartsToClone | ForEach-Object { $_.ToLowerInvariant() } | Select-Object -Unique
+        if (-not $parts) {
+            throw 'PartsToClone cannot be empty. Provide at least one part to clone.'
+        }
+
+        $cloneArgs = @(
+            'teams','team','clone',
+            '--id', $sourceTeam.id,
+            '--name', $NewTeamName,
+            '--partsToClone', ($parts -join ',')
+        )
+
+        if ($NewTeamDescription) {
+            $cloneArgs += @('--description', $NewTeamDescription)
+        }
+
+        if ($Classification) {
+            $cloneArgs += @('--classification', $Classification)
+        }
+
+        if ($Visibility) {
+            $cloneArgs += @('--visibility', $Visibility)
+        }
+
+        Write-Verbose "Clone command arguments: $($cloneArgs -join ' ')"
+
+        $action = "Clone team '$($sourceTeam.displayName)' to '$NewTeamName'"
+        if (-not ($Force.IsPresent -or $PSCmdlet.ShouldProcess($NewTeamName, $action))) {
+            $script:Summary.Skipped++
+            return
+        }
+
+        Write-Host $action -ForegroundColor Cyan
+        $cloneOutput = m365 @cloneArgs 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            $script:Summary.Failures++
+            Write-Warning "Team clone failed. CLI output: $cloneOutput"
+            return
+        }
+
+        $script:Summary.Cloned++
+        Write-Host "Team '$NewTeamName' cloned successfully." -ForegroundColor Green
+    }
+
+    end {
+        Write-Host "Teams cloned: $($script:Summary.Cloned)" -ForegroundColor Green
+        Write-Host "Operations skipped: $($script:Summary.Skipped)" -ForegroundColor Yellow
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor Red
+    }
+}
+
+# example usage
+Invoke-CloneTeamWithCli -SourceTeamName 'Project Phoenix' -NewTeamName 'Project Phoenix (Clone)' -Force
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+***
+
 ## Contributors
 
 | Author(s) |
 |-----------|
 | Rodrigo Pinto |
+| Adam Wójcik |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/teams-clone-team" aria-hidden="true" />
-

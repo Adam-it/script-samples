@@ -9,7 +9,7 @@
       "On the new to be 'cloned' team we can define name, description, visibility and 'parts to clone' ('Apps','Tabs','Settings','Channels',  'Members'). We can actually clone content also. The script is a subset of the SPO powershell packages with content (PnPCandy) concept already been used across many projects."
     ],
     "creationDateTime": "2021-10-25",
-    "updateDateTime": "2021-12-29",
+    "updateDateTime": "2025-11-19",
     "products": [
       "Teams"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.5.0,1.7.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -34,7 +38,10 @@
       "Get-PnPAccessToken",
       "Get-PnPMicrosoft365Group",
       "Get-PnPWeb",
-      "Disconnect-PnPOnline"
+      "Disconnect-PnPOnline",
+      "m365 login",
+      "m365 teams team get",
+      "m365 teams team clone"
     ],
     "thumbnails": [
       {
@@ -49,6 +56,11 @@
         "gitHubAccount": "scoutmanpt",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7837053?v=4",
         "name": "Rodrigo Pinto"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -56,6 +68,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Learn more about CLI for Microsoft 365",
+        "description": "CLI for Microsoft 365 reference and getting started guidance.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

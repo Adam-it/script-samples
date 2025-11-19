@@ -9,7 +9,7 @@
       "By inputting a designated timeframe for inactivity, the script automatically identifies Teams that have remained dormant beyond the specified period. These Teams are then archived."
     ],
     "creationDateTime": "2023-08-06",
-    "updateDateTime": "2023-10-13",
+    "updateDateTime": "2025-11-19",
     "products": [
       "Teams"
     ],
@@ -17,13 +17,21 @@
       {
         "key": "POWERSHELL",
         "value": "7.3.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
       "Data"
     ],
     "tags": [
-      "Invoke-RestMethod"
+      "Invoke-RestMethod",
+      "m365 login",
+      "m365 teams report useractivityuserdetail",
+      "m365 teams team list",
+      "m365 teams team archive"
     ],
     "thumbnails": [
       {
@@ -43,6 +51,11 @@
         "gitHubAccount": "nicodecleyre",
         "pictureUrl": "https://avatars.githubusercontent.com/u/35696168?v=4",
         "name": "Nico De Cleyre"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -50,6 +63,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Learn more about CLI for Microsoft 365",
+        "description": "CLI for Microsoft 365 reference and getting started guidance.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

@@ -93,69 +93,173 @@ function Set-SiteAppCatalogPermissions {
 
 
 
-# [Microsoft Graph PowerShell](#tab/graphps)
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
 ```powershell
-<#
-    .DESCRIPTION
-    The Set-ManagedIdentityAPIPermissions function grants the following Microsoft Graph API permissions:
-    - 'DelegatedPermissionGrant.ReadWrite.All'
-    - 'Application.Read.All',
-    - 'Sites.Selected'                     # once 'Lists.SelectedOperations.Selected' is released, scope can be changed
-
-    Other permissions may be added by updating the $permissionMap array. 
-    Use the following commands to retrieve information about additional applications: 
-    
-    Import-Module Microsoft.Graph.Applications
-    Connect-MgGraph -Scopes 'Application.Read.All'
-
-    Get-MgServicePrincipal -Search '"displayName:Team"' -CountVariable CountVar `
-         -Property "displayName,appId,replyUrls,servicePrincipalType,oauth2PermissionScopes,appRoles,resourceSpecificApplicationPermissions" `
-         -ConsistencyLevel eventual
-
-    See https://learn.microsoft.com/en-us/graph/api/resources/serviceprincipal?view=graph-rest-1.0#properties
-    for a currnet list of available properties and their descriptions
-
-    .NOTES
-    IMPORTANT: The DelegatedPermissionGrant.ReadWrite.All permission allows an app or a service to manage permission grants 
-    and elevate privileges for any app, user, or group in your organization. Only appropriate users should access apps that 
-    have been granted this permission.
-
-    TODO: Once the 'Lists.SelectedOperations.Selected' is available productively (now in beta),
-    the 'Sites.Selected' can be replaced with 'Lists.SelectedOperations.Selected'
-#>
-function Set-ManagedIdentityAPIPermissions {
+function Grant-AadServicePrincipalApiPermission {
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        [string]$spId
-    )
-    $permissionMap = @{
-        '00000003-0000-0000-c000-000000000000' = @( # Microsoft Graph
-            'Application.Read.All',
-            'DelegatedPermissionGrant.ReadWrite.All',
-            'Sites.Selected'                     # once 'Lists.SelectedOperations.Selected' is released, scope can be changed
-        )
-    }
-    Import-Module Microsoft.Graph.Authentication
-    Import-Module Microsoft.Graph.Applications
-    Connect-MgGraph  -Scopes "AppRoleAssignment.ReadWrite.All" , 'Application.Read.All'
+        [Parameter(Mandatory, HelpMessage = "Object ID of the service principal that will receive the permissions.")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ServicePrincipalId,
 
-    Get-MgServicePrincipal -All  | Where-Object { $_.AppId -in $permissionMap.Keys } -PipelineVariable SP | ForEach-Object {
-        $SP.AppRoles | Where-Object { $_.Value -in $permissionMap[$SP.AppId] -and $_.AllowedMemberTypes -contains "Application" } -PipelineVariable AppRole | ForEach-Object {
-            try {
-                $params = @{
-                    principalId = $spId
-                    resourceId  = $SP.Id
-                    appRoleId   = $AppRole.Id
-                }
-                New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $spId -BodyParameter $params -ErrorAction:SilentlyContinue
+        [Parameter(Mandatory, HelpMessage = "Display name of the resource API (for example 'Microsoft Graph').")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ResourceDisplayName,
+
+        [Parameter(Mandatory, HelpMessage = "Application (app-only) scopes to grant.")]
+        [ValidateNotNullOrEmpty()]
+        [string[]]$ApplicationScopes,
+
+        [Parameter(HelpMessage = "Delegated scopes to grant (optional).")]
+        [string[]]$DelegatedScopes,
+
+        [Parameter(HelpMessage = "Skip confirmation prompts and grant permissions immediately.")]
+        [switch]$Force
+    )
+
+    begin {
+        $script:Summary = [ordered]@{
+            ApplicationGranted = 0
+            DelegatedGranted   = 0
+            Skipped            = 0
+            Failures           = 0
+        }
+
+        if (-not $PSBoundParameters.ContainsKey('DelegatedScopes')) {
+            $DelegatedScopes = @()
+        }
+
+        Write-Host "Ensuring Microsoft 365 CLI authentication." -ForegroundColor Cyan
+        $loginResult = m365 login --ensure 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Authentication with CLI for Microsoft 365 failed. CLI output: $loginResult"
+        }
+
+        Write-Host "Resolving resource service principal '$ResourceDisplayName'." -ForegroundColor Cyan
+        $resourceJson = m365 entra serviceprincipal list --displayName $ResourceDisplayName --query "[0]" --output json 2>&1
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace(($resourceJson -as [string]).Trim())) {
+            throw "Resource '$ResourceDisplayName' was not found. CLI output: $resourceJson"
+        }
+
+        try {
+            $script:ResourceServicePrincipal = $resourceJson | ConvertFrom-Json -ErrorAction Stop
+        }
+        catch {
+            throw "Unable to parse resource service principal. $($_.Exception.Message)"
+        }
+        Write-Host "Using resource appId $($script:ResourceServicePrincipal.appId)." -ForegroundColor DarkCyan
+
+        $grantsResult = m365 entra serviceprincipal apppermission list --id $ServicePrincipalId --query "[?resourceAppId=='$($script:ResourceServicePrincipal.appId)']" --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Unable to retrieve existing application grants. CLI output: $grantsResult"
+            $script:ExistingAppGrants = @()
+        }
+        else {
+            $script:ExistingAppGrants = $grantsResult | ConvertFrom-Json
+        }
+
+        $delegatedResult = m365 entra serviceprincipal oauth2permissiongrant list --id $ServicePrincipalId --query "[?resourceId=='$($script:ResourceServicePrincipal.id)']" --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Unable to retrieve existing delegated grants. CLI output: $delegatedResult"
+            $script:ExistingDelegatedGrants = @()
+        }
+        else {
+            $script:ExistingDelegatedGrants = $delegatedResult | ConvertFrom-Json
+        }
+
+    }
+
+    process {
+        foreach ($scope in $ApplicationScopes) {
+            if ([string]::IsNullOrWhiteSpace($scope)) {
+                continue
             }
-            catch {
-                throw $_.Exception
+
+            $alreadyGranted = $script:ExistingAppGrants | Where-Object {
+                $_.resourceAppId -eq $script:ResourceServicePrincipal.appId -and $_.permission -eq $scope
+            }
+
+            if ($alreadyGranted) {
+                Write-Host "Scope '$scope' already granted (application)." -ForegroundColor Yellow
+                $script:Summary.Skipped++
+                continue
+            }
+
+            $shouldGrantApp = $Force.IsPresent -or $PSCmdlet.ShouldProcess($ServicePrincipalId, "Grant application permission '$scope'")
+            if (-not $shouldGrantApp) {
+                $script:Summary.Skipped++
+                Write-Host "Skipped granting application scope '$scope' at user request." -ForegroundColor Yellow
+                continue
+            }
+
+            Write-Host "Granting application scope '$scope'." -ForegroundColor Cyan
+            $grantOutput = m365 entra serviceprincipal apppermission add --id $ServicePrincipalId --resource $script:ResourceServicePrincipal.appId --scope $scope --output json 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                $script:Summary.Failures++
+                Write-Warning "Failed to grant application scope '$scope'. CLI output: $grantOutput"
+            }
+            else {
+                $script:Summary.ApplicationGranted++
+                Write-Host "Granted application scope '$scope'." -ForegroundColor Green
+            }
+        }
+
+        foreach ($scope in $DelegatedScopes) {
+            if ([string]::IsNullOrWhiteSpace($scope)) {
+                continue
+            }
+
+            $existingDelegated = $script:ExistingDelegatedGrants | Where-Object {
+                $_.resourceId -eq $script:ResourceServicePrincipal.id -and $_.scope -split ' ' -contains $scope
+            }
+
+            if ($existingDelegated) {
+                Write-Host "Scope '$scope' already granted (delegated)." -ForegroundColor Yellow
+                $script:Summary.Skipped++
+                continue
+            }
+
+            $shouldGrantDelegated = $Force.IsPresent -or $PSCmdlet.ShouldProcess($ServicePrincipalId, "Grant delegated scope '$scope'")
+            if (-not $shouldGrantDelegated) {
+                $script:Summary.Skipped++
+                Write-Host "Skipped granting delegated scope '$scope' at user request." -ForegroundColor Yellow
+                continue
+            }
+
+            if ($shouldGrantDelegated) {
+                Write-Host "Granting delegated scope '$scope'." -ForegroundColor Cyan
+                $delegatedOutput = m365 entra serviceprincipal oauth2permissiongrant add --id $ServicePrincipalId --resource $script:ResourceServicePrincipal.id --scope $scope --output json 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    $script:Summary.Failures++
+                    Write-Warning "Failed to grant delegated scope '$scope'. CLI output: $delegatedOutput"
+                }
+                else {
+                    $script:Summary.DelegatedGranted++
+                    Write-Host "Granted delegated scope '$scope'." -ForegroundColor Green
+                }
             }
         }
     }
+
+    end {
+        Write-Host "Application scopes granted: $($script:Summary.ApplicationGranted)" -ForegroundColor Green
+        Write-Host "Delegated scopes granted: $($script:Summary.DelegatedGranted)" -ForegroundColor Green
+        Write-Host "Scopes skipped: $($script:Summary.Skipped)" -ForegroundColor Yellow
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor Red
+
+        if (-not $DelegatedScopes -and -not $Force) {
+            Write-Host "Remember to grant admin consent if required." -ForegroundColor DarkYellow
+        }
+    }
 }
+
+# example usage
+Grant-AadServicePrincipalApiPermission -ServicePrincipalId '00000000-0000-0000-0000-000000000000' `
+    -ResourceDisplayName 'Microsoft Graph' `
+    -ApplicationScopes @('Application.Read.All','Sites.Selected') `
+    -DelegatedScopes @('Sites.Selected') -WhatIf
 ```
-[!INCLUDE [More about Microsoft Graph PowerShell SDK](../../docfx/includes/MORE-GRAPHSDK.md)]
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
 
 
 ***
@@ -167,6 +271,7 @@ function Set-ManagedIdentityAPIPermissions {
 | Author(s) |
 |-----------|
 | Kinga Kazala |
+| Adam Wójcik |
 
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

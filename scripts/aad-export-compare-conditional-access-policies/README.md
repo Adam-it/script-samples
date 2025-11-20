@@ -335,8 +335,195 @@ catch {
         # Ignore disconnect errors
     }
 }
+
 ```
 [!INCLUDE [More about Microsoft Graph PowerShell SDK](../../docfx/includes/MORE-GRAPHSDK.md)]
+***
+
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+function Invoke-CaPolicyDriftDetection {
+    <#
+    .SYNOPSIS
+    Exports and compares Entra Conditional Access policies using CLI for Microsoft 365.
+
+    .DESCRIPTION
+    Authenticates via CLI, exports current policies, stores timestamped snapshots, compares against the
+    previous export, and writes drift reports. Optional notifications can be layered on top of the JSON output.
+
+    .PARAMETER ExportPath
+    Root directory to store exports, history, logs, and reports. Defaults to ./CA-Policy-Audit.
+
+    .PARAMETER Force
+    Skip confirmation prompts when creating directories or overwriting files.
+
+    .EXAMPLE
+    Invoke-CaPolicyDriftDetection -ExportPath ./CA-Audit -Verbose
+    #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]$ExportPath = './CA-Policy-Audit',
+
+        [Parameter()]
+        [switch]$Force
+    )
+
+    begin {
+        Write-Host 'Ensuring CLI authentication.' -ForegroundColor Cyan
+        $loginOutput = m365 login --ensure 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "CLI login failed. Output: $loginOutput"
+        }
+
+        $script:Root = Resolve-Path -Path $ExportPath -ErrorAction SilentlyContinue
+        if (-not $script:Root) {
+            if (-not ($Force -or $PSCmdlet.ShouldProcess($ExportPath, 'Create export directory'))) {
+                throw "ExportPath '$ExportPath' does not exist."
+            }
+            $script:Root = New-Item -ItemType Directory -Path $ExportPath -Force | Resolve-Path
+        }
+
+        $script:Paths = [ordered]@{
+            Current  = Join-Path $script:Root '\Current'
+            History  = Join-Path $script:Root '\History'
+            Reports  = Join-Path $script:Root '\Reports'
+            Logs     = Join-Path $script:Root '\Logs'
+        }
+
+        foreach ($path in $script:Paths.GetEnumerator()) {
+            if (-not (Test-Path -Path $path.Value -PathType Container)) {
+                New-Item -ItemType Directory -Path $path.Value -Force | Out-Null
+            }
+        }
+
+        $script:Timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+        $script:CurrentSnapshot = Join-Path $script:Paths.Current "Policies-$($script:Timestamp).json"
+        $script:LogFile = Join-Path $script:Paths.Logs "Run-$($script:Timestamp).log"
+
+        $script:HistoryFiles = Get-ChildItem -Path $script:Paths.History -Filter 'Policies-*.json' | Sort-Object LastWriteTime -Descending
+        $script:PreviousSnapshot = $script:HistoryFiles | Select-Object -First 1
+
+        $script:Summary = [ordered]@{
+            PoliciesExported = 0
+            PoliciesChanged  = 0
+        }
+    }
+
+    process {
+        Write-Host 'Exporting current Conditional Access policies.' -ForegroundColor Cyan
+        $policiesJson = m365 entra policy conditionalaccess list --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Unable to list conditional access policies. CLI output: $policiesJson"
+        }
+
+        try {
+            $policies = $policiesJson | ConvertFrom-Json -ErrorAction Stop
+        }
+        catch {
+            throw "Unable to parse policies. $($_.Exception.Message)"
+        }
+
+        if (-not $policies) {
+            Write-Warning 'No conditional access policies returned.'
+            return
+        }
+
+        $script:Summary.PoliciesExported = $policies.Count
+        $policies | ConvertTo-Json -Depth 10 | Set-Content -Path $script:CurrentSnapshot -Encoding UTF8
+
+        $historyCopy = Join-Path $script:Paths.History (Split-Path -Leaf $script:CurrentSnapshot)
+        Copy-Item -Path $script:CurrentSnapshot -Destination $historyCopy -Force
+
+        if (-not $script:PreviousSnapshot) {
+            Write-Host 'Initial snapshot stored; no previous version to compare.' -ForegroundColor Yellow
+            return
+        }
+
+        Write-Host "Comparing with previous snapshot '$(Split-Path -Leaf $script:PreviousSnapshot.FullName)'." -ForegroundColor Cyan
+        $previousPolicies = Get-Content -Path $script:PreviousSnapshot.FullName | ConvertFrom-Json
+
+        $diff = Compare-Object -ReferenceObject ($previousPolicies | ConvertTo-Json -Depth 10) `
+                              -DifferenceObject ($policies | ConvertTo-Json -Depth 10)
+
+        if ($diff) {
+            $script:Summary.PoliciesChanged = 1
+            $reportPath = Join-Path $script:Paths.Reports "Diff-$($script:Timestamp).json"
+            $report = [ordered]@{
+                Timestamp        = Get-Date
+                PreviousSnapshot = $script:PreviousSnapshot.FullName
+                CurrentSnapshot  = $script:CurrentSnapshot
+                Policies         = @()
+            }
+
+            foreach ($policy in $policies) {
+                $previous = $previousPolicies | Where-Object { $_.Id -eq $policy.Id }
+                if (-not $previous) {
+                    $report.Policies += [ordered]@{
+                        PolicyId    = $policy.Id
+                        DisplayName = $policy.DisplayName
+                        ChangeType  = 'Added'
+                        Current     = $policy
+                        Previous    = $null
+                    }
+                    continue
+                }
+
+                $policyDiff = Compare-Object -ReferenceObject ($previous | ConvertTo-Json -Depth 10) -DifferenceObject ($policy | ConvertTo-Json -Depth 10)
+                if ($policyDiff) {
+                    $report.Policies += [ordered]@{
+                        PolicyId    = $policy.Id
+                        DisplayName = $policy.DisplayName
+                        ChangeType  = 'Modified'
+                        Current     = $policy
+                        Previous    = $previous
+                    }
+                }
+            }
+
+            foreach ($previous in $previousPolicies) {
+                if (-not ($policies | Where-Object { $_.Id -eq $previous.Id })) {
+                    $report.Policies += [ordered]@{
+                        PolicyId    = $previous.Id
+                        DisplayName = $previous.DisplayName
+                        ChangeType  = 'Removed'
+                        Current     = $null
+                        Previous    = $previous
+                    }
+                }
+            }
+
+            $report | ConvertTo-Json -Depth 10 | Set-Content -Path $reportPath -Encoding UTF8
+            Write-Host "Drift detected. Report saved to '$reportPath'." -ForegroundColor Yellow
+        }
+        else {
+            Write-Host 'No differences detected between current and previous policies.' -ForegroundColor Green
+        }
+    }
+
+    end {
+        $log = [ordered]@{
+            Timestamp        = Get-Date
+            PoliciesExported = $script:Summary.PoliciesExported
+            PoliciesChanged  = $script:Summary.PoliciesChanged
+            CurrentSnapshot  = $script:CurrentSnapshot
+            PreviousSnapshot = $script:PreviousSnapshot?.FullName
+        }
+        $log | ConvertTo-Json -Depth 5 | Set-Content -Path $script:LogFile -Encoding UTF8
+
+        Write-Host "Policies exported: $($script:Summary.PoliciesExported)" -ForegroundColor Cyan
+        Write-Host "Policies changed: $($script:Summary.PoliciesChanged)" -ForegroundColor Cyan
+        Write-Host "Current snapshot: $script:CurrentSnapshot" -ForegroundColor Cyan
+    }
+}
+
+# example usage
+Invoke-CaPolicyDriftDetection -ExportPath ./CA-Policy-Audit -Verbose
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
 ***
 
 
@@ -345,6 +532,7 @@ catch {
 | Author(s) |
 |-----------|
 | [Valeras Narbutas](https://github.com/ValerasNarbutas) |
+| Adam Wójcik |
 
 ## Version history
 

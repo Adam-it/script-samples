@@ -9,7 +9,7 @@
       ""
     ],
     "creationDateTime": "2023-02-17",
-    "updateDateTime": "2023-05-01",
+    "updateDateTime": "2025-11-19",
     "products": [
       "SharePoint"
     ],
@@ -24,7 +24,7 @@
       },
       {
         "key":"CLI-FOR-MICROSOFT365",
-        "value":"6.6.0"
+        "value":"11.0.0"
       }
     ],
     "categories": [
@@ -39,11 +39,9 @@
       "Connect-PnPOnline",
       "Add-PnPHubSiteAssociation",
       "Disconnect-PnPOnline",
-      "m365 status",
       "m365 login",
       "m365 spo hubsite get",
-      "m365 spo site hubsite connect",
-      "m365 logout"
+      "m365 spo site hubsite connect"
     ],
     "thumbnails": [
       {
@@ -65,6 +63,11 @@
         "company": "",
         "pictureUrl": "https://github.com/siddharth-vaghasia.png",
         "name": "Siddharth Vaghasia"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

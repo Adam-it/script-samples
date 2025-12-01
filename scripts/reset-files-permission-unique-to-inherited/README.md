@@ -65,38 +65,208 @@ Disconnect-PnPOnline
 
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 ```powershell
-#Log in to Microsoft 365
-Write-Host "Connecting to Tenant" -f Yellow
+function Restore-ListItemInheritance {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param (
+        [Parameter(Mandatory = $true, HelpMessage = "URL of the SharePoint site" )]
+        [ValidateNotNullOrEmpty()]
+        [string] $SiteUrl,
 
-$m365Status = m365 status
-if ($m365Status -match "Logged Out") {
-    m365 login
-}
+        [Parameter(Mandatory = $true, HelpMessage = "Title of the document library" )]
+        [ValidateNotNullOrEmpty()]
+        [string] $LibraryTitle,
 
-$siteURL = Read-Host "Please enter Site URL"
-$listName = Read-Host "Please enter list name"
+        [Parameter(HelpMessage = "Folder server-relative URL. When omitted the script scans from the list root." )]
+        [string] $FolderServerRelativeUrl,
 
-# Get the list
-$list  = m365 spo list get --title $listName --webUrl $siteURL --withPermissions --output json | ConvertFrom-Json
+        [Parameter(HelpMessage = "Recursively process sub folders" )]
+        [switch] $Recursive,
 
+        [Parameter(HelpMessage = "Optional path to export processed items and status" )]
+        [string] $OutputPath,
 
-# Get all files in the list
-$files = m365 spo file list --webUrl $siteURL --folder $listName --recursive --output json | ConvertFrom-Json
-foreach ($file in $files) {
-    # Avoid error: Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated keys 'Id' and 'ID'
-    $fileProperties = m365 spo file get --webUrl $siteURL --id $file.UniqueId --asListItem --output json | ForEach-Object { $_.replace("Id", "_Id") } | ConvertFrom-Json
-    
-    if ($fileProperties.ID) {
-        Write-Host "Processing file $($file.ServerRelativeUrl)"
+        [Parameter(HelpMessage = "Emit the processed items to the pipeline" )]
+        [switch] $PassThru
+    )
 
-        # Get the list item
-        $listItem = m365 spo listitem get --webUrl $siteURL --listId $list.Id --id $fileProperties.ID --properties "HasUniqueRoleAssignments" | ConvertFrom-Json
-        if ($listItem.HasUniqueRoleAssignments) {
-            Write-Host "Restoring the role inheritance of list item: $($file.ServerRelativeUrl)"
-            m365 spo listitem roleinheritance reset --webUrl $siteURL --listItemId $fileProperties.ID --listId $list.Id
+    begin {
+        Write-Verbose "Ensuring CLI authentication"
+        m365 login --ensure | Out-Null
+
+        $results = New-Object System.Collections.Generic.List[psobject]
+        $summary = [ordered]@{
+            ItemsScanned    = 0
+            ItemsReset      = 0
+            ItemsInherited  = 0
+            Errors          = 0
+        }
+
+        if ($OutputPath) {
+            $directory = Split-Path -Parent $OutputPath
+            if (-not $directory) {
+                $directory = '.'
+            }
+            if (-not (Test-Path -Path $directory)) {
+                Write-Verbose "Creating directory '$directory'"
+                New-Item -ItemType Directory -Path $directory -Force | Out-Null
+            }
+        }
+
+        $list = $null
+        $listArgs = @(
+            'spo', 'list', 'get',
+            '--webUrl', $SiteUrl,
+            '--title', $LibraryTitle,
+            '--output', 'json',
+            '--query', '{Id:Id,Title:Title,RootFolderServerRelativeUrl:RootFolder.ServerRelativeUrl}'
+        )
+
+        Write-Verbose "Retrieving list metadata"
+        $listJson = m365 @listArgs 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve list '$LibraryTitle'. CLI output: $listJson"
+        }
+
+        try {
+            $list = $listJson | ConvertFrom-Json
+        }
+        catch {
+            throw "Failed to parse list metadata. Error: $($_.Exception.Message)"
+        }
+
+        if (-not $FolderServerRelativeUrl) {
+            $FolderServerRelativeUrl = $list.RootFolderServerRelativeUrl
+        }
+
+        function Invoke-ItemRepair {
+            param(
+                [string] $Category,
+                [string] $ItemServerRelativeUrl,
+                [string] $FileId
+            )
+
+            $summary.ItemsScanned++
+
+            $itemArgs = @(
+                'spo', 'listitem', 'get',
+                '--webUrl', $SiteUrl,
+                '--listId', $list.Id,
+                '--id', $FileId,
+                '--properties', 'HasUniqueRoleAssignments',
+                '--output', 'json'
+            )
+
+            $itemJson = m365 @itemArgs 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to retrieve list item '$ItemServerRelativeUrl'. CLI output: $itemJson"
+                $summary.Errors++
+                return
+            }
+
+            try {
+                $item = $itemJson | ConvertFrom-Json
+            }
+            catch {
+                Write-Warning "Failed to parse list item '$ItemServerRelativeUrl'. Error: $($_.Exception.Message)"
+                $summary.Errors++
+                return
+            }
+
+            $resultEntry = [pscustomobject]@{
+                ServerRelativeUrl = $ItemServerRelativeUrl
+                ItemId            = $item.Id
+                HadUniquePermission = $item.HasUniqueRoleAssignments
+                ResetPerformed    = $false
+            }
+
+            if ($item.HasUniqueRoleAssignments) {
+                if ($PSCmdlet.ShouldProcess($ItemServerRelativeUrl, 'Restore permission inheritance')) {
+                    $resetArgs = @(
+                        'spo', 'listitem', 'roleinheritance', 'reset',
+                        '--webUrl', $SiteUrl,
+                        '--listId', $list.Id,
+                        '--listItemId', $item.Id
+                    )
+
+                    $resetOutput = m365 @resetArgs 2>&1
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Warning "Failed to reset inheritance for '$ItemServerRelativeUrl'. CLI output: $resetOutput"
+                        $summary.Errors++
+                    }
+                    else {
+                        $summary.ItemsReset++
+                        $resultEntry.ResetPerformed = $true
+                    }
+                }
+            }
+            else {
+                $summary.ItemsInherited++
+            }
+
+            $results.Add($resultEntry) | Out-Null
+        }
+
+    }
+
+    process {
+        $fileArgs = @(
+            'spo', 'file', 'list',
+            '--webUrl', $SiteUrl,
+            '--folderUrl', $FolderServerRelativeUrl,
+            '--output', 'json',
+            '--query', '[].{ServerRelativeUrl:ServerRelativeUrl,UniqueId:UniqueId}'
+        )
+
+        if ($Recursive) {
+            $fileArgs += '--recursive'
+        }
+
+        $filesJson = m365 @fileArgs 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to list files under '$FolderServerRelativeUrl'. CLI output: $filesJson"
+            $summary.Errors++
+            return
+        }
+
+        if ([string]::IsNullOrWhiteSpace($filesJson)) {
+            Write-Verbose "No files returned for '$FolderServerRelativeUrl'"
+            return
+        }
+
+        try {
+            $files = @($filesJson | ConvertFrom-Json)
+        }
+        catch {
+            Write-Warning "Failed to parse file listing for '$FolderServerRelativeUrl'. Error: $($_.Exception.Message)"
+            $summary.Errors++
+            return
+        }
+
+        foreach ($file in $files) {
+            Invoke-ItemRepair -Category 'File' -ItemServerRelativeUrl $file.ServerRelativeUrl -FileId $file.UniqueId
+        }
+    }
+
+    end {
+        if ($OutputPath) {
+            Write-Verbose "Exporting results to '$OutputPath'"
+            $results | Export-Csv -Path $OutputPath -NoTypeInformation -Encoding UTF8 -Force
+        }
+
+        Write-Host "Reset inheritance summary:" -ForegroundColor Cyan
+        Write-Host ("- Items scanned: {0}" -f $summary.ItemsScanned)
+        Write-Host ("- Items reset : {0}" -f $summary.ItemsReset)
+        Write-Host ("- Already inherited: {0}" -f $summary.ItemsInherited)
+        Write-Host ("- Errors: {0}" -f $summary.Errors)
+
+        if ($PassThru) {
+            $results
         }
     }
 }
+
+# Example
+Restore-ListItemInheritance -SiteUrl "https://contoso.sharepoint.com/sites/Docs" -LibraryTitle "Documents" -Recursive -OutputPath "./RestoredPermissions.csv" -Verbose
 ```
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
 ***
@@ -109,6 +279,7 @@ foreach ($file in $files) {
 | [Nanddeep Nachan](https://github.com/nanddeepn) |
 | [Valeras Narbutas](https://github.com/ValerasNarbutas) |
 | [Rob Ellis](https://github.com/ee61re) |
+| [Adam Wójcik](https://github.com/Adam-it) |
 
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

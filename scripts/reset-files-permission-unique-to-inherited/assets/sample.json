@@ -9,7 +9,7 @@
       ""
     ],
     "creationDateTime": "2021-08-11",
-    "updateDateTime": "2023-06-07",
+    "updateDateTime": "2025-12-01",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -28,23 +28,10 @@
       "Security"
     ],
     "tags": [
-      "Permission",
-      "Unique Permission",
-      "Permission Inheritance",
-      "Connect-PnPOnline",
-      "Disconnect-PnPOnline",
-      "Get-PnPContext",
-      "Get-PnPFolder",
-      "Get-PnPList",
-      "Get-PnPListItem",
-      "Get-PnPProperty",
       "m365 login",
-      "m365 status",
-      "m365 spo list list",
-      "m365 spo file list",
-      "m365 spo file get",
       "m365 spo listitem get",
-      "m365 spo listitem roleinheritance reset"
+      "m365 spo listitem roleinheritance reset",
+      "m365 spo file list"
     ],
     "thumbnails": [
       {
@@ -75,7 +62,13 @@
         "company": "Rapid Circle",
         "pictureUrl": "https://avatars.githubusercontent.com/u/40450958?v=4",
         "name": "Dipen Shah"
-      }        
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam W\u00f3jcik"
+      }
     ],
     "references": [
       {

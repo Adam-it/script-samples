@@ -7,7 +7,7 @@
     "url": "https://pnp.github.io/script-samples/get-all-site-collections-subwebs/README.html",
     "longDescription": [],
     "creationDateTime": "2021-05-05",
-    "updateDateTime": "2021-10-10",
+    "updateDateTime": "2025-12-01",
     "products": [
       "SharePoint"
     ],
@@ -18,19 +18,14 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
+        "value": "11.0.0"
       }
     ],
     "tags": [
       "m365 login",
-      "m365 status",
       "m365 spo site classic list",
       "m365 spo site list",
-      "m365 spo web list",
-      "Connect-PnPOnline",
-      "Get-PnPSubWeb",
-      "Get-PnPTenant",
-      "Get-PnPTenantSite"
+      "m365 spo web list"
     ],
     "categories": [
       "Report"
@@ -47,7 +42,8 @@
       {
         "gitHubAccount": "Adam-it",
         "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
-        "name": "Adam Wójcik"
+        "name": "Adam Wójcik",
+        "company": ""
       },
       {
         "gitHubAccount": "chandaniprajapati",

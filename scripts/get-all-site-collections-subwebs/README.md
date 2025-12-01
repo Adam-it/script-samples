@@ -8,7 +8,7 @@ Sometimes we have a business requirement to get site collections with all the su
 
 ![Example Screenshot](assets/example.png)
 
-result with CLI version of the script
+result with CLI for Microsoft 365 version of the script
 
 ![Example Cli Screenshot](assets/example_cli.png)
 
@@ -67,43 +67,222 @@ AllSiteCollAndSubWebs
 
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 ```powershell
+function Get-SpoSiteCollectionsWithSubwebs {
+    [CmdletBinding()]
+    param(
+        [Parameter(HelpMessage = "Filter to apply when retrieving sites, e.g. `\"Url -like 'project'\"`")]
+        [string] $Filter,
 
-function PrintSite([string]$type, $sitesJson) {
-    $sites = $sitesJson | ConvertFrom-Json
-    $sitesCount = $sites.Count
-    Write-Host "--------------------------------------------------------------------"
-    Write-Host "$type (amount: $sitesCount):"
-    foreach ($site in $sites) {
-        Write-Host $site.Title $site.Url    
-        $subWebs = m365 spo web list -u $site.Url
-        $subWebs = $subWebs | ConvertFrom-Json
-        foreach ($subWeb in $subWebs) {
-            Write-Host $subWeb.Title $subWeb.Url
+        [Parameter(HelpMessage = "Modern site types to include in the inventory")]
+        [ValidateNotNullOrEmpty()]
+        [ValidateSet('TeamSite', 'CommunicationSite')]
+        [string[]] $SiteTypes = @('TeamSite', 'CommunicationSite'),
+
+        [Parameter(HelpMessage = "Include classic site collections in the report")]
+        [switch] $IncludeClassicSites,
+
+        [Parameter(HelpMessage = "Include deleted sites in the report (sub-web enumeration is skipped)")]
+        [switch] $IncludeDeletedSites,
+
+        [Parameter(HelpMessage = "Optional path to export the results to CSV")]
+        [string] $OutputPath,
+
+        [Parameter(HelpMessage = "Emit the inventory objects to the pipeline")]
+        [switch] $PassThru
+    )
+
+    begin {
+        Write-Verbose "Ensuring CLI authentication"
+        m365 login --ensure | Out-Null
+
+        $results = New-Object System.Collections.Generic.List[psobject]
+        $summary = [ordered]@{
+            Categories = New-Object System.Collections.Generic.List[psobject]
+            Errors     = 0
+        }
+
+        if ($OutputPath) {
+            $directory = Split-Path -Path $OutputPath -Parent
+            if (-not $directory) {
+                $directory = '.'
+            }
+            if (-not (Test-Path -Path $directory)) {
+                Write-Verbose "Creating directory '$directory'"
+                New-Item -ItemType Directory -Path $directory -Force | Out-Null
+            }
+        }
+
+        function Invoke-SiteCategory {
+            param(
+                [string] $Label,
+                [string[]] $CommandArgs,
+                [bool] $EnumerateSubwebs = $true
+            )
+
+            Write-Verbose "Retrieving $Label"
+            $json = m365 @CommandArgs 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to retrieve $Label. CLI output: $json"
+                $summary.Errors++
+                return
+            }
+
+            if ([string]::IsNullOrWhiteSpace($json)) {
+                Write-Verbose "No results returned for $Label"
+                return
+            }
+
+            try {
+                $sites = $json | ConvertFrom-Json
+            }
+            catch {
+                Write-Warning "Failed to parse response for $Label. Error: $($_.Exception.Message)"
+                $summary.Errors++
+                return
+            }
+
+            $sites = @($sites)
+            if ($sites.Count -eq 0) {
+                Write-Verbose "No sites found for $Label"
+                return
+            }
+
+            $stats = [ordered]@{
+                Category = $Label
+                Sites    = $sites.Count
+                SubWebs  = 0
+            }
+
+            foreach ($site in $sites) {
+                if ($EnumerateSubwebs) {
+                    $webArgs = @(
+                        'spo', 'web', 'list',
+                        '--webUrl', $site.Url,
+                        '--output', 'json',
+                        '--query', '[].{Title:Title,Url:Url}'
+                    )
+
+                    $webJson = m365 @webArgs 2>&1
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Warning "Failed to retrieve sub-webs for '$($site.Url)'. CLI output: $webJson"
+                        $summary.Errors++
+                        $results.Add([pscustomobject]@{
+                            Category     = $Label
+                            SiteTitle    = $site.Title
+                            SiteUrl      = $site.Url
+                            SubWebTitle  = $null
+                            SubWebUrl    = $null
+                        }) | Out-Null
+                        continue
+                    }
+
+                    try {
+                        $subWebs = [string]::IsNullOrWhiteSpace($webJson) ? @() : @($webJson | ConvertFrom-Json)
+                    }
+                    catch {
+                        Write-Warning "Failed to parse sub-webs for '$($site.Url)'. Error: $($_.Exception.Message)"
+                        $summary.Errors++
+                        $subWebs = @()
+                    }
+
+                    if ($subWebs.Count -eq 0) {
+                        $results.Add([pscustomobject]@{
+                            Category     = $Label
+                            SiteTitle    = $site.Title
+                            SiteUrl      = $site.Url
+                            SubWebTitle  = $null
+                            SubWebUrl    = $null
+                        }) | Out-Null
+                    }
+                    else {
+                        foreach ($subWeb in $subWebs) {
+                            $results.Add([pscustomobject]@{
+                                Category     = $Label
+                                SiteTitle    = $site.Title
+                                SiteUrl      = $site.Url
+                                SubWebTitle  = $subWeb.Title
+                                SubWebUrl    = $subWeb.Url
+                            }) | Out-Null
+                        }
+                    }
+
+                    $stats.SubWebs += $subWebs.Count
+                }
+                else {
+                    $results.Add([pscustomobject]@{
+                        Category     = $Label
+                        SiteTitle    = $site.Title
+                        SiteUrl      = $site.Url
+                        SubWebTitle  = $null
+                        SubWebUrl    = $null
+                    }) | Out-Null
+                }
+            }
+
+            $summary.Categories.Add([pscustomobject]$stats) | Out-Null
+        }
+    }
+
+    process {
+        foreach ($type in ($SiteTypes | Select-Object -Unique)) {
+            $label = switch ($type) {
+                'TeamSite'          { 'Team Sites' }
+                'CommunicationSite' { 'Communication Sites' }
+                Default             { $type }
+            }
+
+            $siteArgs = @(
+                'spo', 'site', 'list',
+                '--type', $type,
+                '--output', 'json',
+                '--query', '[].{Title:Title,Url:Url}'
+            )
+
+            if ($Filter) {
+                $siteArgs += @('--filter', $Filter)
+            }
+
+            Invoke-SiteCategory -Label $label -CommandArgs $siteArgs
+        }
+
+        if ($IncludeClassicSites) {
+            $classicArgs = @('spo', 'site', 'classic', 'list', '--output', 'json', '--query', '[].{Title:Title,Url:Url}')
+            if ($Filter) {
+                $classicArgs += @('--filter', $Filter)
+            }
+            Invoke-SiteCategory -Label 'Classic Sites' -CommandArgs $classicArgs
+        }
+
+        if ($IncludeDeletedSites) {
+            $deletedArgs = @('spo', 'site', 'list', '--deleted', '--output', 'json', '--query', '[].{Title:Title,Url:Url}')
+            if ($Filter) {
+                $deletedArgs += @('--filter', $Filter)
+            }
+            Invoke-SiteCategory -Label 'Deleted Sites' -CommandArgs $deletedArgs -EnumerateSubwebs:$false
+        }
+    }
+
+    end {
+        if ($OutputPath) {
+            Write-Verbose "Exporting results to '$OutputPath'"
+            $results | Export-Csv -Path $OutputPath -NoTypeInformation -Encoding UTF8
+            Write-Host "Results exported to $OutputPath" -ForegroundColor Green
+        }
+
+        Write-Host "Site inventory summary:" -ForegroundColor Cyan
+        foreach ($stat in $summary.Categories) {
+            Write-Host ("- {0}: {1} site(s), {2} sub web(s)" -f $stat.Category, $stat.Sites, $stat.SubWebs)
+        }
+        Write-Host ("- Errors: {0}" -f $summary.Errors)
+
+        if ($PassThru) {
+            $results
         }
     }
 }
 
-function AllSiteCollAndSubWebs() {
-    $m365Status = m365 status
-    if ($m365Status -match "Logged Out") {
-        m365 login
-    }
-
-    $teamSites = m365 spo site list --type TeamSite
-    PrintSite -type 'Team Sites' -sitesJson $teamSites
-
-    $communicationSites = m365 spo site list --type CommunicationSite
-    PrintSite -type 'Communication Sites' -sitesJson $communicationSites
-
-    $classicSites = m365 spo site classic list
-    PrintSite -type 'Classic Sites' -sitesJson $classicSites
-
-    $deletedSites = m365 spo site list --deleted
-    PrintSite -type 'Deleted Sites' -sitesJson $deletedSites
-}
-
-AllSiteCollAndSubWebs
-
+# Example usage
+Get-SpoSiteCollectionsWithSubwebs -IncludeClassicSites -IncludeDeletedSites -OutputPath "./site-inventory.csv" -Verbose
 ```
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
 ***

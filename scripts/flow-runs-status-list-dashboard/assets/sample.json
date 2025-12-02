@@ -9,26 +9,24 @@
       ""
     ],
     "creationDateTime": "2022-02-01",
-    "updateDateTime": "2022-02-01",
+    "updateDateTime": "2025-12-01",
     "products": [
       "Power Automate"
     ],
     "metadata": [
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
+        "value": "11.0.0"
       }
     ],
     "categories": [
       "Report"
     ],
     "tags": [
-      "m365 status",
       "m365 login",
-      "m365 flow environment list",
       "m365 flow list",
-      "m365 spo listitem list",
       "m365 flow run list",
+      "m365 spo listitem list",
       "m365 spo listitem add",
       "m365 spo listitem set"
     ],
@@ -46,6 +44,12 @@
         "company": "365Apps",
         "pictureUrl": "https://github.com/Ryan365Apps.png",
         "name": "Ryan Healy"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam W\u00f3jcik"
       }
     ],
     "references": [

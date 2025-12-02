@@ -9,7 +9,7 @@
       "This sample read site url and list/library title from user and fetch some required field properties and then export it to CSV"
     ],
     "creationDateTime": "2021-10-13",
-    "updateDateTime": "2022-05-27",
+    "updateDateTime": "2025-12-01",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -29,8 +29,6 @@
     ],
     "tags": [
       "m365 login",
-      "m365 status",
-      "m365 spo field get",
       "m365 spo field list",
       "Connect-PnPOnline",
       "Get-PnPField"
@@ -53,6 +51,11 @@
         "gitHubAccount": "chandaniprajapati",
         "pictureUrl": "https://avatars.githubusercontent.com/u/52065929?v=4",
         "name": "Chandani Prajapati"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

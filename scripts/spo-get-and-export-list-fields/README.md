@@ -96,41 +96,131 @@ ConnectToSPSite
 
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 ```powershell
-Function Login {
-    Write-Host "Connecting to Tenant Site" -f Yellow   
-    $m365Status = m365 status
+function Get-SpoListFieldReport {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, HelpMessage = "SharePoint site URL hosting the list")]
+        [ValidateNotNullOrEmpty()]
+        [string] $SiteUrl,
 
-    if ($m365Status -match "Logged Out") {
-      m365 login
-    }
-}
+        [Parameter(Mandatory = $true, HelpMessage = "Title of the target list or library")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ListTitle,
 
-Function ExportListFields {
-    $webUrl = Read-Host "Please enter Site URL"
-    $listTitle = Read-Host "Please enter list name"
+        [Parameter(HelpMessage = "When supplied, include hidden fields in the report")]
+        [switch] $IncludeHidden,
 
-    try {
-        $listFields = m365 spo field list --webUrl $webUrl --listTitle $listTitle --output json | ConvertFrom-Json
+        [Parameter(HelpMessage = "Skip exporting the report to disk")]
+        [switch] $SkipExport,
 
-        $listFieldsReports = @()
+        [Parameter(HelpMessage = "Custom CSV destination (defaults to timestamped file in the current directory)")]
+        [ValidateNotNullOrEmpty()]
+        [string] $OutputPath,
 
-        foreach ($listField in $listFields) {
-            Write-Host "Processing field: $($listField.Title) - $($listField.Id)"
-            $field = m365 spo field get --webUrl $webUrl --listTitle $listTitle --id $listField.Id --output json | ConvertFrom-Json
-            $listFieldsReports += $field
+        [Parameter(HelpMessage = "Emit the report objects to the pipeline")]
+        [switch] $PassThru
+    )
+
+    begin {
+        Write-Verbose "Ensuring CLI authentication"
+        $loginOutput = m365 login --ensure 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to sign in to CLI for Microsoft 365. CLI output: $loginOutput"
         }
-    
-        $dateTime = "_{0:MM_dd_yy}_{0:HH_mm_ss}" -f (Get-Date)
-        $csvPath = ".\ListFields" + $dateTime + ".csv"
-        $listFieldsReports | ConvertTo-Csv -NoTypeInformation | Out-File -FilePath "SearchResults.csv"
+
+        if (-not $SkipExport) {
+            if (-not $PSBoundParameters.ContainsKey('OutputPath')) {
+                $timestamp = (Get-Date).ToString('yyyyMMdd-HHmmss')
+                $OutputPath = Join-Path -Path (Get-Location) -ChildPath "ListFields-$timestamp.csv"
+            }
+
+            $directory = Split-Path -Parent $OutputPath
+            if ([string]::IsNullOrEmpty($directory)) {
+                $directory = '.'
+            }
+
+            if (-not (Test-Path -Path $directory)) {
+                Write-Verbose "Creating directory '$directory'"
+                New-Item -Path $directory -ItemType Directory -Force | Out-Null
+            }
+        }
+
+        $context = [ordered]@{
+            Results = [System.Collections.Generic.List[psobject]]::new()
+            FieldsRetrieved = 0
+            HiddenSkipped   = 0
+            Exported        = 0
+        }
+
+        $query = "[].{Id:Id,Title:Title,Type:TypeAsString,InternalName:InternalName,StaticName:StaticName,Scope:Scope,TypeDisplay:TypeDisplayName,ReadOnly:ReadOnlyField,Unique:EnforceUniqueValues,Required:Required,Sortable:Sortable,SchemaXml:SchemaXml,Description:Description,Group:Group,Hidden:Hidden}"
+        $properties = 'Id,Title,TypeAsString,InternalName,StaticName,Scope,TypeDisplayName,ReadOnlyField,EnforceUniqueValues,Required,Sortable,SchemaXml,Description,Group,Hidden'
     }
-    catch {
-        Write-Host "Error in getting list fields: " $_.Exception.Message -ForegroundColor Red                 
+
+    process {
+        Write-Verbose "Retrieving fields for list '$ListTitle'"
+        $fieldsJson = m365 spo field list --webUrl $SiteUrl --listTitle $ListTitle --properties $properties --output json --query $query 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to list fields. CLI output: $fieldsJson"
+        }
+
+        try {
+            $fields = if ([string]::IsNullOrWhiteSpace($fieldsJson)) { @() } else { @($fieldsJson | ConvertFrom-Json) }
+        }
+        catch {
+            throw "Failed to parse field listing. Error: $($_.Exception.Message)"
+        }
+
+        $context.FieldsRetrieved = $fields.Count
+
+        if (-not $IncludeHidden) {
+            $visibleFields = $fields | Where-Object { -not $_.Hidden }
+            $context.HiddenSkipped = $fields.Count - $visibleFields.Count
+        }
+        else {
+            $visibleFields = $fields
+        }
+
+        foreach ($field in $visibleFields) {
+            $context.Results.Add([pscustomobject]@{
+                Title        = $field.Title
+                Type         = $field.Type
+                InternalName = $field.InternalName
+                StaticName   = $field.StaticName
+                Scope        = $field.Scope
+                TypeDisplay  = $field.TypeDisplay
+                ReadOnly     = [bool]$field.ReadOnly
+                Unique       = [bool]$field.Unique
+                Required     = [bool]$field.Required
+                Sortable     = [bool]$field.Sortable
+                Group        = $field.Group
+                Hidden       = [bool]$field.Hidden
+                Description  = $field.Description
+                SchemaXml    = $field.SchemaXml
+            }) | Out-Null
+        }
+    }
+
+    end {
+        if (-not $SkipExport -and $context.Results.Count -gt 0) {
+            Write-Verbose "Exporting field report to '$OutputPath'"
+            $context.Results | Export-Csv -Path $OutputPath -NoTypeInformation -Encoding UTF8 -Force
+            $context.Exported = $context.Results.Count
+        }
+
+        Write-Host "Field export summary:" -ForegroundColor Cyan
+        Write-Host ("- Fields retrieved : {0}" -f $context.FieldsRetrieved)
+        Write-Host ("- Hidden skipped   : {0}" -f $context.HiddenSkipped)
+        Write-Host ("- Rows in report   : {0}" -f $context.Results.Count)
+        Write-Host ("- Rows exported    : {0}" -f $context.Exported)
+
+        if ($PassThru) {
+            $context.Results
+        }
     }
 }
 
-Login
-ExportListFields
+# Example usage
+Get-SpoListFieldReport -SiteUrl "https://contoso.sharepoint.com/sites/demo" -ListTitle "Documents" -Verbose
 ```
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
 ***

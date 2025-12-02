@@ -7,7 +7,7 @@
     "url": "https://pnp.github.io/script-samples/spo-generate-demo-events/README.html",
     "longDescription": [],
     "creationDateTime": "2021-09-08",
-    "updateDateTime": "2021-10-10",
+    "updateDateTime": "2025-12-01",
     "products": [
       "SharePoint"
     ],
@@ -18,7 +18,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -27,7 +27,6 @@
     "tags": [
       "modern",
       "m365 login",
-      "m365 status",
       "m365 spo listitem add",
       "Add-PnPListItem",
       "Connect-PnPOnline"

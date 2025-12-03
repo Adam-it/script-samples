@@ -7,7 +7,7 @@
     "title": "Export all List and Libraries with Item count and Permission in CSV",
     "url": "https://pnp.github.io/script-samples/spo-get-lists-libraries-item-count-permissions/README.html",
     "creationDateTime": "2021-10-08",
-    "updateDateTime": "2023-10-19",
+    "updateDateTime": "2025-12-02",
     "shortDescription": "Get all lists and Libraries along with total Item count and permissions and export it in CSV",
     "longDescription": null,
     "products": [
@@ -20,10 +20,8 @@
       "Connect-PnPOnline",
       "Get-PnPList",
       "Get-PnPProperty",
-      "m365 status",
       "m365 login",
-      "m365 spo list list",
-      "m365 spo list view list"
+      "m365 spo list list"
     ],
     "metadata": [
       {
@@ -32,7 +30,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
+        "value": "11.0.0"
       }
     ],
     "thumbnails": [

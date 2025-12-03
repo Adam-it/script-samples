@@ -9,7 +9,7 @@
       "Script to generate Team's full report, gathering all Teams,Channels,Tabs available info. The script is a subset of the SPO powershell packages with content (PnPCandy) concept already been used across many projects."
     ],
     "creationDateTime": "2021-11-02",
-    "updateDateTime": "2022-02-26",
+    "updateDateTime": "2025-12-02",
     "products": [
       "Teams"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -34,15 +34,13 @@
       "Get-PnPMicrosoft365GroupMember",
       "Get-PnPTeamsUser",
       "Disconnect-PnPOnline",
-      "m365 status",
       "m365 login",
       "m365 teams team list",
-      "m365 aad o365group",
+      "m365 entra m365group get",
       "m365 teams user list",
       "m365 teams channel list",
       "m365 teams channel get",
-      "m365 teams tab list",
-      "m365 logout"
+      "m365 teams tab list"
     ],
     "thumbnails": [
       {
@@ -63,6 +61,11 @@
         "gitHubAccount": "scoutmanpt",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7837053?v=4",
         "name": "Rodrigo Pinto"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

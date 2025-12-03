@@ -221,63 +221,72 @@ process {
 
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $True)]
+    [Parameter(Mandatory = $True, HelpMessage = 'Tenant primary domain (e.g., contoso.onmicrosoft.com).')]
     [string]$Tenant,
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $False, HelpMessage = 'Optional team display name or ID to scope the report.')] 
     [string]$Team,
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $False, HelpMessage = 'Folder where the CSV reports will be saved. Defaults to current directory.')] 
     [string]$ExportPath= ".\"
 )
 begin {
     $ErrorActionPreference = "Stop"   
     
     function Capitalize($objMain) {
-        if ($null -ne $objMain) {
-            #test if its an array of objects
-            $objMain.foreach({
-                    $obj = $_
-                    $members = $obj | Get-Member -MemberType NoteProperty
-                    $members | ForEach-Object {
-           
-                        $name = [regex]::replace($_.Name, '(^|_)(.)', { $args[0].Groups[2].Value.ToUpper() })
-                        $value = $obj.PSObject.Properties[$_.Name].value
-                        $obj.PSObject.Properties.Remove($_.Name)
-                        # add a new NoteProperty 'fqdn'
-                        $obj | Add-Member -Name $name  -Value $value -MemberType NoteProperty -Force 
-                        $added = $obj.PSObject.Properties[$name]
-                    }
-                })
-           
+        if ($null -eq $objMain) {
+            return $null
         }
+
+        # test if its an array of objects
+        $objMain.foreach({
+                $obj = $_
+                $members = $obj | Get-Member -MemberType NoteProperty
+                $members | ForEach-Object {
+                    $name = [regex]::replace($_.Name, '(^|_)(.)', { $args[0].Groups[2].Value.ToUpper() })
+                    $value = $obj.PSObject.Properties[$_.Name].value
+                    $obj.PSObject.Properties.Remove($_.Name)
+                    # add a new NoteProperty 'fqdn'
+                    $obj | Add-Member -Name $name  -Value $value -MemberType NoteProperty -Force 
+                    $added = $obj.PSObject.Properties[$name]
+                }
+            })
+
         $objMain
     }
+
     function Get-UserInfo($obj)
     {
-        $Info=" "
+        $Info = " "
       
-        $obj |Select-Object @{n = 'Users'; e = {'[' +  $_.DisplayName + ':' + $_.UserPrincipalName +']' } } | ForEach-Object { $Info += $_.Users +";"  }
-        $Info= $Info.Substring(0,$Info.Length-1).Trim()
+        $obj | Select-Object @{n = 'Users'; e = {'[' +  $_.DisplayName + ':' + $_.UserPrincipalName +']' } } | ForEach-Object { $Info += $_.Users +";"  }
+        $Info = $Info.Substring(0, $Info.Length-1).Trim()
         $Info
     }
     
     ## Validate if Tenant value is ok
-    if ($Tenant -notmatch '.onmicrosoft.com') {
-        $msg = "Provided Tenant is not valid. Please use the following format [Tenant].onmicrosoft.com. Example:pnpcady.onmicrosoft.com"
-        throw $msg
-    }
+    if ($Tenant -notmatch '.onmicrosoft.com')
+        throw "Provided Tenant is not valid. Please use the following format [Tenant].onmicrosoft.com. Example:pnpcady.onmicrosoft.com"
+
     $tenantPrefix = $Tenant.ToLower().Replace(".onmicrosoft.com", "")
     $url = "https://$tenantPrefix-admin.sharepoint.com"
- 
+    $loginOutput = m365 login --ensure 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate to Microsoft 365. CLI output: $loginOutput"
+    }
 }
 
 process {
-   $m365Status = m365 status
-  if ($m365Status -match "Logged Out") {
-    m365 login
-}
+    Write-Verbose "Getting Team(s) $Team"
+    $teamsResponse = m365 teams team list --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to retrieve teams. CLI output: $teamsResponse"
+    }
 
-    Write-Output " Getting Team(s) $Team"
-    $listOfTeams = m365 teams team list -o json | ConvertFrom-Json 
+    try {
+        $listOfTeams = $teamsResponse | ConvertFrom-Json
+    }
+    catch {
+        throw "Unable to parse teams response as JSON. Error: $($_.Exception.Message)"
+    }
 
     if (($null -ne $Team) -and ($Team -ne ""))
     {
@@ -287,21 +296,32 @@ process {
     if($null -ne $listOfTeams)
     {
         $teamCount = $listOfTeams.Count
-        Write-Output "Processing $teamCount teams..."
+        Write-Verbose "Processing $teamCount teams..."
     }
     else {
         Write-Output " No Team(s) found"
     }
-   
-                                                       
+                                                
     $list = @()  
     $listOfTeams | ForEach-Object {
         $tm = $_
 
-        Write-Output "  Team:$($tm.displayName)"
+        Write-Verbose "Processing team '$($tm.displayName)'"
 
-        Write-Output "   Get group details"
-        $Group = m365 aad o365group get --id $tm.id --includeSiteUrl -o json | ConvertFrom-Json
+        Write-Verbose "Retrieving group details"
+        $groupResponse = m365 entra m365group get --id $tm.id --withSiteUrl --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to retrieve group details for team '$($tm.displayName)'. CLI output: $groupResponse"
+            return
+        }
+
+        try {
+            $Group = $groupResponse | ConvertFrom-Json
+        }
+        catch {
+            Write-Warning "Unable to parse group details for team '$($tm.displayName)'. Error: $($_.Exception.Message)"
+            return
+        }
  
         $tm | Add-Member -Name "Visibility" -MemberType NoteProperty -Value $Group.Visibility  -Force
         $tm | Add-Member -Name "SiteUrl" -MemberType NoteProperty -Value $Group.SiteUrl  -Force
@@ -316,14 +336,46 @@ process {
         $tm | Add-Member -Name "SecurityIdentified" -MemberType NoteProperty -Value $Group.SecurityIdentified  -Force
         $tm | Add-Member -Name "Theme" -MemberType NoteProperty -Value $Group.Theme  -Force
        
-        Write-Output "   Get membership (Owners,Members,Guests)" 
-        $Owners =  m365 teams user list --teamId $tm.id --role Owner  -o json | ConvertFrom-Json
-        $OwnersInfo= Get-UserInfo -obj $Owners
+        Write-Verbose "Retrieving membership (Owners, Members, Guests)"
+        $Owners = @()
+        $Members = @()
+        $Guests = @()
 
-        $Members = m365 teams user list --teamId $tm.id --role Member  -o json | ConvertFrom-Json
+        $ownersResponse = m365 teams user list --teamId $tm.id --role Owner --output json 2>&1
+        $ownersExitCode = $LASTEXITCODE
+        $membersResponse = m365 teams user list --teamId $tm.id --role Member --output json 2>&1
+        $membersExitCode = $LASTEXITCODE
+        $guestsResponse = m365 teams user list --teamId $tm.id --role Guest --output json 2>&1
+        $guestsExitCode = $LASTEXITCODE
+
+        try {
+            if ($ownersExitCode -eq 0 -and $ownersResponse) {
+                $Owners = $ownersResponse | ConvertFrom-Json
+            }
+            elseif ($ownersExitCode -ne 0) {
+                Write-Warning "Failed to retrieve owners for team '$($tm.displayName)'. CLI output: $ownersResponse"
+            }
+
+            if ($membersExitCode -eq 0 -and $membersResponse) {
+                $Members = $membersResponse | ConvertFrom-Json
+            }
+            elseif ($membersExitCode -ne 0) {
+                Write-Warning "Failed to retrieve members for team '$($tm.displayName)'. CLI output: $membersResponse"
+            }
+
+            if ($guestsExitCode -eq 0 -and $guestsResponse) {
+                $Guests = $guestsResponse | ConvertFrom-Json
+            }
+            elseif ($guestsExitCode -ne 0) {
+                Write-Warning "Failed to retrieve guests for team '$($tm.displayName)'. CLI output: $guestsResponse"
+            }
+        }
+        catch {
+            Write-Warning "Unable to parse membership data for team '$($tm.displayName)'. Error: $($_.Exception.Message)"
+        }
+
+        $OwnersInfo= Get-UserInfo -obj $Owners
         $MembersInfo= Get-UserInfo -obj $Members 
-        
-        $Guests =  m365 teams user list --teamId $tm.id --role Guest -o json | ConvertFrom-Json
         $GuestsInfo= Get-UserInfo -obj $Guests 
 
         $tm | Add-Member -Name "Owners" -MemberType NoteProperty -Value $Owners  -Force
@@ -333,37 +385,73 @@ process {
         $tm | Add-Member -Name "Guest" -MemberType NoteProperty -Value $Guests  -Force    
         $tm | Add-Member -Name "GuestInfo" -MemberType NoteProperty -Value $GuestsInfo  -Force 
 
-        Write-Output "   Membership (Owners,Members,Guests) collected ! " 
-        
+        Write-Verbose "Membership (Owners, Members, Guests) collected"
         
         #get all channels
-        Write-Output "   Getting Channels"
-        $allChannels = m365 teams channel list --teamId $tm.id | ConvertFrom-Json
+        Write-Verbose "Retrieving channels"
+        $channelsResponse = m365 teams channel list --teamId $tm.id --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to retrieve channels for team '$($tm.displayName)'. CLI output: $channelsResponse"
+            return
+        }
+
+        try {
+            $allChannels = $channelsResponse | ConvertFrom-Json
+        }
+        catch {
+            Write-Warning "Unable to parse channels for team '$($tm.displayName)'. Error: $($_.Exception.Message)"
+            return
+        }
         $allChannels = Capitalize -obj $allChannels
         
-        Write-Output "    Get Primary Channel" 
-        $primaryChannel = m365 teams channel get --teamId $tm.id --primary
+        Write-Verbose "Retrieving primary channel"
+        $primaryChannelResponse = m365 teams channel get --teamId $tm.id --primary --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to retrieve primary channel for team '$($tm.displayName)'. CLI output: $primaryChannelResponse"
+            $primaryChannel = $null
+        }
+        else {
+            try {
+                $primaryChannel = $primaryChannelResponse | ConvertFrom-Json
+            }
+            catch {
+                Write-Warning "Unable to parse primary channel for team '$($tm.displayName)'. Error: $($_.Exception.Message)"
+                $primaryChannel = $null
+            }
+        }
         $allChannels | ForEach-object {   
             [PsObject] $chn = [PsObject]  $_
     
-            Write-Output ("    [" + $chn.DisplayName + "] Getting Tabs")
+            Write-Verbose ("Retrieving tabs for channel '$($chn.DisplayName)'")
             $isPrimaryChannel = ($primaryChannel.id -eq $chn.Id)
-            $tabs = m365 teams tab list --teamId $tm.id --channelId $chn.Id -o json | ConvertFrom-Json
-            $tabs = Capitalize -obj $tabs
+            $tabsResponse = m365 teams tab list --teamId $tm.id --channelId $chn.Id --output json 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to retrieve tabs for team '$($tm.displayName)' channel '$($chn.DisplayName)'. CLI output: $tabsResponse"
+                return
+            }
+
+            try {
+                $tabs = $tabsResponse | ConvertFrom-Json
+                $tabs = Capitalize -obj $tabs
+            }
+            catch {
+                Write-Warning "Unable to parse tabs for team '$($tm.displayName)' channel '$($chn.DisplayName)'. Error: $($_.Exception.Message)"
+                return
+            }
             $chn | Add-Member -Name "Tabs" -MemberType NoteProperty -Value  $tabs  -Force
-              Write-Output ("    [" + $chn.DisplayName + "] Tabs collected !")
+            Write-Verbose ("Tabs collected for channel '$($chn.DisplayName)'")
 
         }
-        Write-Output "   All Channels collected!"
+        Write-Verbose "All channels collected"
         
         $tm | Add-Member -Name "Channels" -MemberType NoteProperty -Value $allChannels -Force
     }
-    m365 logout
-    Write-Output "Disconnected"
+}
 
+end {
     $exportTeams = $listOfTeams |  Sort-Object Id
    
-    $teams = $exportTeams |Select-Object @{n = 'TeamId'; e = { $_.Id } } ,  @{n = 'TeamDisplayName'; e = { $_.DisplayName } } ,  @{n = 'TeamDescription'; e = { $_.Description } },  `
+    $teams = $exportTeams | Select-Object @{n = 'TeamId'; e = { $_.Id } } ,  @{n = 'TeamDisplayName'; e = { $_.DisplayName } } ,  @{n = 'TeamDescription'; e = { $_.Description } },  `
     Visibility, SiteUrl, Classification, CreatedDateTime, DeletedDateTime, `
     Mail, MailEnabled, MailNickname, RenewedDateTime, SecurityEnabled, SecurityIdentified, Theme , OwnersInfo, MembersInfo, GuestsInfo 
     
@@ -371,19 +459,21 @@ process {
     $teamsChannels = $teamsChannels| Select-Object TeamDisplayName,  @{n = 'ChannelId'; e = { $_.Id } } , @{n = 'ChannelDisplayName'; e = { $_.DisplayName } } ,  @{n = 'ChannelDescription'; e = { $_.Description } }  , `
                                       CreatedDateTime, Email, IdIsFavoriteByDefault, MembershipType, ModerationSettings, WebUrl, Tabs
 
-    $teamsChannelsTabs =$teamsChannels | Select-Object  TeamDisplayName, ChannelDisplayName  -ExpandProperty Tabs
-    $teamsChannelsTabs =$teamsChannelsTabs | Select-Object  TeamDisplayName,ChannelDisplayName,@{n = 'TabId'; e = { $_.Id } },@{n = 'TabDisplayName'; e = { $_.DisplayName } }  , @{n = 'TabWebUrl'; e = { $_.WebUrl } }  -ExpandProperty TeamsApp
+    $teamsChannelsTabs = $teamsChannels | Select-Object  TeamDisplayName, ChannelDisplayName - ExpandProperty Tabs
+    $teamsChannelsTabs = $teamsChannelsTabs | Select-Object  TeamDisplayName,ChannelDisplayName,@{n = 'TabId'; e = { $_.Id } },@{n = 'TabDisplayName'; e = { $_.DisplayName } }  , @{n = 'TabWebUrl'; e = { $_.WebUrl } }  - ExpandProperty TeamsApp
     $teamsChannelsTabs =$teamsChannelsTabs | Select-Object  TeamDisplayName,ChannelDisplayName,TabId, TabDisplayName,TabWebUrl, @{n = 'TeamsAppId'; e = { $_.Id } } 
 
     $teamsChannels = $teamsChannels | Select-Object TeamDisplayName,ChannelId,	ChannelDisplayName,	ChannelDescription,	CreatedDateTime, Email,	IdIsFavoriteByDefault,	MembershipType,	 ModerationSettings,WebUrl
     Write-Output "Export all Teams info"
     $path= (Resolve-path -Path $ExportPath).Path
-    $teams |  Export-Csv -Path "$path\Teams.csv" -Force
-    $teamsChannels |Export-Csv -Path "$path\TeamsChannels.csv" -Force
-    $teamsChannelsTabs |  Export-Csv -Path "$path\TeamsChannelsTabs.csv" -Force
+    $teams | Export-Csv -Path "$path\Teams.csv" -Force
+    $teamsChannels | Export-Csv -Path "$path\TeamsChannels.csv" -Force
+    $teamsChannelsTabs | Export-Csv -Path "$path\TeamsChannelsTabs.csv" -Force
     Write-Output "All Teams info exported at [$path] "
-
 }
+
+# Example usage:
+# .\TeamsFullReport.ps1 -Tenant "contoso.onmicrosoft.com" -ExportPath "C:\\Reports" -Verbose
 
 ```
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
@@ -396,11 +486,7 @@ process {
 |-----------|
 | [Reshmee Auckloo](https://github.com/reshmee011)|
 | Rodrigo Pinto |
+| [Adam Wójcik](https://github.com/Adam-it) |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/teams-full-report" aria-hidden="true" />
-
-
-
-
-

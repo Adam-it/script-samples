@@ -223,14 +223,44 @@ param (
   [string]$FileToUse
 )
 begin {
-  $m365Status = m365 status 
-  if ($m365Status -match "Logged Out") {
-    m365 login
+  $script:Stats = [ordered]@{
+    ItemsProcessed  = 0
+    ItemsSucceeded  = 0
+    VersionFailures = 0
+    CreationFailures = 0
   }
-  Write-Host "Initialization done, time to create versions!" -f Green 
-}
-process {
-  
+
+  function Invoke-CheckoutCheckin {
+    param (
+      [Parameter(Mandatory = $true)]
+      [string]$FileUrl,
+      [Parameter(Mandatory = $true)]
+      [ValidateSet('Major', 'Minor')]
+      [string]$Type,
+      [Parameter(Mandatory = $false)]
+      [string]$Comment
+    )
+
+    $operations = @(
+      @{ Args = @('spo', 'file', 'checkout', '--webUrl', $WebUrl, '--fileUrl', $FileUrl); Message = "Failed to check out file '$FileUrl' before $Type check-in." },
+      @{ Args = @('spo', 'file', 'checkin', '--webUrl', $WebUrl, '--fileUrl', $FileUrl, '--type', $Type); Message = "Failed to check in $Type version for file '$FileUrl'." }
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($Comment)) {
+      $operations[1].Args += @('--comment', $Comment)
+    }
+
+    foreach ($operation in $operations) {
+      $output = m365 @($operation.Args) 2>&1
+      if ($LASTEXITCODE -ne 0) {
+        Write-Warning "$($operation.Message) CLI output: $output"
+        return $false
+      }
+    }
+
+    return $true
+  }
+
   function New-Versions {
     param (
       [Parameter(Mandatory = $true)]
@@ -238,10 +268,14 @@ process {
       [Parameter(Mandatory = $true)]
       [int]$Counter
     )
+
+    $script:Stats.ItemsProcessed++
   
     # Have to first check out, else it throws an error 'Error: The file "Shared Documents/1.docx" is not checked out'
-    m365 spo file checkout --webUrl $WebUrl --fileUrl $FileUrl | Out-Null
-    m365 spo file checkin --webUrl $WebUrl --fileUrl $FileUrl --type Major --comment "First major version check in" | Out-Null
+    if (-not (Invoke-CheckoutCheckin -FileUrl $FileUrl -Type 'Major' -Comment 'First major version check in')) {
+      $script:Stats.VersionFailures++
+      return $false
+    }
     
     # Creating versions
     for ($i = 1; $i -lt ($MajorVersions + 1); $i++) {
@@ -249,23 +283,49 @@ process {
       for ($j = 1; $j -lt ($MinorVersionBeforeMajor + 1); $j++) {
         Write-Progress -Activity "Creating versions" -Status "$Counter/$ItemsToCreate files created. Processing major version $i/$MajorVersions, Creating minor version $j/$MinorVersionBeforeMajor" -PercentComplete (($Counter / $ItemsToCreate) * 100)
         # Create minor version here
-        m365 spo file checkout --webUrl $WebUrl --fileUrl $FileUrl | Out-Null
-        m365 spo file checkin --webUrl $WebUrl --fileUrl $FileUrl --type Minor --comment "Check in of minor version $j" | Out-Null
+        if (-not (Invoke-CheckoutCheckin -FileUrl $FileUrl -Type 'Minor' -Comment "Check in of minor version $j")) {
+          $script:Stats.VersionFailures++
+          return $false
+        }
       }
-      m365 spo file checkout --webUrl $WebUrl --fileUrl $FileUrl | Out-Null
-      m365 spo file checkin --webUrl $WebUrl --fileUrl $FileUrl --type Major --comment "Check in of major version $i" | Out-Null
+      if (-not (Invoke-CheckoutCheckin -FileUrl $FileUrl -Type 'Major' -Comment "Check in of major version $i")) {
+        $script:Stats.VersionFailures++
+        return $false
+      }
     }
+
+    return $true
   }
 
+  $loginOutput = m365 login --ensure 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to authenticate to Microsoft 365. CLI output: $loginOutput"
+  }
+  Write-Host "Initialization done, time to create versions!" -f Green 
+}
+process {
   $FileExtension = $FileToUse.Split('.')[$FileToUse.Split('.').Count - 1]
 
   Write-Host "Starting the script, we are going to create $ItemsToCreate $($type)s in the list with title $ListTitle. They will each have $MajorVersions major versions and $MinorVersionBeforeMajor minor versions before a new major version is added." -f Green
-  $list = m365 spo list get --webUrl $WebUrl --title $ListTitle | ConvertFrom-Json
+  $listOutput = m365 spo list get --webUrl $WebUrl --title $ListTitle --output json 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to retrieve list '$ListTitle'. CLI output: $listOutput"
+  }
+
+  try {
+    $list = $listOutput | ConvertFrom-Json
+  }
+  catch {
+    throw "Unable to parse list details. Error: $($_.Exception.Message)"
+  }
   Write-Host "Obtained the list with title $($list.Title)" -f Green
 
   if (!$list.EnableMinorVersions) {
     Write-Host "Have to set properties on list to enable versioning and enable the creation of minor versions" -f Red
-    m365 spo list set --webUrl $WebUrl -i $list.Id --enableVersioning $true --enableMinorVersions $true
+    $listSetOutput = m365 spo list set --webUrl $WebUrl --id $list.Id --enableVersioning $true --enableMinorVersions $true 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to update list properties for '$ListTitle'. CLI output: $listSetOutput"
+    }
     Write-Host "List properties updated!" -f Green
   }
 
@@ -279,11 +339,30 @@ process {
       $FileUrl = "$($ServerRelativeUrl)/$FolderCnt/$FolderCnt.$FileExtension" 
 
       # Create the folder and add the file
-      m365 spo folder add --webUrl $WebUrl --parentFolderUrl $ServerRelativeUrl --name $FolderCnt | Out-Null
-      m365 spo file add --webUrl $WebUrl --folder "$($ServerRelativeUrl)/$FolderCnt" --path $FileToUse --FileLeafRef $FolderCnt | Out-Null
+      $folderAddOutput = m365 spo folder add --webUrl $WebUrl --parentFolderUrl $ServerRelativeUrl --name $FolderCnt 2>&1
+      if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to create folder '$FolderCnt'. CLI output: $folderAddOutput"
+        $script:Stats.CreationFailures++
+        $FolderCnt++
+        continue
+      }
+
+      $fileAddOutput = m365 spo file add --webUrl $WebUrl --folder "$($ServerRelativeUrl)/$FolderCnt" --path $FileToUse --fileName $FolderCnt 2>&1
+      if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to upload file '$FolderCnt'. CLI output: $fileAddOutput"
+        $script:Stats.CreationFailures++
+        $FolderCnt++
+        continue
+      }
 
       # Call function to create the versions
-      New-Versions -FileUrl $FileUrl -Counter $FolderCnt
+      if (-not (New-Versions -FileUrl $FileUrl -Counter $FolderCnt)) {
+        Write-Warning "Failed to create versions for item '$FolderCnt'. Skipping to next item."
+        $FolderCnt++
+        continue
+      }
+
+      $script:Stats.ItemsSucceeded++
 
       $FolderCnt++
     }
@@ -295,10 +374,22 @@ process {
       $FileUrl = "$($ServerRelativeUrl)/$FileCnt.$FileExtension" 
 
       # Creating file
-      m365 spo file add --webUrl $WebUrl --folder $ServerRelativeUrl --path $FileToUse --FileLeafRef $FileCnt | Out-Null
+      $fileAddOutput = m365 spo file add --webUrl $WebUrl --folder $ServerRelativeUrl --path $FileToUse --fileName $FileCnt 2>&1
+      if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to upload file '$FileCnt'. CLI output: $fileAddOutput"
+        $script:Stats.CreationFailures++
+        $FileCnt++
+        continue
+      }
       
       # Call function to create the versions
-      New-Versions -FileUrl $FileUrl -Counter $FileCnt
+      if (-not (New-Versions -FileUrl $FileUrl -Counter $FileCnt)) {
+        Write-Warning "Failed to create versions for item '$FileCnt'. Skipping to next item."
+        $FileCnt++
+        continue
+      }
+
+      $script:Stats.ItemsSucceeded++
 
       $FileCnt++
     }
@@ -306,7 +397,17 @@ process {
 
   Write-Host "Script Complete! :)" -f Green
 }
+
+end {
+  Write-Host "Summary" -ForegroundColor Green
+  Write-Host "Items processed : $($script:Stats.ItemsProcessed)"
+  Write-Host "Items succeeded : $($script:Stats.ItemsSucceeded)"
+  Write-Host "Creation failures: $($script:Stats.CreationFailures)"
+  Write-Host "Version failures : $($script:Stats.VersionFailures)"
+}
+
 ```
+
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
 ***
 
@@ -316,6 +417,7 @@ process {
 |-----------|
 | Kasper Larsen|
 | Mathijs Verbeeck|
+| [Adam Wójcik](https://github.com/Adam-it) |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/create-dummy-docs-versions-in-library" aria-hidden="true" />

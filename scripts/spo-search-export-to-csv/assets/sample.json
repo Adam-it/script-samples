@@ -9,7 +9,7 @@
       ""
     ],
     "creationDateTime": "2021-11-03",
-    "updateDateTime": "2022-05-26",
+    "updateDateTime": "2025-12-02",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "4.3.0"
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -30,8 +30,7 @@
       "search",
       "Submit-PnPSearchQuery",
       "m365 login",
-      "m365 spo search",
-      "m365 status"
+      "m365 spo search"
     ],
     "thumbnails": [
       {
@@ -53,6 +52,11 @@
         "company": "ID Live Ltd",
         "pictureUrl": "https://avatars.githubusercontent.com/u/3036301?v=4",
         "name": "Jim Love"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

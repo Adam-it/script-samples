@@ -53,18 +53,28 @@ $itemsToSave | Export-Csv -Path "SearchResults.csv" -NoTypeInformation
 
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 ```powershell
-#Log in to Microsoft 365
-Write-Host "Connecting to Tenant" -f Yellow 
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true, HelpMessage = 'SharePoint search query text (KQL format).')]
+    [string]$QueryText,
 
-$m365Status = m365 status
-if ($m365Status -match "Logged Out") {
-    m365 login
+    [Parameter(Mandatory = $false, HelpMessage = 'Comma-separated managed properties to include in the results.')]
+    [string]$SelectProperties = 'Title,Path,Author'
+)
+
+# Log in to Microsoft 365
+Write-Host "Ensuring connection to Microsoft 365" -ForegroundColor Yellow
+$loginOutput = m365 login --ensure 2>&1
+if ($LASTEXITCODE -ne 0) {
+    throw "Failed to authenticate. CLI output: $loginOutput"
 }
 
-$query = "PromotedState:2"
-$properties = "Title,Path,Author"
+$searchOutput = m365 spo search --queryText $QueryText --selectProperties $SelectProperties --allResults --output csv 2>&1
+if ($LASTEXITCODE -ne 0) {
+    throw "Search query failed. CLI output: $searchOutput"
+}
 
-m365 spo search --queryText $query --selectProperties $properties --allResults --output csv | Out-File -FilePath "SearchResults.csv"
+$searchOutput | Out-File -FilePath "SearchResults.csv"
 ```
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
 ***

@@ -9,7 +9,7 @@
       "Download all the content type document templates files associated with a library"
     ],
     "creationDateTime": "2022-11-04",
-    "updateDateTime": "2023-05-10",
+    "updateDateTime": "2025-12-03",
     "products": [
       "SharePoint"
     ],
@@ -19,8 +19,8 @@
         "value": "1.11.0"
       },
       {
-          "key":"CLI-FOR-MICROSOFT365",
-          "value":"6.7.0"
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -34,11 +34,9 @@
       "Get-PnPList",
       "Get-PnPFile",
       "Disconnect-PnPOnline",
-      "m365 status",
       "m365 login",
       "m365 spo list contenttype list",
-      "m365 spo file get",
-      "m365 logout"
+      "m365 spo file get"
     ],
     "thumbnails": [
       {
@@ -60,6 +58,11 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/25476310?v=4",
         "name": "Ganesh Sanap"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam W\u00f3jcik"
       }
     ],
     "references": [
@@ -69,9 +72,9 @@
         "url": "https://aka.ms/pnp/powershell"
       },
       {
-          "name": "Want to learn more about CLI for Microsoft 365 and the commands",
-          "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
-          "url": "https://aka.ms/cli-m365"
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

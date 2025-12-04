@@ -9,7 +9,7 @@
       "This script exports the SharePoint site hierarchy into a Markdown file to visualize the hub sites and its associated sites."
     ],
     "creationDateTime": "2023-11-03",
-    "updateDateTime": "2024-03-04",
+    "updateDateTime": "2025-12-03",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "7.5.0"
+        "value": "11.0.0"
       }
     ],
     "categories": [
@@ -32,10 +32,8 @@
       "Get-PnPHubSite",
       "Disconnect-PnPOnline",
       "m365 login",
-      "m365 status",
       "m365 spo site list",
-      "m365 spo hubsite list",
-      "m365 logout"
+      "m365 spo hubsite list"
     ],
     "thumbnails": [
       {
@@ -63,6 +61,11 @@
         "company": "",
         "pictureUrl": "https://github.com/tecchan1107.png",
         "name": "Tetsuya Kawahara"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam W\u00f3jcik"
       }
     ],
     "references": [

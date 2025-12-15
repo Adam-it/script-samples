@@ -3,24 +3,22 @@
     "name": "teams-get-channel-spo-urls",
     "source": "pnp",
     "title": "Retrieving SharePoint Site URL for Teams Channels",
-    "shortDescription": "This script can help to identify the SharePoint Urls associated to private and shared channels. For example, eDiscovery when running against 'Specific Locations' or just for reporting purposes",
+    "shortDescription": "Identify the SharePoint URLs associated with Microsoft Teams channels using either PnP PowerShell or CLI for Microsoft 365.",
     "url": "https://pnp.github.io/script-samples/teams-get-channel-spo-urls/README.html",
-    "longDescription": [
-      "You may want to retrieve the SharePoint sites of private and shared channels for different reasons like to add to eDiscovery when running against 'Specific Locations' or just for reporting purposes. A teams can have up to 30 Private Channels and unlimited shared channels up to the maximum of 1000 channels. This script can help to identify the SharePoint Urls associated to private and shared channels."
-    ],
+    "longDescription": "Retrieve the SharePoint sites of private and shared channels for eDiscovery or reporting. Teams can have up to 30 private channels and many shared channels, so this script collates their SharePoint URLs.",
     "creationDateTime": "2024-12-10",
-    "updateDateTime": "2024-12-10",
+    "updateDateTime": "2025-12-14",
     "products": [
       "Teams"
     ],
     "metadata": [
       {
-        "key": "PNP-POWERSHELL",
-        "value": "2.99.63"
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
       },
       {
-        "key": "POWERSHELL",
-        "value": "7.4.5"
+        "key": "PNP-POWERSHELL",
+        "value": "2.99.63"
       }
     ],
     "categories": [
@@ -28,6 +26,10 @@
       "Governance"
     ],
     "tags": [
+      "m365 login",
+      "m365 teams team list",
+      "m365 teams channel list",
+      "m365 teams channel get",
       "Connect-PnPOnline",
       "Get-PnPTeamsTeam",
       "Get-PnPTenantSite"
@@ -46,9 +48,20 @@
         "company": "Avanade",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
         "name": "Reshmee Auckloo"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site for getting started and command references.",
+        "url": "https://aka.ms/cli-m365"
+      },
       {
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",

@@ -28,7 +28,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/export-onedrive-sites-details-to-csv/README.md
 
 ## FLOW
-- [ ] scripts/flow-export-all-flows-in-environment/README.md
+- [x] scripts/flow-export-all-flows-in-environment/README.md
 - [ ] scripts/flow-runs-day-summary/README.md
 
 ## GET
@@ -218,3 +218,4 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/teams-get-templates/README.md
 - [ ] scripts/teams-list-all-app-descriptions/README.md
 - [x] scripts/teams-list-ownerless-teams/README.md
+- [x] scripts/teams-get-channel-spo-urls/README.md

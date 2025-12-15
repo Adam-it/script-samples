@@ -1,13 +1,11 @@
 [
   {
-    "schema": null,
     "name": "flow-export-all-flows-in-environment",
-    "version": null,
     "source": "pnp",
     "title": "Export all flows in environment",
     "url": "https://pnp.github.io/script-samples/flow-export-all-flows-in-environment/README.html",
     "creationDateTime": "2021-03-12",
-    "updateDateTime": "2021-11-18",
+    "updateDateTime": "2025-12-15",
     "shortDescription": "This script will get all flows in your default environment and export them for importing back into Power Automate",
     "longDescription": null,
     "products": [
@@ -18,12 +16,19 @@
     ],
     "tags": [
       "Export-PnPFlow",
-      "Get-PnPFlow"
+      "Get-PnPFlow",
+      "m365 flow environment list",
+      "m365 flow list",
+      "m365 flow export"
     ],
     "metadata": [
       {
         "key": "PNP-POWERSHELL",
         "value": "1.8.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
       }
     ],
     "thumbnails": [
@@ -47,6 +52,11 @@
         "gitHubAccount": "LuiseFreese",
         "company": "Luise Freese",
         "pictureUrl": "https://avatars.githubusercontent.com/u/49960482?v=4"
+      },
+      {
+        "name": "Adam Wójcik",
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4"
       }
     ],
     "references": [
@@ -59,6 +69,11 @@
         "name": "Export all Flows using PnP.PowerShell",
         "description": "Added PnP PowerShell version from PnP.PowerShell + Bonus Script: Export all Flows using PnP.PowerShell Blog",
         "url": "https://www.leonarmston.com/2021/01/testing-out-the-new-power-automate-flow-commands-in-pnp-powershell-bonus-script-export-all-flows-using-pnp-powershell/"
+      },
+      {
+        "name": "CLI for Microsoft 365 Documentation",
+        "description": "Official documentation for CLI for Microsoft 365 commands.",
+        "url": "https://pnp.github.io/cli-microsoft365/"
       }
     ]
   }

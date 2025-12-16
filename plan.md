@@ -29,7 +29,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 
 ## FLOW
 - [x] scripts/flow-export-all-flows-in-environment/README.md
-- [ ] scripts/flow-runs-day-summary/README.md
+- [ ] scripts/flow-runs-day-summary/README.md *(deprioritised)*
 
 ## GET
 - [x] scripts/get-disabled-or-inactive-user-accounts/README.md

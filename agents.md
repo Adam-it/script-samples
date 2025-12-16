@@ -3,6 +3,7 @@
 ## Core Flow
 1. **Recap scenario**: confirm if you are refactoring an existing CLI tab or adding a new one alongside PnP PowerShell.
 2. **Plan & research**: outline inputs/outputs, check CLI docs in `../cli-microsoft365/docs/docs/cmd/`, and map auth → actions → reporting.
+   - Review `../cli-microsoft365/allCommands.json` before defaulting to `m365 request` so you pick the most appropriate built-in command.
 3. **Metadata touch-up (sample.json)**:
    - Update `updateDateTime` and CLI version (from `../cli-microsoft365/package.json`).
    - Append or update the `CLI-FOR-MICROSOFT365` entry in `metadata`; never invent new keys.

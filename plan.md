@@ -140,7 +140,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-get-sharepoint-storage-currentquota/README.md
 - [ ] scripts/spo-get-sharinglinks/README.md
 - [ ] scripts/spo-get-site-list-ids/README.md
-- [ ] scripts/spo-get-site-sharing-settings/README.md
+- [x] scripts/spo-get-site-sharing-settings/README.md
 - [ ] scripts/spo-get-siteid-from-microsoftgraph/README.md
 - [ ] scripts/spo-get-sites-membership-report/README.md
 - [ ] scripts/spo-get-sites-with-unique-permissions/README.md

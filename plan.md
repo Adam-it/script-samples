@@ -3,7 +3,7 @@
 The following script samples currently offer only a PnP PowerShell implementation. Each item needs a companion CLI for Microsoft 365 version (script, metadata, documentation) following `agents.md`.
 
 ## Priority Starters
-- [ ] scripts/bulk-restore-from-recyclebin/README.md — candidate commands: `m365 spo recyclebinitem list`, `m365 spo recyclebinitem restore`
+- [x] scripts/bulk-restore-from-recyclebin/README.md — candidate commands: `m365 spo recyclebinitem list`, `m365 spo recyclebinitem restore`
 - [x] scripts/aad-get-tenantid/README.md — candidate commands: `m365 entra tenant settings list` (or similar tenant info command)
 - [ ] scripts/spo-get-site-sharing-settings/README.md — candidate commands: `m365 spo site get`
 
@@ -17,7 +17,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/aad-update-m365-global-unified-settings/README.md
 
 ## BULK
-- [ ] scripts/bulk-restore-from-recyclebin/README.md
+- [x] scripts/bulk-restore-from-recyclebin/README.md
 
 ## CREATE
 - [x] scripts/create-dummy-docs-in-library/README.md

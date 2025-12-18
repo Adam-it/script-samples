@@ -22,7 +22,7 @@
    - Keep CLI invocations as readable single-line commands unless dynamic option assembly is unavoidable.
    - Convert CLI JSON results with native `@($json | ConvertFrom-Json)` instead of custom helpers; stick to arrays so summaries can use `+=`.
    - Wrap CLI calls, check `$LASTEXITCODE`, record successes/failures, add end-of-run summary, support `ShouldProcess`/`WhatIf`.
-   - **Export to CSV when appropriate**: Consider adding an optional `$ExportCsvPath` parameter to export summary or detailed results to CSV in the `end` block. This helps with reporting and auditing.
+   - **CSV Export Best Practice**: Use an optional `[switch]$ExportToCsv` parameter with an optional `$OutputPath` parameter (default to current directory). Perform CSV export in the `end` block as a summary action. If the switch is not specified, display results in the terminal using `Format-Table`. This keeps scripts flexible for both automation (CSV) and interactive use (terminal output).
    - Example usage comment at the end should include `-Verbose` flag to demonstrate comprehensive feedback.
 6. **Self-review**: run the checklist, note CLI + PowerShell scores (0–10) with strengths and improvement ideas, then pause.
 

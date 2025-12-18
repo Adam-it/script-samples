@@ -10,7 +10,146 @@ Converts unique site IDs from a txt file to URLs using Microsoft Search for M365
 
 This PowerShell script takes an input file containing one or more SharePoint online (Office 365) Site Collection Object IDs and converts them into the full URLs. It requires PnP Online module for connection to Office 365, performs a search query using these GUIDs as parameters, retrieves site details including their respective URL addresses from each result row.
 
+Alongside the PnP PowerShell option, the sample now offers a CLI for Microsoft 365 version that delivers the same lookup from any platform. The CLI script reuses the text-based input file, resolves each GUID to URL and title, and enriches the CSV with the detected site type (team, communication, channel, etc.) so administrators can analyse tenancy makeup without relying on Windows-only tooling.
+
 Note: Above description uses AI to describe the script.
+
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+function Get-SpoSiteUrlsFromIds {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory, HelpMessage = "Path to the text file that contains SharePoint site collection IDs (one per line).")]
+        [ValidateScript({ Test-Path -Path $_ -PathType Leaf })]
+        [string]$SiteIdsPath,
+
+        [Parameter(HelpMessage = "Optional path to save the CSV export. Defaults to the current directory with a timestamped name.")]
+        [string]$OutputPath
+    )
+
+    begin {
+        Write-Verbose 'Ensuring CLI for Microsoft 365 authentication'
+        $loginOutput = m365 login --ensure 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to sign in with CLI for Microsoft 365. CLI output: $loginOutput"
+        }
+
+        $timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'
+        if (-not $OutputPath) {
+            $OutputPath = Join-Path -Path (Get-Location) -ChildPath "site-urls_$timestamp.csv"
+        }
+
+        $directory = Split-Path -Path $OutputPath -Parent
+        if ($directory -and -not (Test-Path -Path $directory -PathType Container)) {
+            Write-Verbose "Creating export directory '$directory'"
+            New-Item -ItemType Directory -Path $directory -Force | Out-Null
+        }
+
+        $script:Summary = [ordered]@{
+            InputCount = 0
+            Resolved   = 0
+            ReportPath = $OutputPath
+            Records    = @()
+            Failures   = @()
+        }
+
+        $script:SiteTypeMap = @{
+            'GROUP#0'             = 'Team site'
+            'SITEPAGEPUBLISHING#0'= 'Communication site'
+            'TEAMCHANNEL#1'       = 'Team channel site'
+            'TEAMCHANNEL#0'       = 'Team channel site'
+            'SITEPAGEPUBLISHING#1'= 'Communication (classic)'
+            'SITE#0'              = 'Classic site'
+        }
+
+        $script:SiteIds = Get-Content -Path $SiteIdsPath | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        $script:Summary.InputCount = $script:SiteIds.Count
+    }
+
+    process {
+        foreach ($rawId in $script:SiteIds) {
+            $normalizedId = $rawId.Trim('{', '}', ' ')  # accept GUID with or without braces
+            Write-Verbose "Resolving site ID $normalizedId"
+
+            $siteJson = m365 spo site list --filter "Id -eq '$normalizedId'" --output json 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                $script:Summary.Failures += [pscustomobject]@{
+                    SiteId  = $rawId
+                    Message = $siteJson
+                }
+                continue
+            }
+
+            $siteInfo = @()
+            if (-not [string]::IsNullOrWhiteSpace($siteJson)) {
+                $siteInfo = @($siteJson | ConvertFrom-Json)
+            }
+
+            if (-not $siteInfo) {
+                $script:Summary.Failures += [pscustomobject]@{
+                    SiteId  = $rawId
+                    Message = 'Site not found in tenant.'
+                }
+                continue
+            }
+
+            $resolved = $siteInfo[0]
+            $siteTemplate = $resolved.Template
+            if ($script:SiteTypeMap.ContainsKey($siteTemplate)) {
+                $siteType = $script:SiteTypeMap[$siteTemplate]
+            }
+            else {
+                $siteType = $siteTemplate
+            }
+            $script:Summary.Records += [pscustomobject]@{
+                InputSiteId = $rawId
+                SiteId      = $resolved.Id
+                SiteUrl     = $resolved.Url
+                SiteTitle   = $resolved.Title
+                SiteType    = $siteType
+            }
+            $script:Summary.Resolved++
+        }
+    }
+
+    end {
+        if (-not $script:Summary.Records) {
+            Write-Warning 'No sites were resolved from the supplied identifiers.'
+            return [pscustomobject]$script:Summary
+        }
+
+        if ($PSCmdlet.ShouldProcess($script:Summary.ReportPath, 'Export resolved site URLs')) {
+            Write-Verbose "Exporting results to '$($script:Summary.ReportPath)'"
+            $script:Summary.Records | Export-Csv -Path $script:Summary.ReportPath -NoTypeInformation
+        }
+
+        Write-Host '--- Site resolution summary ---'
+        Write-Host "Input IDs : $($script:Summary.InputCount)"
+        Write-Host "Resolved  : $($script:Summary.Resolved)"
+        Write-Host "Report    : $($script:Summary.ReportPath)"
+        Write-Host "Failures  : $($script:Summary.Failures.Count)"
+
+        if ($script:Summary.Failures) {
+            $script:Summary.Failures | ForEach-Object {
+                Write-Warning "Failed to resolve $($_.SiteId): $($_.Message)"
+            }
+        }
+
+        return [pscustomobject]$script:Summary
+    }
+}
+
+<#
+Sample site IDs file (siteids.txt):
+{11111111-1111-1111-1111-111111111111}
+{22222222-2222-2222-2222-222222222222}
+{33333333-3333-3333-3333-333333333333}
+#>
+
+Get-SpoSiteUrlsFromIds -SiteIdsPath '.\siteids.txt' -Verbose
+
+```
 
 # [PnP PowerShell](#tab/pnpps)
 

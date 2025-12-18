@@ -134,7 +134,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-get-folder-item/README.md
 - [ ] scripts/spo-get-items-not-indexed-since-last-update/README.md
 - [x] scripts/spo-get-items-with-custom-permissions/README.md
-- [ ] scripts/spo-get-libraries-with-webhooks/README.md
+- [x] scripts/spo-get-libraries-with-webhooks/README.md
 - [ ] scripts/spo-get-list-item-version-history/README.md
 - [ ] scripts/spo-get-permission-audit/README.md
 - [ ] scripts/spo-get-sharepoint-storage-currentquota/README.md

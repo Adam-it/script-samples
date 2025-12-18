@@ -25,6 +25,13 @@
    - **CSV Export Best Practice**: Use an optional `[switch]$ExportToCsv` parameter with an optional `$OutputPath` parameter (default to current directory). Perform CSV export in the `end` block as a summary action. If the switch is not specified, display results in the terminal using `Format-Table`. This keeps scripts flexible for both automation (CSV) and interactive use (terminal output).
    - Example usage comment at the end should include `-Verbose` flag to demonstrate comprehensive feedback.
 6. **Self-review**: run the checklist, note CLI + PowerShell scores (0–10) with strengths and improvement ideas, then pause.
+   - **Present improvement suggestions**: After completing the script, include a section in your summary that suggests potential future enhancements or alternative approaches. Examples:
+     - Performance optimizations for large tenants (e.g., parallel processing, batching)
+     - Additional parameters that could make the script more flexible
+     - Alternative CLI commands or approaches that could achieve the same goal
+     - Edge cases that might need special handling
+     - Integration possibilities with other scripts or workflows
+   - These suggestions help demonstrate forward thinking and provide the user with a roadmap for future enhancements.
 
 ## Quick Checklist
 - ✅ sample.json valid, date/version/metadata/authors/references updated (no extra keys).

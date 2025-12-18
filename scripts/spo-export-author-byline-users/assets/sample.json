@@ -9,7 +9,7 @@
       "One of my customs requested that we removed a specific employee from the modern pages in their Intranet ASAP as that employee had left rather abruptly. They had no idea where that employee was displayed hence this script"
     ],
     "creationDateTime": "2023-01-06",
-    "updateDateTime": "2023-01-06",
+    "updateDateTime": "2025-12-18",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.10.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
       }
     ],
     "categories": [
@@ -28,7 +32,10 @@
       "Export-Csv",
       "Get-PnPList",
       "Get-PnPTenant",
-      "Get-PnPTenantSite"
+      "Get-PnPTenantSite",
+      "m365 login",
+      "m365 spo site list",
+      "m365 spo listitem list"
     ],
     "thumbnails": [
       {
@@ -43,6 +50,11 @@
         "gitHubAccount": "kasperbolarsen",
         "pictureUrl": "https://avatars.githubusercontent.com/u/20593570?s=400&u=f9a4d5137685d8c3fcc60394fc193f3e8156f678&v=4",
         "name": "Kasper Larsen"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -50,6 +62,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

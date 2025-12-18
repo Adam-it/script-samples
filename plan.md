@@ -96,7 +96,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-enable-disable-app-bar/README.md
 - [ ] scripts/spo-enable-page-scheduling/README.md
 - [ ] scripts/spo-ensure-cts-before-template/README.md
-- [ ] scripts/spo-export-all-customformatting/README.md
+- [x] scripts/spo-export-all-customformatting/README.md
 - [ ] scripts/spo-export-all-site-pages-details/README.md
 - [ ] scripts/spo-export-author-byline-users/README.md
 - [ ] scripts/spo-export-basic-sitecollection-info/README.md

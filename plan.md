@@ -99,7 +99,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/spo-export-all-customformatting/README.md
 - [x] scripts/spo-export-all-site-pages-details/README.md
 - [x] scripts/spo-export-author-byline-users/README.md
-- [ ] scripts/spo-export-basic-sitecollection-info/README.md
+- [x] scripts/spo-export-basic-sitecollection-info/README.md
 - [ ] scripts/spo-export-checked-out-files-in-all-sites-associated-with-a-hub-site-to-csv/README.md
 - [ ] scripts/spo-export-checked-out-files-in-tenant-using-search/README.md
 - [ ] scripts/spo-export-duplicate-files/README.md

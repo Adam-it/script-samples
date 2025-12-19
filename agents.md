@@ -11,7 +11,11 @@
    - Append or update the `CLI-FOR-MICROSOFT365` entry in `metadata`; never invent new keys.
    - Keep PnP references; add the CLI reference when introducing a CLI tab.
    - Extend `authors` with Adam Wójcik (`gitHubAccount` `Adam-it`, picture URL) when you touch the CLI sample.
-   - Adjust `tags` only after the script is final so they match the actual commands.
+   - Adjust `tags` only after the script is final so they match the actual commands. The `tags` array must contain unique values only - no duplicates. Each command from both PnP PowerShell and CLI for Microsoft 365 should appear exactly once.
+   - **Validate JSON syntax**: After making changes, ensure the JSON is valid. Common mistakes:
+     - Extra commas after closing braces (e.g., `}},` should be `},`)
+     - Missing commas between array items (e.g., in `tags` array)
+     - Verify with `python3 -m json.tool <file>` to catch syntax errors
 4. **README updates**:
    - Preserve the PnP tab.
    - New CLI tabs must mirror PnP inputs/outputs, update the summary, and include Adam in the contributors list.
@@ -22,8 +26,9 @@
    - Keep CLI invocations as readable single-line commands unless dynamic option assembly is unavoidable.
    - Convert CLI JSON results with native `@($json | ConvertFrom-Json)` instead of custom helpers; stick to arrays so summaries can use `+=`.
    - Wrap CLI calls, check `$LASTEXITCODE`, record successes/failures, add end-of-run summary, support `ShouldProcess`/`WhatIf`.
+   - **Use Write-Verbose for progress messages**: Informational messages about script progress (e.g., "Retrieving groups...", "Found X items...") should use `Write-Verbose` so users can control verbosity with `-Verbose` flag. Reserve `Write-Host` with colors only for final status messages in the `end` block (e.g., success/warning summaries).
    - **CSV Export Best Practice**: Use an optional `[switch]$ExportToCsv` parameter with an optional `$OutputPath` parameter (default to current directory). Perform CSV export in the `end` block as a summary action. If the switch is not specified, display results in the terminal using `Format-Table`. This keeps scripts flexible for both automation (CSV) and interactive use (terminal output).
-   - Example usage comment at the end should include `-Verbose` flag to demonstrate comprehensive feedback.
+   - **Comment-based help with examples**: Always include comprehensive comment-based help (`.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, `.EXAMPLE`) at the start of the script. Include at least 3-4 examples showing different usage patterns, with the most complex example including the `-Verbose` flag to demonstrate comprehensive feedback.
 6. **Self-review**: run the checklist, note CLI + PowerShell scores (0–10) with strengths and improvement ideas, then pause.
    - **Present improvement suggestions**: After completing the script, include a section in your summary that suggests potential future enhancements or alternative approaches. Examples:
      - Performance optimizations for large tenants (e.g., parallel processing, batching)
@@ -35,6 +40,9 @@
 
 ## Quick Checklist
 - ✅ sample.json valid, date/version/metadata/authors/references updated (no extra keys).
+  - Verify with `python3 -m json.tool scripts/<folder>/assets/sample.json` before marking complete.
+  - Ensure `tags` array has no duplicate entries.
+  - Check for syntax errors: extra commas (`}},`), missing commas between items.
 - ✅ CLI README tab follows best practices; PnP tab untouched.
 - ✅ Tags align with the final CLI commands.
 - ✅ Long-form CLI options and server-side filtering (`--query`) wherever supported.

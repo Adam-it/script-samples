@@ -21,11 +21,15 @@
    - New CLI tabs must mirror PnP inputs/outputs, update the summary, and include Adam in the contributors list.
 5. **Author the CLI script**:
    - Advanced function with `CmdletBinding`, typed params with `HelpMessage` for each parameter (provides user guidance), `begin/process/end` blocks.
-   - `m365 login --ensure` in the begin block (no `--output` flag), verify login by checking `$LASTEXITCODE` immediately after the command and throw error if it fails.
+   - `m365 login --ensure` in the begin block (no `--output` flag), verify login by checking `$LASTEXITCODE` immediately after the command and `throw` on failure.
    - Long-form options, handle output with `--output json` and `--query` for filtering.
    - Keep CLI invocations as readable single-line commands unless dynamic option assembly is unavoidable.
    - Convert CLI JSON results with native `@($json | ConvertFrom-Json)` instead of custom helpers; stick to arrays so summaries can use `+=`.
-   - Wrap CLI calls, check `$LASTEXITCODE`, record successes/failures, add end-of-run summary, support `ShouldProcess`/`WhatIf`.
+   - **Error Handling Best Practices**:
+     - Use `throw` for critical errors in `begin` block (login failures, invalid paths, missing prerequisites). Simpler than `Write-Error` + `exit 1` and provides better stack traces.
+     - Per-item errors in `process` block: use `try/catch` with `Write-Warning` and `continue` to process remaining items. Never use `return` or `throw` inside loops as it exits the entire script.
+     - Track all failures in the summary counter (`$script:Summary.Failures++`) and optionally add failed items to the report with error details so users can see what failed in the CSV export.
+     - Always display failure count in the `end` block summary with color-coding (red if > 0).
    - **Use Write-Verbose for progress messages**: Informational messages about script progress (e.g., "Retrieving groups...", "Found X items...") should use `Write-Verbose` so users can control verbosity with `-Verbose` flag. Reserve `Write-Host` with colors only for final status messages in the `end` block (e.g., success/warning summaries).
    - **CSV Export Best Practice**: Use an optional `[switch]$ExportToCsv` parameter with an optional `$OutputPath` parameter (default to current directory). Perform CSV export in the `end` block as a summary action. If the switch is not specified, display results in the terminal using `Format-Table`. This keeps scripts flexible for both automation (CSV) and interactive use (terminal output).
    - **Comment-based help with examples**: Always include comprehensive comment-based help (`.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, `.EXAMPLE`) at the start of the script. Include at least 3-4 examples showing different usage patterns, with the most complex example including the `-Verbose` flag to demonstrate comprehensive feedback.
@@ -54,3 +58,17 @@
 - Never remove PnP content; mimic its behaviour.
 - Keep credentials/tenant info out of samples.
 - Prefer `Write-Verbose`/`Write-Warning`; summaries belong in the `end` block.
+
+## PowerShell Syntax Validation
+
+When adding PowerShell scripts to README files:
+- **NEVER** escape `$` with backslashes (`\$`) - this breaks PowerShell syntax and makes variables invalid.
+- Verify variables use correct syntax: `$variable`, not `\$variable`.
+- String interpolation: `"text $($var.property)"`, not `"text \$(\$var.property)"`.
+- After adding a script to README, verify PowerShell syntax visually or extract and validate with PowerShell parser if possible.
+- Test that comment-based help renders correctly (`. .\script.ps1; Get-Help .\script.ps1`).
+- Common issues to watch for:
+  - Extra backslashes before `$` symbols
+  - Incorrect array syntax
+  - Missing or extra braces/brackets
+  - Invalid parameter attributes

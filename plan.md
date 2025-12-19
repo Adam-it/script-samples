@@ -137,7 +137,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/spo-get-libraries-with-webhooks/README.md
 - [ ] scripts/spo-get-list-item-version-history/README.md
 - [ ] scripts/spo-get-permission-audit/README.md
-- [ ] scripts/spo-get-sharepoint-storage-currentquota/README.md
+- [x] scripts/spo-get-sharepoint-storage-currentquota/README.md
 - [ ] scripts/spo-get-sharinglinks/README.md
 - [x] scripts/spo-get-site-list-ids/README.md
 - [x] scripts/spo-get-site-sharing-settings/README.md

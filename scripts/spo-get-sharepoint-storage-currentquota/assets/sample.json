@@ -9,7 +9,7 @@
       "it is imperative to keep an eye on its usage and take relevant actions suited to the circumstances. By default a SharePoint site is allocated 25 TB by default and OneDrive for Business site is allocated 1 TB by default. These settings can be amended manually to a different quota to control SharePoint site. The script will help to proactively monitor percent used against quota for each SharePoint site."
     ],
     "creationDateTime": "2024-07-28",
-    "updateDateTime": "2024-07-28",
+    "updateDateTime": "2025-12-18",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "2.5.2"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
       }
     ],
     "categories": [
@@ -25,7 +29,9 @@
     "tags": [
       "modern",
       "Connect-PnPOnline",
-      "Get-PnPTenantSite"
+      "Get-PnPTenantSite",
+      "m365 login",
+      "m365 spo site list"
     ],
     "thumbnails": [
       {
@@ -41,6 +47,11 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
         "name": "Reshmee Auckloo"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

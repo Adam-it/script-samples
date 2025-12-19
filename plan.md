@@ -3,7 +3,7 @@
 The following script samples currently offer only a PnP PowerShell implementation. Each item needs a companion CLI for Microsoft 365 version (script, metadata, documentation) following `agents.md`.
 
 ## AAD
-- [ ] scripts/aad-control-guestaccount-m365-groups-teams/README.md
+- [x] scripts/aad-control-guestaccount-m365-groups-teams/README.md
 - [x] scripts/aad-get-duplicate-m365group/README.md
 - [x] scripts/aad-get-tenantid/README.md
 - [x] scripts/aad-grant-serviceprincipal-api-permissions/README.md

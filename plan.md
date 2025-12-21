@@ -7,7 +7,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/aad-get-duplicate-m365group/README.md
 - [x] scripts/aad-get-tenantid/README.md
 - [x] scripts/aad-grant-serviceprincipal-api-permissions/README.md
-- [ ] scripts/aad-renew-m365-group/README.md
+- [x] scripts/aad-renew-m365-group/README.md
 - [x] scripts/aad-replace-membership-of-selected-groups/README.md
 - [ ] scripts/aad-update-m365-global-unified-settings/README.md
 

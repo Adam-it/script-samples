@@ -9,7 +9,7 @@
       "This script exports every OneDrive in the tenant, and the site collection admins of the site. This helps audit which admins have unnecessary access to user OneDrives."
     ],
     "creationDateTime": "2022-04-16",
-    "updateDateTime": "2022-04-16",
+    "updateDateTime": "2025-12-21",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.5.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
       }
     ],
     "categories": [
@@ -24,7 +28,10 @@
       "Security"
     ],
     "tags": [
-      "classic"
+      "classic",
+      "m365 login",
+      "m365 spo site list",
+      "m365 spo site admin list"
     ],
     "thumbnails": [
       {
@@ -40,6 +47,11 @@
         "company": "Netwoven",
         "pictureUrl": "https://github.com/maher256.png",
         "name": "Matt Maher"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -47,6 +59,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

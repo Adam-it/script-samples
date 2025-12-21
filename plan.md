@@ -9,7 +9,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/aad-grant-serviceprincipal-api-permissions/README.md
 - [x] scripts/aad-renew-m365-group/README.md
 - [x] scripts/aad-replace-membership-of-selected-groups/README.md
-- [ ] scripts/aad-update-m365-global-unified-settings/README.md
+- [x] scripts/aad-update-m365-global-unified-settings/README.md
 
 ## BULK
 - [x] scripts/bulk-restore-from-recyclebin/README.md

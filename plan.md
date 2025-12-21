@@ -36,7 +36,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/modernize-classic-pages-from-publishing-sites/README.md
 
 ## ONEDRIVE
-- [ ] scripts/onedrive-export-admins/README.md
+- [x] scripts/onedrive-export-admins/README.md
 
 ## PNP
 - [ ] scripts/pnp-modern-searchv3-scanner/README.md

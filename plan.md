@@ -47,11 +47,11 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-add-language-settings/README.md
 - [ ] scripts/spo-add-modern-calendar-view/README.md
 - [ ] scripts/spo-add-multiple-document-libraries-with-list-template/README.md
-- [ ] scripts/spo-add-sitedesign-permissions/README.md
+- [ ] ~~scripts/spo-add-sitedesign-permissions/README.md~~ (requires m365 request - web-level extraction not available)
 - [ ] scripts/spo-apply-OOB-sitedesign/README.md
 - [ ] scripts/spo-apply-pnptemplate-with-files-and-listitems/README.md
 - [ ] scripts/spo-apply-pnptemplate-with-parameters/README.md
-- [ ] scripts/spo-apply-site-theme/README.md
+- [x] scripts/spo-apply-site-theme/README.md
 - [x] scripts/spo-bulk-delete-recyclebin-in-batch-avoid-lvt/README.md
 - [ ] scripts/spo-bulk-import-data/README.md
 - [ ] scripts/spo-bulk-publish-syntex-model/README.md

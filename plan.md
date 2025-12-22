@@ -59,7 +59,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-change-list-url/README.md
 - [ ] scripts/spo-change-retention-labels/README.md
 - [ ] scripts/spo-clean-comments/README.md
-- [ ] scripts/spo-compare-files/README.md
+- [x] scripts/spo-compare-files/README.md
 - [ ] scripts/spo-configure-documentid-feature/README.md
 - [ ] scripts/spo-copy-directory-structure-to-sharepoint-list/README.md
 - [x] scripts/spo-copy-hubsite-navigation/README.md

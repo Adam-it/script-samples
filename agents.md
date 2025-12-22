@@ -25,6 +25,20 @@
    - Long-form options, handle output with `--output json` and `--query` for filtering.
    - Keep CLI invocations as readable single-line commands unless dynamic option assembly is unavoidable.
    - Convert CLI JSON results with native `@($json | ConvertFrom-Json)` instead of custom helpers; stick to arrays so summaries can use `+=`.
+   - **Avoid `m365 request` command**: Only use `m365 request` as a last resort when absolutely no specific CLI for Microsoft 365 command exists for a scenario. Using `m365 request` should be considered a temporary workaround until a dedicated CLI command is implemented. If a script heavily relies on REST API calls via `m365 request`, consider selecting a different script to implement that uses specific CLI commands instead.
+   - **Multi-tenant/Multi-connection Support**: CLI for Microsoft 365 supports managing multiple connections simultaneously, which is essential for cross-tenant operations:
+     - Use `m365 login --connectionName <name>` to create a named connection when logging in to different tenants
+     - Use `m365 connection list --output json` to list all available connections
+     - Use `m365 connection use --name <name>` to switch the active connection
+     - Example workflow for comparing files across tenants:
+       1. `m365 login --connectionName "tenant1"` (authenticate to first tenant)
+       2. `m365 login --connectionName "tenant2"` (authenticate to second tenant)
+       3. `m365 connection use --name "tenant1"` (switch to first tenant)
+       4. Execute commands against first tenant
+       5. `m365 connection use --name "tenant2"` (switch to second tenant)
+       6. Execute commands against second tenant
+     - Each connection maintains its own authentication state, so you can switch between tenants without re-authenticating
+     - Connection names can be custom (e.g., "myworkaccount", "tenant1") or auto-generated GUIDs
    - **Error Handling Best Practices**:
      - Use `throw` for critical errors in `begin` block (login failures, invalid paths, missing prerequisites). Simpler than `Write-Error` + `exit 1` and provides better stack traces.
      - Per-item errors in `process` block: use `try/catch` with `Write-Warning` and `continue` to process remaining items. Never use `return` or `throw` inside loops as it exits the entire script.

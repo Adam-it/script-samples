@@ -71,7 +71,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-create-multi-hub-sites/README.md
 - [ ] scripts/spo-csom-properties/README.md
 - [ ] scripts/spo-delete-companywide-anonymous-sharinglink/README.md
-- [ ] scripts/spo-delete-empty-folders/README.md
+- [x] scripts/spo-delete-empty-folders/README.md
 - [ ] scripts/spo-delete-expired-sharing-link-folder-file-item/README.md
 - [ ] scripts/spo-delete-hub-and-sites/README.md
 - [ ] scripts/spo-delete-sharinglink-folder-file-item/README.md

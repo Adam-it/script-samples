@@ -10,7 +10,7 @@
         "SharePoint document libraries can accumulate empty folders over time due to user actions, migrations, or automated processes. Empty folders clutter the library, making navigation and management harder for users and administrators. By identifying and removing these folders, the script helps keep the document library organized, improves user experience, and can enhance performance by reducing unnecessary items. The report-only mode also allows safe auditing before deletion, minimizing accidental data loss."
       ],
       "creationDateTime": "2025-09-02",
-      "updateDateTime": "2025-09-02",
+      "updateDateTime": "2025-12-21",
       "products": [
         "SharePoint"
       ],
@@ -18,9 +18,16 @@
         {
           "key": "PnP-PowerShell",
           "value": "2.2.0"
+        },
+        {
+          "key": "CLI-FOR-MICROSOFT365",
+          "value": "11.2.0"
         }
       ],
       "tags": [
+        "m365 login",
+        "m365 spo folder list",
+        "m365 spo folder remove",
         "Connect-PnPOnline",
         "Get-PnPFolderItem",
         "Get-PnPFolderStorageMetric",
@@ -51,6 +58,11 @@
           "company": "",
           "pictureUrl": "https://github.com/SmitaNachan.png",
           "name": "Smita Nachan"
+        },
+        {
+          "gitHubAccount": "Adam-it",
+          "pictureUrl": "https://github.com/Adam-it.png",
+          "name": "Adam Wójcik"
         }
       ],
       "references": [
@@ -58,6 +70,11 @@
           "name": "Want to learn more about PnP PowerShell and the commands",
           "description": "Check out the PnP PowerShell site to get started and for the reference to the commands.",
           "url": "https://aka.ms/pnp/powershell"
+        },
+        {
+          "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+          "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+          "url": "https://aka.ms/cli-m365"
         }
       ]
     }

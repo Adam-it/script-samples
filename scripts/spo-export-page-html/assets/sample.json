@@ -8,22 +8,30 @@
     "longDescription": [
       ""
     ],
-    "creationDateTime": "2023-10-29",
-    "updateDateTime": "2023-10-29",
+   "creationDateTime": "2023-10-29",
+    "updateDateTime": "2025-12-21",
     "products": [
       "SharePoint"
     ],
     "metadata": [
+     {
+       "key": "PNP-POWERSHELL",
+       "value": "2.2.0"
+      },
       {
-        "key": "PNP-POWERSHELL",
-        "value": "2.2.0"
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
       }
     ],
     "categories": [
       "Data"
     ],
-    "tags": [
-      "Get-PnPList","Get-PnPListItem"
+   "tags": [
+      "Get-PnPList",
+      "Get-PnPListItem",
+      "m365 login",
+      "m365 spo page list",
+      "m365 spo page get"
     ],
     "thumbnails": [
       {
@@ -37,15 +45,26 @@
       {
         "gitHubAccount": "jackpoz",
         "company": "",
-        "pictureUrl": "https://github.com/jackpoz.png",
-        "name": "Giacomo Pozzoni"
+       "pictureUrl": "https://github.com/jackpoz.png",
+       "name": "Giacomo Pozzoni"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
       {
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
-        "url": "https://aka.ms/pnp/powershell"
+       "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

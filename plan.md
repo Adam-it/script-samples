@@ -100,7 +100,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-export-duplicate-files/README.md
 - [ ] scripts/spo-export-files-and-versions/README.md
 - [ ] scripts/spo-export-import-folderstructure/README.md
-- [ ] scripts/spo-export-page-html/README.md
+- [x] scripts/spo-export-page-html/README.md
 - [ ] scripts/spo-export-people-web-part-users/README.md
 - [ ] scripts/spo-export-report-files-incidents/README.md
 - [ ] scripts/spo-export-site-all-content/README.md

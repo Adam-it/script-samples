@@ -2,6 +2,49 @@
 
 The following script samples currently offer only a PnP PowerShell implementation. Each item needs a companion CLI for Microsoft 365 version (script, metadata, documentation) following `agents.md`.
 
+---
+
+## 🎯 Priority Scripts - Next 5 (Recommended Implementation Order)
+
+### 1. spo-create-multi-hub-sites (High Value ⭐⭐⭐⭐⭐)
+**Path**: `scripts/spo-create-multi-hub-sites/README.md` (line 71)  
+**Justification**: Enterprise hub site architecture demonstrating JSON-driven config, multi-phase workflow (create sites → register hubs → connect sites), and proper hub site hierarchy management. High-value scenario for large organizations.  
+**Commands**: `m365 spo site add`, `m365 spo hubsite register`, `m365 spo hubsite set`, `m365 spo hubsite connect`, `m365 spo site get`  
+**Complexity**: Medium-High | **Status**: Ready ✅ All commands verified  
+
+### 2. spo-delete-sharinglink-folder-file-item (Copilot Readiness)
+**Path**: `scripts/spo-delete-sharinglink-folder-file-item/README.md` (line 77)  
+**Justification**: Copilot readiness scenario addressing oversharing mitigation through sharing link management. Demonstrates loop-based file processing with proper error handling. Highly relevant for security/compliance teams.  
+**Commands**: `m365 spo file sharinglink list`, `m365 spo file sharinglink clear`, `m365 spo list list`, `m365 spo listitem list`  
+**Complexity**: Medium | **Status**: Ready ✅ All commands verified (includes `clear` for bulk removal)  
+
+### 3. spo-download-all-doclibs (Common Migration Scenario)
+**Path**: `scripts/spo-download-all-doclibs/README.md` (line 89)  
+**Justification**: Common backup/migration scenario demonstrating file download with version history, library enumeration, and local file system management. Useful for offline archives and migration prep.  
+**Commands**: `m365 spo list list`, `m365 spo file list`, `m365 spo file get`, `m365 spo file version list`  
+**Complexity**: Medium | **Status**: Ready ✅ All commands verified  
+
+### 4. spo-bulk-remove-retention-labels (Compliance Management)
+**Path**: `scripts/spo-bulk-remove-retention-labels/README.md` (line 58)  
+**Justification**: Compliance and migration scenario for bulk retention label removal. Demonstrates batch operations with proper error handling. Important for M365 migrations when retention policies need updating.  
+**Commands**: `m365 spo file retentionlabel remove`, `m365 spo listitem list`  
+**Complexity**: Low-Medium | **Status**: Ready ✅ Commands verified (loop-based, not bulk API)  
+
+### 5. spo-add-multiple-document-libraries-with-list-template (Bulk Provisioning)
+**Path**: `scripts/spo-add-multiple-document-libraries-with-list-template/README.md` (line 49)  
+**Justification**: CSV-driven bulk library provisioning with navigation and custom templates. Demonstrates batch site setup automation common in site provisioning workflows.  
+**Commands**: `m365 spo list add`, `m365 spo list set`, `m365 spo navigation node add`  
+**Complexity**: Medium | **Status**: Ready ✅ Commands verified  
+
+**Selection Criteria**:
+- ✅ No `m365 request` needed (all use specific CLI commands)
+- ✅ High business value scenarios (enterprise, security, compliance, migration)
+- ✅ Diverse patterns (JSON config, CSV import, bulk operations, multi-phase workflows)
+- ✅ Gradual complexity curve (Low-Medium → Medium → Medium-High)
+- ✅ All CLI commands verified in `/root/pnp/cli-microsoft365/docs/`
+
+---
+
 ## AAD
 - [x] scripts/aad-control-guestaccount-m365-groups-teams/README.md
 - [x] scripts/aad-get-duplicate-m365group/README.md
@@ -73,7 +116,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-delete-companywide-anonymous-sharinglink/README.md
 - [x] scripts/spo-delete-empty-folders/README.md
 - [ ] scripts/spo-delete-expired-sharing-link-folder-file-item/README.md
-- [ ] scripts/spo-delete-hub-and-sites/README.md
+- [x] scripts/spo-delete-hub-and-sites/README.md
 - [ ] scripts/spo-delete-sharinglink-folder-file-item/README.md
 - [ ] scripts/spo-delete-site-with-retention-policy/README.md
 - [ ] scripts/spo-deploy-install-update-spfx-hubsite-associatedsites/README.md

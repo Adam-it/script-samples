@@ -1,0 +1,68 @@
+# CLI for Microsoft 365 Script Implementation Guide
+
+## Core Flow
+1. **Verify scenario**: Confirm if refactoring existing CLI tab or adding new one alongside PnP PowerShell.
+2. **Research CLI commands**: Check `../cli-microsoft365/docs/docs/cmd/` and `../cli-microsoft365/allCommands.json` to find appropriate commands.
+   - **Avoid `m365 request`**: Only use as last resort when no specific CLI command exists.
+   - **Use unique identifiers**: When working with SharePoint lists/libraries, always prefer `--listId` or `--listUrl` over `--listTitle`. Multiple lists can have the same title, causing CLI commands to fail or prompt for confirmation (breaking automation). Use `Id` or `Url` properties which are guaranteed unique.
+   - During self-review, confirm every CLI command and option against docs.
+
+## Metadata (sample.json)
+   - Update `updateDateTime` (today) and CLI version from `../cli-microsoft365/package.json`.
+   - Add or update `CLI-FOR-MICROSOFT365` entry in `metadata`.
+   - Keep PnP references; add the CLI reference when introducing a CLI tab.
+   - Add Adam Wójcik to `authors` (`gitHubAccount`: `Adam-it`).
+   - Add CLI commands to `tags` (unique values only, no duplicates).
+   - **Validate JSON**: `python3 -m json.tool <file>` to catch syntax errors (extra commas, missing commas).
+
+## README Updates
+   - Preserve PnP tab; add CLI tab.
+   - Update summary to mention both PnP and CLI.
+   - Add Adam to Contributors table.
+
+## Script Structure
+   - Advanced function: `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.
+   - Typed parameters with `[Parameter(Mandatory/HelpMessage)]` attributes.
+   - `begin/process/end` blocks.
+   - `m365 login --ensure` in the begin block (no `--output` flag), verify login by checking `$LASTEXITCODE` immediately after the command and `throw` on failure.
+   - Long-form CLI options (`--url` not `-u`), use `--output json` for parsing.
+   - Keep CLI invocations as readable single-line commands unless dynamic option assembly is unavoidable.
+   - Convert JSON with `@($json | ConvertFrom-Json)`.
+
+## Multi-tenant Support
+   - CLI for Microsoft 365 supports multiple simultaneous connections:
+     - Use `m365 login --connectionName <name>` to create a named connection when logging in to different tenants
+     - Use `m365 connection use --name <name>` to switch the active connection
+     - Each connection maintains its own auth state (no re-authentication when switching).
+
+## Error Handling
+     - **`begin` block**: Use `throw` for critical errors (login, invalid paths).
+     - **`process` block**: Use `try/catch` with `Write-Warning` and `continue`. Never use `return` or `throw` inside loops.
+     - Track failures in `$script:Summary.Failures++`.
+     - Always display failure count in the `end` block summary with color-coding (red if > 0).
+
+## Output & UX
+   - **Progress messages**: Use `Write-Verbose` for progress; `Write-Host` with colors only in `end` block for summaries.
+   - **CSV Export**: Optional `[switch]$ExportToCsv` with `$OutputPath` parameter. Export in `end` block; otherwise display with `Format-Table`.
+   - **Report-Only Mode**: For destructive operations, add `[switch]$ReportOnly` that shows what would be affected (titles, URLs, counts) without performing actions. Complements `-WhatIf` with richer preview.
+   - **Usage Examples**: Add 3-4 commented usage examples at the end of the script (not comment-based help at the top, per user preference). Examples should demonstrate: basic usage, report-only mode (if applicable), WhatIf mode, and verbose output. Keep examples concise and practical.
+
+## Self-Review
+   - Score CLI + PowerShell practices (0–10) with strengths and improvements.
+   - Suggest future enhancements: performance optimizations, additional parameters, edge cases.
+
+## Quick Checklist
+- ✅ sample.json: date, version, metadata, authors, references updated. Validate with `python3 -m json.tool`.
+- ✅ Tags: no duplicates, match actual commands.
+- ✅ CLI README tab follows best practices; PnP tab untouched.
+- ✅ Long-form CLI options; use `--output json` and `--query` for filtering.
+- ✅ `ShouldProcess` protects destructive operations; no unexpected prompts.
+- ✅ Check `$LASTEXITCODE` after CLI commands.
+- ✅ Usage examples at end of script (3-4 examples).
+- ✅ Mark complete in plan.md.
+
+## Guardrails
+- No throwaway helper scripts for tiny edits.
+- Never remove PnP content; mimic its behaviour.
+- Keep credentials/tenant info out of samples.
+- No backslash escaping: use `$variable` not `\$variable` in README scripts.

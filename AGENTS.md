@@ -21,13 +21,24 @@
    - Add Adam to Contributors table.
 
 ## Script Structure
-   - Advanced function: `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.
-   - Typed parameters with `[Parameter(Mandatory/HelpMessage)]` attributes.
-   - `begin/process/end` blocks.
-   - `m365 login --ensure` in the begin block (no `--output` flag), verify login by checking `$LASTEXITCODE` immediately after the command and `throw` on failure.
-   - Long-form CLI options (`--url` not `-u`), use `--output json` for parsing.
-   - Keep CLI invocations as readable single-line commands unless dynamic option assembly is unavoidable.
-   - Convert JSON with `@($json | ConvertFrom-Json)`.
+  - Advanced function: `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.
+  - Typed parameters with `[Parameter(Mandatory/HelpMessage)]` attributes.
+  - `begin/process/end` blocks.
+  - `m365 login --ensure` in the begin block (no `--output` flag), verify login by checking `$LASTEXITCODE` immediately after the command and `throw` on failure.
+  - Long-form CLI options (`--url` not `-u`), use `--output json` for parsing.
+   - **JMESPath Filtering**: Use `--query` to filter results server-side instead of PowerShell `Where-Object` when possible:
+     - Reduces memory usage and improves performance (filtering happens before JSON parsing)
+     - Syntax: `--query "[?property == 'value']"` or `--query "[?property == \`$true\`]"` for booleans
+     - Escape backticks in PowerShell: `` --query "[?Active == \`$true\`]" ``
+     - Common patterns:
+       - Boolean filter: `--query "[?HasUniqueRoleAssignments == \`$true\`]"`
+       - String filter: `--query "[?Title == 'Documents']"`
+       - Nested property: `--query "[?link.scope == 'anonymous']"`
+       - Multiple conditions: `--query "[?Active == \`$true\` && Status == 'Approved']"`
+     - **When NOT to use**: Complex PowerShell logic (e.g., `-notin`, regex, custom comparisons) — filter in PowerShell instead.
+     - See [JMESPath Tutorial](http://jmespath.org/tutorial.html) for advanced syntax.
+  - Keep CLI invocations as readable single-line commands unless dynamic option assembly is unavoidable.
+  - Convert JSON with `@($json | ConvertFrom-Json)`.
 
 ## Multi-tenant Support
    - CLI for Microsoft 365 supports multiple simultaneous connections:
@@ -48,8 +59,50 @@
    - **Usage Examples**: Add 3-4 commented usage examples at the end of the script (not comment-based help at the top, per user preference). Examples should demonstrate: basic usage, report-only mode (if applicable), WhatIf mode, and verbose output. Keep examples concise and practical.
 
 ## Self-Review
-   - Score CLI + PowerShell practices (0–10) with strengths and improvements.
-   - Suggest future enhancements: performance optimizations, additional parameters, edge cases.
+  - Score CLI + PowerShell practices (0–10) with strengths and improvements.
+  - Suggest future enhancements: performance optimizations, additional parameters, edge cases.
+
+### README Tab Order Self-Check (CRITICAL)
+
+Before completing any script implementation, **ALWAYS verify README.md tab structure**:
+
+1. **Verify tab order** matches this pattern:
+   ```
+   ## Summary
+   ### Prerequisites
+   # [CLI for Microsoft 365](#tab/cli-m365-ps)
+   [CLI script content]
+   [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+   # [PnP PowerShell](#tab/pnpps)
+   [PnP script content]
+   [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
+   ***
+   ## Source Credit
+   ## Contributors
+   [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
+   <img src="..." />
+   ```
+
+2. **Common mistakes to check**:
+   - ❌ CLI tab placed AFTER Contributors section
+   - ❌ CLI tab placed AFTER disclaimer or telemetry img tag
+   - ❌ Missing `***` separator before Source Credit
+   - ❌ Duplicate tab markers (e.g., two `# [PnP PowerShell]` lines)
+   - ❌ Script content appearing outside tab sections
+
+3. **Self-review checklist**:
+   - [ ] CLI/PnP tabs appear BEFORE `## Source Credit`
+   - [ ] Contributors section is AFTER all script tabs
+   - [ ] No content between disclaimer and telemetry img
+   - [ ] Tab order is consistent (CLI → PnP or PnP → CLI)
+   - [ ] `***` separator closes all tabs before Source Credit
+
+4. **Quick verification command**:
+   ```bash
+   grep -n "^# \[" scripts/<script-name>/README.md
+   grep -n "^## Contributors" scripts/<script-name>/README.md
+   ```
+   Tab markers (`# [CLI` or `# [PnP`) should have **lower line numbers** than `## Contributors`.
 
 ## Quick Checklist
 - ✅ sample.json: date, version, metadata, authors, references updated. Validate with `python3 -m json.tool`.

@@ -9,7 +9,7 @@
       "This sample read Site Url, Source page and destination page from user and then we will copy webparts from source page to destination page"
     ],
     "creationDateTime": "2021-10-05",
-    "updateDateTime": "2021-10-05",
+    "updateDateTime": "2025-12-21",
     "products": [
       "SharePoint"
     ],
@@ -17,12 +17,21 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.5.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
       }
     ],
     "categories": [
       "Data"
     ],
     "tags": [
+      "m365 login",
+      "m365 spo page control list",
+      "m365 spo page control get",
+      "m365 spo page clientsidewebpart add",
+      "m365 spo page publish",
       "Connect-PnPOnline"
     ],
     "thumbnails": [
@@ -35,12 +44,23 @@
     ],
     "authors": [
       {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
+      },
+      {
         "gitHubAccount": "chandaniprajapati",
         "pictureUrl": "https://avatars.githubusercontent.com/u/52065929?v=4",
         "name": "Chandani Prajapati"
       }
     ],
     "references": [
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
+      },
       {
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",

@@ -113,9 +113,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/spo-change-retention-labels/README.md
   **✅ COMPLETED 2025-12-21:** Full CLI implementation with dynamic hashtable-based label mapping, CSV site list, server-side OData filtering (`--filter "ComplianceTag ne null"`), WhatIf support, transcript logging, CSV export, two-level progress bars, comprehensive error handling. Score: 6.5/10. **Production Gaps**: Missing label validation in begin block (could fail after hours of processing if target label doesn't exist), no throttling protection (could hit API limits on large tenants with 10K+ items). CLI version superior to PnP due to dynamic mapping vs hardcoded if/elseif. Used `--listId` (unique) per AGENTS.md guidance.
 - [ ] scripts/spo-clean-comments/README.md
+- [x] scripts/spo-clean-comments/README.md
+  **⚠️ SKIPPED - NOT FEASIBLE:** CLI for Microsoft 365 lacks comment management commands. No equivalent to `Get-PnPListItemComment` or `Remove-PnPListItemComment`. Core functionality (list/delete comments, filter by user) requires SharePoint REST API calls via `m365 request`, which violates AGENTS.md guidance. PnP PowerShell is the appropriate tool for this scenario.
 - [x] scripts/spo-compare-files/README.md
 - [ ] scripts/spo-configure-documentid-feature/README.md
-- [ ] scripts/spo-copy-directory-structure-to-sharepoint-list/README.md
+- [x] scripts/spo-configure-documentid-feature/README.md
+  **⚠️ SKIPPED - PARTIAL FUNCTIONALITY:** CLI for Microsoft 365 lacks Document ID prefix configuration. No equivalent to PnP's `Set-PnPSiteDocumentIdPrefix` command for setting custom prefix, scheduling ID assignment, or overwriting existing IDs. While CLI can enable the feature and add columns to views, the core configuration (prefix) requires SharePoint UI or REST API via `m365 request`, which violates AGENTS.md guidance. Partial implementation provides insufficient value.
+- [x] scripts/spo-copy-directory-structure-to-sharepoint-list/README.md
+  **✅ COMPLETED 2025-12-21:** Full CLI implementation using `m365 spo listitem batch add` for CSV-based directory structure import. Scans local filesystem, generates CSV with 20 hierarchy levels, batch creates SharePoint list items (500 per batch). WhatIf support, progress bars, comprehensive error handling. Score: 8.5/10 (CLI: 9/10, PowerShell: 8.5/10). **Strengths**: Cleaner than PnP (no 20-param function), uses native batch command, proper AGENTS.md compliance. **Minor Gaps**: Double directory scan (performance issue for 1000+ folders), array concatenation in loop (should use [List]), no transcript logging. **Testing Needed**: Special characters in folder names (quotes, commas), paths >260 chars.
 - [x] scripts/spo-copy-hubsite-navigation/README.md
 - [ ] scripts/spo-copy-library-across-tenants/README.md
 - [ ] scripts/spo-copy-webpart-settings/README.md

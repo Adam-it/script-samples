@@ -110,7 +110,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-bulk-publish-syntex-model/README.md
 - [x] scripts/spo-bulk-remove-retention-labels/README.md
 - [ ] scripts/spo-change-list-url/README.md
-- [ ] scripts/spo-change-retention-labels/README.md
+- [x] scripts/spo-change-retention-labels/README.md
+  **✅ COMPLETED 2025-12-21:** Full CLI implementation with dynamic hashtable-based label mapping, CSV site list, server-side OData filtering (`--filter "ComplianceTag ne null"`), WhatIf support, transcript logging, CSV export, two-level progress bars, comprehensive error handling. Score: 6.5/10. **Production Gaps**: Missing label validation in begin block (could fail after hours of processing if target label doesn't exist), no throttling protection (could hit API limits on large tenants with 10K+ items). CLI version superior to PnP due to dynamic mapping vs hardcoded if/elseif. Used `--listId` (unique) per AGENTS.md guidance.
 - [ ] scripts/spo-clean-comments/README.md
 - [x] scripts/spo-compare-files/README.md
 - [ ] scripts/spo-configure-documentid-feature/README.md

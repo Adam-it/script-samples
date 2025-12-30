@@ -5,6 +5,7 @@
 2. **Research CLI commands**: Check `../cli-microsoft365/docs/docs/cmd/` and `../cli-microsoft365/allCommands.json` to find appropriate commands.
    - **Avoid `m365 request`**: Only use as last resort when no specific CLI command exists.
    - **Use unique identifiers**: When working with SharePoint lists/libraries, always prefer `--listId` or `--listUrl` over `--listTitle`. Multiple lists can have the same title, causing CLI commands to fail or prompt for confirmation (breaking automation). Use `Id` or `Url` properties which are guaranteed unique.
+   - **Filter out hidden/system lists**: When enumerating SharePoint lists/libraries with `m365 spo list list`, always filter out hidden system lists using `--filter "Hidden eq false"`. This excludes system lists like "Master Page Gallery", "Style Library", "Form Templates", etc., while including all user-facing lists regardless of template type. Do NOT filter by `BaseType` or `BaseTemplate` unless you specifically need only certain template types.
    - During self-review, confirm every CLI command and option against docs.
 
 ## Metadata (sample.json)
@@ -61,6 +62,7 @@
 ## Self-Review
   - Score CLI + PowerShell practices (0–10) with strengths and improvements.
   - Suggest future enhancements: performance optimizations, additional parameters, edge cases.
+  - **ALWAYS mark script complete in plan.md**: After completing implementation and self-review, mark the script as done with `[x]` checkbox and add a completion note with date, score, key features, and identified gaps/limitations.
   - **BE HONEST AND CRITICAL**: Start with lower scores (5-6) if uncertain. Do not inflate scores.
   - **ALWAYS VERIFY**: Check every CLI command and option against documentation in `cli-microsoft365/docs/` folder.
   - **Common pitfalls**:

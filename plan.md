@@ -122,7 +122,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/spo-copy-directory-structure-to-sharepoint-list/README.md
   **✅ COMPLETED 2025-12-21:** Full CLI implementation using `m365 spo listitem batch add` for CSV-based directory structure import. Scans local filesystem, generates CSV with 20 hierarchy levels, batch creates SharePoint list items (500 per batch). WhatIf support, progress bars, comprehensive error handling. Score: 8.5/10 (CLI: 9/10, PowerShell: 8.5/10). **Strengths**: Cleaner than PnP (no 20-param function), uses native batch command, proper AGENTS.md compliance. **Minor Gaps**: Double directory scan (performance issue for 1000+ folders), array concatenation in loop (should use [List]), no transcript logging. **Testing Needed**: Special characters in folder names (quotes, commas), paths >260 chars.
 - [x] scripts/spo-copy-hubsite-navigation/README.md
-- [ ] scripts/spo-copy-library-across-tenants/README.md
+- [x] scripts/spo-copy-library-across-tenants/README.md
+  **⚠️ SKIPPED 2025-12-21:** CLI for Microsoft 365 v11.2.0 supports multi-tenant connections but requires switching the active connection via `m365 connection use`, causing significant performance overhead (2+ switches per file). PnP PowerShell's `-ReturnConnection` parameter allows simultaneous connections without switching. For a library with 1000 files, this results in 3-5x slower execution and requires local disk space equal to library size for temp file storage. **Recommendation**: Use PnP PowerShell for cross-tenant library copies, or implement as two separate scripts (export → import).
 - [ ] scripts/spo-copy-webpart-settings/README.md
 - [ ] scripts/spo-copy-webparts-to-another-page/README.md
 - [ ] scripts/spo-create-documentset/README.md

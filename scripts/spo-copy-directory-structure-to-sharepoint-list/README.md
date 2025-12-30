@@ -82,6 +82,189 @@ The body of the request should contain
 
 ```
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory = $true, HelpMessage = "Local directory path to scan (e.g., C:\\FileShares\\HR)")]
+    [ValidateScript({ Test-Path $_ -PathType Container })]
+    [string]$RootPath,
+    
+    [Parameter(Mandatory = $true, HelpMessage = "SharePoint site URL (e.g., https://contoso.sharepoint.com/sites/migration)")]
+    [ValidatePattern('^https://')]
+    [string]$SiteUrl,
+    
+    [Parameter(Mandatory = $true, HelpMessage = "Target SharePoint list name")]
+    [string]$ListName,
+    
+    [Parameter(HelpMessage = "Maximum directory depth to scan (default: 20)")]
+    [ValidateRange(1, 20)]
+    [int]$MaxDepth = 20,
+    
+    [Parameter(HelpMessage = "Batch size for list item creation (default: 500)")]
+    [ValidateRange(1, 1000)]
+    [int]$BatchSize = 500
+)
+
+begin {
+    $script:Summary = @{
+        FoldersScanned = 0
+        ItemsCreated = 0
+        PathsSkipped = 0
+        Failures = 0
+    }
+    
+    Write-Verbose "Ensuring user is logged in to CLI for Microsoft 365..."
+    m365 login --ensure
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate with CLI for Microsoft 365. Please run 'm365 login' first."
+    }
+    
+    Write-Verbose "Validating target SharePoint list: $ListName"
+    $listJson = m365 spo list get --webUrl $SiteUrl --title $ListName --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "List '$ListName' not found at $SiteUrl. Please create the list with required columns (Title, Level, Level1-Level20) before running this script."
+    }
+    
+    Write-Verbose "List validated successfully. Beginning directory scan..."
+}
+
+process {
+    try {
+        Write-Verbose "Scanning directory structure: $RootPath"
+        
+        $allFolders = Get-ChildItem -Path $RootPath -Directory -Recurse -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName.Length -le 260 }
+        
+        $skippedPaths = Get-ChildItem -Path $RootPath -Directory -Recurse -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName.Length -gt 260 }
+        
+        $script:Summary.FoldersScanned = $allFolders.Count
+        $script:Summary.PathsSkipped = $skippedPaths.Count
+        
+        if ($skippedPaths.Count -gt 0) {
+            Write-Warning "Skipped $($skippedPaths.Count) folder(s) with paths exceeding 260 characters (SharePoint limit)"
+        }
+        
+        Write-Verbose "Found $($allFolders.Count) folder(s) to process"
+        
+        if ($allFolders.Count -eq 0) {
+            Write-Warning "No folders found in $RootPath"
+            return
+        }
+        
+        $items = @()
+        foreach ($folder in $allFolders) {
+            $relativePath = $folder.FullName.Replace($RootPath, "").TrimStart('\\')
+            $parts = if ($relativePath) { $relativePath.Split('\\') } else { @() }
+            $depth = $parts.Count
+            
+            if ($depth -gt $MaxDepth) {
+                Write-Warning "Folder depth ($depth) exceeds MaxDepth ($MaxDepth): $($folder.FullName)"
+                $script:Summary.PathsSkipped++
+                continue
+            }
+            
+            $row = [PSCustomObject]@{
+                Title = $folder.FullName
+                Level = $depth
+            }
+            
+            for ($i = 1; $i -le 20; $i++) {
+                $levelValue = if ($i -le $parts.Count) { $parts[$i - 1] } else { "" }
+                $row | Add-Member -MemberType NoteProperty -Name "Level$i" -Value $levelValue
+            }
+            
+            $items += $row
+        }
+        
+        Write-Verbose "Prepared $($items.Count) list item(s) for batch creation"
+        
+        $totalBatches = [Math]::Ceiling($items.Count / $BatchSize)
+        $currentBatch = 0
+        
+        for ($i = 0; $i -lt $items.Count; $i += $BatchSize) {
+            $currentBatch++
+            $batchItems = $items[$i..[Math]::Min($i + $BatchSize - 1, $items.Count - 1)]
+            
+            Write-Progress -Activity "Creating list items" -Status "Batch $currentBatch of $totalBatches" -PercentComplete (($currentBatch / $totalBatches) * 100)
+            
+            $csvContent = ($batchItems | ConvertTo-Csv -NoTypeInformation) -join "`n"
+            $csvContent = $csvContent.Replace('"', '\"')
+            
+            if ($PSCmdlet.ShouldProcess("Batch $currentBatch ($($batchItems.Count) items)", "Create list items")) {
+                try {
+                    m365 spo listitem batch add --webUrl $SiteUrl --listTitle $ListName --csvContent $csvContent 2>&1 | Out-Null
+                    
+                    if ($LASTEXITCODE -eq 0) {
+                        $script:Summary.ItemsCreated += $batchItems.Count
+                        Write-Verbose "  Batch $currentBatch: Created $($batchItems.Count) item(s)"
+                    } else {
+                        Write-Warning "Batch $currentBatch failed to create items"
+                        $script:Summary.Failures += $batchItems.Count
+                    }
+                } catch {
+                    Write-Warning "Error processing batch $currentBatch: $($_.Exception.Message)"
+                    $script:Summary.Failures += $batchItems.Count
+                }
+            } else {
+                $script:Summary.ItemsCreated += $batchItems.Count
+            }
+        }
+        
+        Write-Progress -Activity "Creating list items" -Completed
+        
+    } catch {
+        Write-Warning "Error during directory scan: $($_.Exception.Message)"
+        $script:Summary.Failures++
+    }
+}
+
+end {
+    Write-Host "`n========================================" -ForegroundColor Cyan
+    Write-Host "  Directory to SharePoint List Summary" -ForegroundColor Cyan
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "Folders Scanned     : $($Summary.FoldersScanned)" -ForegroundColor White
+    Write-Host "Items Created       : $($Summary.ItemsCreated)" -ForegroundColor Green
+    
+    if ($Summary.PathsSkipped -gt 0) {
+        Write-Host "Paths Skipped       : $($Summary.PathsSkipped)" -ForegroundColor Yellow
+    }
+    
+    if ($Summary.Failures -gt 0) {
+        Write-Host "Failures            : $($Summary.Failures)" -ForegroundColor Red
+    }
+    
+    Write-Host "========================================" -ForegroundColor Cyan
+    
+    if ($Summary.Failures -eq 0 -and $Summary.ItemsCreated -gt 0) {
+        Write-Host "`n✅ Script completed successfully!" -ForegroundColor Green
+        Write-Host "Next steps:" -ForegroundColor White
+        Write-Host "  1. Open the list at: $SiteUrl/Lists/$($ListName.Replace(' ', ''))" -ForegroundColor Gray
+        Write-Host "  2. Fill in SharePointSite, DocLibrary, and DocSubfolder columns" -ForegroundColor Gray
+        Write-Host "  3. Export to CSV for SharePoint Migration Manager" -ForegroundColor Gray
+    } elseif ($Summary.Failures -gt 0) {
+        Write-Host "`n⚠️ Script completed with errors. Review warnings above." -ForegroundColor Yellow
+    }
+}
+
+# Usage examples:
+# Basic usage - scan directory and create list items
+# .\Copy-DirectoryToList.ps1 -RootPath "C:\FileShares\HR" -SiteUrl "https://contoso.sharepoint.com/sites/migration" -ListName "MigrationFolders"
+
+# Limit scan depth to 10 levels
+# .\Copy-DirectoryToList.ps1 -RootPath "C:\FileShares\Finance" -SiteUrl "https://contoso.sharepoint.com/sites/migration" -ListName "MigrationFolders" -MaxDepth 10
+
+# Preview what would be created (WhatIf mode)
+# .\Copy-DirectoryToList.ps1 -RootPath "C:\FileShares\IT" -SiteUrl "https://contoso.sharepoint.com/sites/migration" -ListName "MigrationFolders" -WhatIf
+
+# Verbose output with custom batch size
+# .\Copy-DirectoryToList.ps1 -RootPath "C:\FileShares\Sales" -SiteUrl "https://contoso.sharepoint.com/sites/migration" -ListName "MigrationFolders" -BatchSize 250 -Verbose
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
 # [PnP PowerShell](#tab/pnpps)
 
 ```powershell
@@ -205,7 +388,7 @@ $subfolders = get-folders -path $rootpath -level 1
 | Author(s) |
 |-----------|
 | Russell Gove |
+| [Adam Wójcik](https://github.com/Adam-it) |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-copy-directory-structure-to-sharepoint-list" aria-hidden="true" />
-

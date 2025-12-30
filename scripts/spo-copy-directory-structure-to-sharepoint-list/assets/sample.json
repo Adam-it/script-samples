@@ -8,22 +8,28 @@
         "Migrate file shares to SharePoint? Get all the individual directories int a SharePoint list so that we can trigger an migration using the SharePoint Migration Manager"
     ],
     "creationDateTime": "2022-10-28",
-    "updateDateTime": "2022-10-28",
+    "updateDateTime": "2025-12-21",
     "products": [
         "SharePoint",
         "Graph"
     ],
-    "metadata": [{
+    "metadata": [
+      {
         "key": "PNP-POWERSHELL",
         "value": "1.11.0"
-      }],
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
+      }
+    ],
     "categories": [
         "Configure"
     ],
     "tags": [
-        "Unified Audit Logs",
-        "ULS",
-        "PDF"
+        "m365 login",
+        "m365 spo list get",
+        "m365 spo listitem batch add"
     ],
     "thumbnails": [{
         "type": "image",
@@ -31,15 +37,30 @@
         "url": "https://raw.githubusercontent.com/pnp/script-samples/main/scripts/spo-copy-directory-structure-to-sharepoint-list/assets/preview.png",
         "alt": "A preview image of Copy the folder structure of a directory to a sharepoint list"
     }],
-    "authors": [{
+    "authors": [
+      {
         "gitHubAccount": "russgove",
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/2412956?v=4",
         "name": "Russell Gove"
-    }],
-    "references": [{
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
+      }
+    ],
+    "references": [
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
+      },
+      {
         "name": "Want to learn more about the Microsoft Graph",
         "description": "Check out the documentation site to get started and for the reference to the endpoints.",
         "url": "https://developer.microsoft.com/graph/graph-explorer"
-    }]
+      }
+    ]
 }]

@@ -22,11 +22,14 @@
    - Add Adam to Contributors table.
 
 ## Script Structure
-  - Advanced function: `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.
-  - Typed parameters with `[Parameter(Mandatory/HelpMessage)]` attributes.
-  - `begin/process/end` blocks.
-  - `m365 login --ensure` in the begin block (no `--output` flag), verify login by checking `$LASTEXITCODE` immediately after the command and `throw` on failure.
-  - Long-form CLI options (`--url` not `-u`), use `--output json` for parsing.
+ - Advanced function: `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.
+ - Typed parameters with `[Parameter(Mandatory/HelpMessage)]` attributes.
+ - `begin/process/end` blocks.
+     - **`begin` block**: Handle prerequisites (login, validation, data loading).
+     - **`process` block**: Main processing logic including ALL modification commands (add, update, delete, publish). Wrap destructive operations in `if ($PSCmdlet.ShouldProcess(...))` checks.
+     - **`end` block**: Display summary, export reports, stop transcript. NO modification commands should be here.
+ - `m365 login --ensure` in the begin block (no `--output` flag), verify login by checking `$LASTEXITCODE` immediately after the command and `throw` on failure.
+ - Long-form CLI options (`--url` not `-u`), use `--output json` for parsing.
    - **JMESPath Filtering**: Use `--query` to filter results server-side instead of PowerShell `Where-Object` when possible:
      - Reduces memory usage and improves performance (filtering happens before JSON parsing)
      - Syntax: `--query "[?property == 'value']"` or `--query "[?property == \`$true\`]"` for booleans

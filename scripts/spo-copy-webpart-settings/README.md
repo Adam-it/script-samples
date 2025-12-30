@@ -20,6 +20,201 @@ After that we specify the section, column and order of where the web part is on 
 
 ![Example Screenshot](assets/example.png)
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+
+[CmdletBinding(SupportsShouldProcess)]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "The site URL where the pages are located")]
+    [ValidatePattern('^https://')]
+    [string]$SiteUrl,
+
+    [Parameter(Mandatory = $true, HelpMessage = "The ID of the SPFx web part (from manifest)")]
+    [ValidateNotNullOrEmpty()]
+    [string]$WebPartId,
+
+    [Parameter(Mandatory = $true, HelpMessage = "The name of the source page with updated settings (e.g., page-1.aspx)")]
+    [ValidateNotNullOrEmpty()]
+    [string]$SourcePageName,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Section number on source page (0-based)")]
+    [int]$SourceSection = 0,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Order/control index within section on source page (0-based)")]
+    [int]$SourceOrder = 0,
+
+    [Parameter(Mandatory = $true, HelpMessage = "Destination page names where settings should be copied (e.g., page-2.aspx, page-3.aspx)")]
+    [ValidateNotNullOrEmpty()]
+    [string[]]$DestinationPageNames,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Section number on destination pages (0-based)")]
+    [int]$DestinationSection = 0,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Order/control index within section on destination pages (0-based)")]
+    [int]$DestinationOrder = 0
+)
+
+begin {
+    $logFile = ".\copy-webpart-settings-$(Get-Date -Format 'yyyyMMddHHmmss').log"
+    Start-Transcript -Path $logFile
+    Write-Verbose "Transcript logging to: $logFile"
+
+    Write-Verbose "Ensuring CLI for Microsoft 365 login..."
+    m365 login --ensure
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate with CLI for Microsoft 365."
+    }
+
+    Write-Verbose "Retrieving web part settings from source page: $SourcePageName"
+    $sourceControlsJson = m365 spo page control list --webUrl $SiteUrl --pageName $SourcePageName --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to retrieve controls from source page '$SourcePageName'. Error: $sourceControlsJson"
+    }
+
+    $sourceControls = @($sourceControlsJson | ConvertFrom-Json)
+    Write-Verbose "Found $($sourceControls.Count) control(s) on source page."
+
+    # CLI uses 1-based indexing for sectionIndex and controlIndex (order within section)
+    # Convert from 0-based params to 1-based for filtering
+    $targetSectionIndex = $SourceSection + 1
+    $targetControlIndex = $SourceOrder + 1
+
+    $sourceControl = $sourceControls | Where-Object {
+        $_.id -eq $WebPartId -and
+        $_.controlData.position.sectionIndex -eq $targetSectionIndex -and
+        $_.controlData.position.controlIndex -eq $targetControlIndex
+    }
+
+    if (-not $sourceControl) {
+        throw "Web part with ID '$WebPartId' not found at section $SourceSection, order $SourceOrder on source page '$SourcePageName'."
+    }
+
+    Write-Verbose "Found source web part. Extracting properties..."
+    $sourceControlId = $sourceControl.id
+
+    $sourceControlDetailsJson = m365 spo page control get --webUrl $SiteUrl --pageName $SourcePageName --id $sourceControlId --output json 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to retrieve source control details. Error: $sourceControlDetailsJson"
+    }
+
+    $sourceControlDetails = $sourceControlDetailsJson | ConvertFrom-Json
+    $sourceWebPartProperties = $sourceControlDetails.webPartData.properties | ConvertTo-Json -Depth 100 -Compress
+
+    Write-Verbose "Source web part properties extracted successfully."
+
+    $script:Summary = [PSCustomObject]@{
+        Saved   = 0
+        Skipped = 0
+    }
+}
+
+process {
+    foreach ($destinationPageName in $DestinationPageNames) {
+        Write-Verbose "Processing destination page: $destinationPageName"
+
+        try {
+            $destControlsJson = m365 spo page control list --webUrl $SiteUrl --pageName $destinationPageName --output json 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Skipped '$destinationPageName': Failed to retrieve controls. Error: $destControlsJson"
+                $script:Summary.Skipped++
+                continue
+            }
+
+            $destControls = @($destControlsJson | ConvertFrom-Json)
+
+            $destTargetSectionIndex = $DestinationSection + 1
+            $destTargetControlIndex = $DestinationOrder + 1
+
+            $destControl = $destControls | Where-Object {
+                $_.id -eq $WebPartId -and
+                $_.controlData.position.sectionIndex -eq $destTargetSectionIndex -and
+                $_.controlData.position.controlIndex -eq $destTargetControlIndex
+            }
+
+            if (-not $destControl) {
+                Write-Warning "Skipped '$destinationPageName': Web part with ID '$WebPartId' not found at section $DestinationSection, order $DestinationOrder."
+                $script:Summary.Skipped++
+                continue
+            }
+
+            if ($PSCmdlet.ShouldProcess($destinationPageName, 'Update web part properties')) {
+                Write-Verbose "  Updating web part properties on '$destinationPageName'..."
+                $updateResult = m365 spo page control set --webUrl $SiteUrl --pageName $destinationPageName --id $destControl.id --webPartProperties $sourceWebPartProperties 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Warning "Skipped '$destinationPageName': Failed to update web part properties. Error: $updateResult"
+                    $script:Summary.Skipped++
+                    continue
+                }
+
+                Write-Verbose "  Publishing page '$destinationPageName'..."
+                $publishResult = m365 spo page publish --webUrl $SiteUrl --pageName $destinationPageName 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Warning "Updated but failed to publish '$destinationPageName'. Error: $publishResult"
+                }
+
+                Write-Verbose "  Completed '$destinationPageName'."
+                $script:Summary.Saved++
+            }
+        }
+        catch {
+            Write-Warning "Skipped '$destinationPageName': Unexpected error. $_"
+            $script:Summary.Skipped++
+            continue
+        }
+    }
+}
+
+end {
+    Write-Host "\n========================================" -ForegroundColor Cyan
+    Write-Host "Web Part Settings Copy Summary" -ForegroundColor Cyan
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "Pages saved:   " -NoNewline -ForegroundColor Green
+    Write-Host $script:Summary.Saved -ForegroundColor White
+    Write-Host "Pages skipped: " -NoNewline -ForegroundColor Yellow
+    Write-Host $script:Summary.Skipped -ForegroundColor White
+    Write-Host "========================================\n" -ForegroundColor Cyan
+
+    Stop-Transcript
+}
+
+<#
+# Usage Examples:
+
+# Example 1: Copy web part settings from page-1 to page-2 and page-3
+.\Copy-WebPartSettings.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" `
+    -WebPartId "544c1372-42df-47c3-94d6-017428cd2baf" `
+    -SourcePageName "page-1.aspx" `
+    -DestinationPageNames @("page-2.aspx", "page-3.aspx")
+
+# Example 2: Copy from different section/order positions
+.\Copy-WebPartSettings.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" `
+    -WebPartId "544c1372-42df-47c3-94d6-017428cd2baf" `
+    -SourcePageName "template.aspx" `
+    -SourceSection 1 `
+    -SourceOrder 2 `
+    -DestinationPageNames @("page-10.aspx", "page-11.aspx") `
+    -DestinationSection 0 `
+    -DestinationOrder 1
+
+# Example 3: Use WhatIf to preview changes
+.\Copy-WebPartSettings.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" `
+    -WebPartId "544c1372-42df-47c3-94d6-017428cd2baf" `
+    -SourcePageName "page-1.aspx" `
+    -DestinationPageNames @("page-2.aspx", "page-3.aspx") `
+    -WhatIf
+
+# Example 4: Verbose output for troubleshooting
+.\Copy-WebPartSettings.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" `
+    -WebPartId "544c1372-42df-47c3-94d6-017428cd2baf" `
+    -SourcePageName "page-1.aspx" `
+    -DestinationPageNames @("page-2.aspx") `
+    -Verbose
+#>
+
+```
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
 # [PnP PowerShell](#tab/pnpps)
 
 ```powershell
@@ -207,6 +402,7 @@ After that we specify the section, column and order of where the web part is on 
 
 | Author(s) |
 |-----------|
+| [Adam Wójcik](https://github.com/Adam-it) |
 | Anoop Tatti |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

@@ -9,7 +9,7 @@
       "Script to copy custom SPFx web part settings from one page to other pages"
     ],
     "creationDateTime": "2021-07-05",
-    "updateDateTime": "2021-07-05",
+    "updateDateTime": "2025-12-21",
     "products": [
       "SharePoint"
     ],
@@ -17,12 +17,21 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.5.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
       }
     ],
     "categories": [
       "Configure"
     ],
     "tags": [
+      "m365 login",
+      "m365 spo page control list",
+      "m365 spo page control get",
+      "m365 spo page control set",
+      "m365 spo page publish",
       "Modern page",
       "SPFx",
       "Web Part Settings",
@@ -40,6 +49,12 @@
     ],
     "authors": [
       {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
+      },
+      {
         "gitHubAccount": "anoopt",
         "company": "Content + Cloud",
         "pictureUrl": "https://avatars.githubusercontent.com/u/9694225?v=4",
@@ -47,6 +62,11 @@
       }
     ],
     "references": [
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
+      },
       {
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",

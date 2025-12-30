@@ -61,6 +61,13 @@
 ## Self-Review
   - Score CLI + PowerShell practices (0–10) with strengths and improvements.
   - Suggest future enhancements: performance optimizations, additional parameters, edge cases.
+  - **BE HONEST AND CRITICAL**: Start with lower scores (5-6) if uncertain. Do not inflate scores.
+  - **ALWAYS VERIFY**: Check every CLI command and option against documentation in `cli-microsoft365/docs/` folder.
+  - **Common pitfalls**:
+    - Assuming CLI options exist without verification (e.g., `--url` to rename lists)
+    - Over-engineering with unnecessary command building patterns
+    - Adding options at the end when they could be inline (e.g., `--output json` position)
+    - Not testing command assumptions against actual CLI behavior
 
 ### README Tab Order Self-Check (CRITICAL)
 

@@ -66,6 +66,7 @@ foreach ($item in $items) {
 ## Self-Review
   - Verify all commands against docs.
   - Score honestly (start at 6-7, not 9-10).
+  - **Check for backslash escaping**: Run `grep '\\$' README.md` - should return ZERO matches. Variables in PowerShell scripts within README must be `$variable` NOT `\$variable`.
   - Mark complete in plan.md with score, features, gaps.
   - **Validate README structure**: Run `grep -n '^# \[' README.md` to ensure no duplicate tab markers.
 

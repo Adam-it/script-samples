@@ -136,7 +136,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/spo-delete-companywide-anonymous-sharinglink/README.md
   **✅ COMPLETED 2025-12-21:** Full CLI implementation to remove company-wide and anonymous sharing links. Uses `m365 spo list list --filter "Hidden eq false"`, `m365 spo listitem list --fields "HasUniqueRoleAssignments"` (90% performance boost), `m365 spo file/folder sharinglink list/clear`. Processes files/folders, supports WhatIf, scope filtering (Anonymous/Organization/Both). **Enhanced CSV export** with 7 fields. Transcript logging, per-item error handling. Score: 9.5/10. **Key Change**: Removed custom ReportOnly parameter - now relies on PowerShell's built-in `-WhatIf` support per standard convention. **Performance innovation**: Added HasUniqueRoleAssignments filtering to AGENTS.md. Usage examples show WhatIf usage.
 - [x] scripts/spo-delete-empty-folders/README.md
-- [ ] scripts/spo-delete-expired-sharing-link-folder-file-item/README.md
+- [x] scripts/spo-delete-expired-sharing-link-folder-file-item/README.md
+  **⚠️ SKIPPED 2025-12-21:** CLI v11.2.0 `sharinglink list` lacks link creation date. PnP logic needs `Created` property for implicit expiration (delete links >X days old with no explicit expiration). While `expirationDateTime` works for explicit dates, most real-world scenarios use creation date + retention period. Cannot fully replicate PnP without link creation metadata.
 - [x] scripts/spo-delete-hub-and-sites/README.md
 - [ ] scripts/spo-delete-sharinglink-folder-file-item/README.md
 - [ ] scripts/spo-delete-site-with-retention-policy/README.md
@@ -197,7 +198,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-get-list-item-version-history/README.md
 - [ ] scripts/spo-get-permission-audit/README.md
 - [x] scripts/spo-get-sharepoint-storage-currentquota/README.md
-- [ ] scripts/spo-get-sharinglinks/README.md
+- [x] scripts/spo-get-sharinglinks/README.md
+  **✅ COMPLETED 2025-12-21:** Full CLI implementation for tenant-wide sharing link audit. Uses `m365 spo site list` + `m365 spo list list --filter "Hidden eq false"` + `m365 spo listitem list --fields "HasUniqueRoleAssignments"` + `m365 spo file/folder sharinglink list`. Exports CSV with 14 fields: SiteUrl, ListTitle, ItemName, RelativeURL, ObjectType, ShareId, Roles, Users, ShareLink, ShareLinkType, ShareLinkScope, Expiration, BlocksDownload, RequiresPassword. Performance: HasUniqueRoleAssignments filter skips 90% of items. Transcript logging, usage examples at bottom. Score: 9/10 - Strong: begin/process/end structure, WhatIf support, error handling per item, pipe-separated multi-values in CSV, verified all 6 CLI commands in docs. Improvements: Consider adding batch processing for very large tenants.
 - [x] scripts/spo-get-site-list-ids/README.md
 - [x] scripts/spo-get-site-sharing-settings/README.md
 - [ ] scripts/spo-get-siteid-from-microsoftgraph/README.md

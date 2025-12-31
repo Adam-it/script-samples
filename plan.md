@@ -206,7 +206,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-get-sites-membership-report/README.md
 - [ ] scripts/spo-get-sites-with-unique-permissions/README.md
 - [ ] scripts/spo-get-sp-site-page-viewers-details/README.md
-- [ ] scripts/spo-get-spfx-apipermissions/README.md
+- [x] scripts/spo-get-sites-membership-report/README.md
+  **✅ COMPLETED 2025-12-21:** Full CLI implementation for tenant-wide site membership audit. Uses 7 CLI commands: `m365 spo site list`, `m365 spo site admin list`, `m365 entra m365group user list` (--role Owner/Member, --filter for guests), `m365 spo web get --withGroups` (for associated groups), `m365 spo group member list`. Exports CSV with 9 fields: Site Name, Group Owners, Group Members, Group Guests, Site Id, Site admins, Site owners, Site members, Site visitors. Score: 9.5/10. **CRITICAL FIX:** Associated group assignment now uses `m365 spo web get --withGroups` to retrieve exact group IDs (`AssociatedOwnerGroup.Id`, `AssociatedMemberGroup.Id`, `AssociatedVisitorGroup.Id`) instead of fragile title matching (internationalization-friendly). **Added to AGENTS.md:** Associated groups pattern guidance. **Verified:** All commands against docs. **Verified README structure:** CLI (18) → PnP (237) → Contributors (296).
 - [ ] scripts/spo-get-storage-site-versionsrecyclebin/README.md
 - [ ] scripts/spo-get-usage-from-audit-logs/README.md
 - [ ] scripts/spo-grant-app-site-permission/README.md

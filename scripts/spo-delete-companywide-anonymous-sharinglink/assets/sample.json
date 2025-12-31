@@ -9,7 +9,7 @@
       "Sharing links can lead to oversharing, especially when default site sharing settings haven't been updated to 'People with existing access'. If default sharing options are not updated in the tenant or site, end users can easily create a company wide or anonymous sharing links with a single click. End users can make a conscious decision to create sharing links with specific 'people you choose' which limits the audience having access to the data. This script can help delete those company-wide and anonymous sharing links at folder, file, and item levels. This approach can help mitigate oversharing issues during the M365 Copilot rollout."
     ],
     "creationDateTime": "2025-01-03",
-    "updateDateTime": "2025-01-03",
+    "updateDateTime": "2025-12-21",
     "products": [
       "SharePoint",
       "Sharing Links",
@@ -19,6 +19,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "2.99.90"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
       }
     ],
     "categories": [
@@ -27,6 +31,13 @@
     ],
     "tags": [
       "modern",
+      "m365 login",
+      "m365 spo list list",
+      "m365 spo listitem list",
+      "m365 spo file sharinglink list",
+      "m365 spo file sharinglink clear",
+      "m365 spo folder sharinglink list",
+      "m365 spo folder sharinglink clear",
       "Connect-PnPOnline",
       "Get-PnPFileSharingLink",
       "Get-PnPFolderSharingLink",
@@ -45,6 +56,12 @@
     ],
     "authors": [
       {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://github.com/Adam-it.png",
+        "name": "Adam Wójcik"
+      },
+      {
         "gitHubAccount": "reshmee011",
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
@@ -52,6 +69,11 @@
       }
     ],
     "references": [
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
+      },
       {
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",

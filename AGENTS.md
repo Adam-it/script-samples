@@ -1,133 +1,119 @@
 # CLI for Microsoft 365 Script Implementation Guide
 
 ## Core Flow
-1. **Verify scenario**: Confirm if refactoring existing CLI tab or adding new one alongside PnP PowerShell.
-2. **Research CLI commands**: Check `../cli-microsoft365/docs/docs/cmd/` and `../cli-microsoft365/allCommands.json` to find appropriate commands.
-   - **Avoid `m365 request`**: Only use as last resort when no specific CLI command exists.
-   - **Use unique identifiers**: When working with SharePoint lists/libraries, always prefer `--listId` or `--listUrl` over `--listTitle`. Multiple lists can have the same title, causing CLI commands to fail or prompt for confirmation (breaking automation). Use `Id` or `Url` properties which are guaranteed unique.
-   - **Filter out hidden/system lists**: When enumerating SharePoint lists/libraries with `m365 spo list list`, always filter out hidden system lists using `--filter "Hidden eq false"`. This excludes system lists like "Master Page Gallery", "Style Library", "Form Templates", etc., while including all user-facing lists regardless of template type. Do NOT filter by `BaseType` or `BaseTemplate` unless you specifically need only certain template types.
-   - During self-review, confirm every CLI command and option against docs.
+1. **Research CLI commands**: Check `../cli-microsoft365/docs/docs/cmd/` to verify all commands exist with required options.
+   - Avoid `m365 request` unless no specific command exists.
+   - Use `--listId` or `--listUrl` over `--listTitle` (prevents confirmation prompts).
+   - Filter hidden lists: `--filter "Hidden eq false"` excludes system lists.
+   - Verify every command/option against docs during self-review.
 
 ## Metadata (sample.json)
    - Update `updateDateTime` (today) and CLI version from `../cli-microsoft365/package.json`.
-   - Add or update `CLI-FOR-MICROSOFT365` entry in `metadata`.
-   - Keep PnP references; add the CLI reference when introducing a CLI tab.
+   - Add `CLI-FOR-MICROSOFT365` metadata entry.
    - Add Adam Wójcik to `authors` (`gitHubAccount`: `Adam-it`).
-   - Add CLI commands to `tags` (unique values only, no duplicates).
-   - **Validate JSON**: `python3 -m json.tool <file>` to catch syntax errors (extra commas, missing commas).
+   - Add CLI commands to `tags` (unique values only).
+   - Add CLI reference; keep existing PnP references.
 
-## README Updates
-   - Preserve PnP tab; add CLI tab.
-   - Update summary to mention both PnP and CLI.
+## README
+   - Add CLI tab alongside PnP tab (preserve existing content).
+   - Update summary to mention CLI.
    - Add Adam to Contributors table.
+   - **Tab order**: CLI/PnP tabs BEFORE `## Contributors`. Verify: `grep -n '^# \[' README.md`
 
 ## Script Structure
- - Advanced function: `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.
+ - `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.
  - Typed parameters with `[Parameter(Mandatory/HelpMessage)]` attributes.
- - `begin/process/end` blocks.
-     - **`begin` block**: Handle prerequisites (login, validation, data loading).
-     - **`process` block**: Main processing logic including ALL modification commands (add, update, delete, publish). Wrap destructive operations in `if ($PSCmdlet.ShouldProcess(...))` checks.
-     - **`end` block**: Display summary, export reports, stop transcript. NO modification commands should be here.
- - `m365 login --ensure` in the begin block (no `--output` flag), verify login by checking `$LASTEXITCODE` immediately after the command and `throw` on failure.
- - Long-form CLI options (`--url` not `-u`), use `--output json` for parsing.
-   - **JMESPath Filtering**: Use `--query` to filter results server-side instead of PowerShell `Where-Object` when possible:
-     - Reduces memory usage and improves performance (filtering happens before JSON parsing)
-     - Syntax: `--query "[?property == 'value']"` or `--query "[?property == \`$true\`]"` for booleans
-     - Escape backticks in PowerShell: `` --query "[?Active == \`$true\`]" ``
-     - Common patterns:
-       - Boolean filter: `--query "[?HasUniqueRoleAssignments == \`$true\`]"`
-       - String filter: `--query "[?Title == 'Documents']"`
-       - Nested property: `--query "[?link.scope == 'anonymous']"`
-       - Multiple conditions: `--query "[?Active == \`$true\` && Status == 'Approved']"`
-     - **When NOT to use**: Complex PowerShell logic (e.g., `-notin`, regex, custom comparisons) — filter in PowerShell instead.
-     - See [JMESPath Tutorial](http://jmespath.org/tutorial.html) for advanced syntax.
-  - Keep CLI invocations as readable single-line commands unless dynamic option assembly is unavoidable.
-  - Convert JSON with `@($json | ConvertFrom-Json)`.
+ - **begin/process/end blocks**:
+   - `begin`: Login, validation, data loading.
+   - `process`: ALL modification commands (add, update, delete, publish) wrapped in `if ($PSCmdlet.ShouldProcess(...))`.
+   - `end`: Summary, export, transcript. NO modifications.
+ - `m365 login --ensure` in begin block (NO `--output` flag). Check `$LASTEXITCODE`, throw on failure.
+ - Long-form options (`--url` not `-u`), use `--output json` for parsing.
+ - Use `--query` (JMESPath) for server-side filtering when possible.
+ - Keep CLI invocations as single-line commands unless dynamic assembly needed.
+ - Convert JSON: `@($json | ConvertFrom-Json)`.
 
-## Multi-tenant Support
-   - CLI for Microsoft 365 supports multiple simultaneous connections:
-     - Use `m365 login --connectionName <name>` to create a named connection when logging in to different tenants
-     - Use `m365 connection use --name <name>` to switch the active connection
-     - Each connection maintains its own auth state (no re-authentication when switching).
+## Performance Optimization
+**Minimize API requests**:
+ - **Filter by HasUniqueRoleAssignments**: Only items with unique permissions can have sharing links/permissions. Use `--fields "...,HasUniqueRoleAssignments"` + client-side filter to skip 90% of items.
+ - Use `--filter` (OData) or `--query` (JMESPath) over `Where-Object`.
+ - Use `--fields` to limit columns.
+ - Use batch commands when available.
+
+**Example**:
+```powershell
+# Good: Filter items with unique permissions first
+$items = m365 spo listitem list --webUrl $url --listId $id --fields "FileRef,HasUniqueRoleAssignments" --output json | ConvertFrom-Json
+$items = $items | Where-Object { $_.HasUniqueRoleAssignments -eq $true }
+foreach ($item in $items) {
+    $links = m365 spo file sharinglink list --webUrl $url --fileUrl $item.FileRef --output json
+}
+```
 
 ## Error Handling
-     - **`begin` block**: Use `throw` for critical errors (login, invalid paths).
-     - **`process` block**: Use `try/catch` with `Write-Warning` and `continue`. Never use `return` or `throw` inside loops.
-     - Track failures in `$script:Summary.Failures++`.
-     - Always display failure count in the `end` block summary with color-coding (red if > 0).
+ - `begin`: Use `throw` for critical errors (login, invalid paths).
+ - `process`: Use `try/catch` with `Write-Warning` + `continue`. Never `return` or `throw` in loops.
+ - Track failures: `$script:Summary.Failures++`.
+ - Display failure count in `end` block with color-coding (red if > 0).
 
 ## Output & UX
-   - **Progress messages**: Use `Write-Verbose` for progress; `Write-Host` with colors only in `end` block for summaries.
-   - **CSV Export**: Optional `[switch]$ExportToCsv` with `$OutputPath` parameter. Export in `end` block; otherwise display with `Format-Table`.
-   - **Report-Only Mode**: For destructive operations, add `[switch]$ReportOnly` that shows what would be affected (titles, URLs, counts) without performing actions. Complements `-WhatIf` with richer preview.
-   - **Usage Examples**: Add 3-4 commented usage examples at the end of the script (not comment-based help at the top, per user preference). Examples should demonstrate: basic usage, report-only mode (if applicable), WhatIf mode, and verbose output. Keep examples concise and practical.
+ - **Progress**: Use `Write-Verbose` for progress; `Write-Host` with colors only in `end` block summaries.
+ - **CSV Export**: Optional `[switch]$ExportToCsv` with `$OutputPath`. Export in `end` block. Use `($array | Where-Object { $_ }) -join '|'` for multi-value fields.
+ - **Use WhatIf, not custom ReportOnly**: Rely on PowerShell's built-in `-WhatIf` support via `ShouldProcess`. Do NOT add custom `[switch]$ReportOnly` parameters.
+ - **Transcript Logging**: Add `Start-Transcript` in `begin`, `Stop-Transcript` in `end`.
+ - **Usage Examples**: Add 3-4 commented examples at END of script (not comment-based help at top). Always include WhatIf example, show basic usage, Verbose output.
 
 ## Self-Review
-  - Score CLI + PowerShell practices (0–10) with strengths and improvements.
-  - Suggest future enhancements: performance optimizations, additional parameters, edge cases.
-  - **ALWAYS mark script complete in plan.md**: After completing implementation and self-review, mark the script as done with `[x]` checkbox and add a completion note with date, score, key features, and identified gaps/limitations.
-  - **BE HONEST AND CRITICAL**: Start with lower scores (5-6) if uncertain. Do not inflate scores.
-  - **ALWAYS VERIFY**: Check every CLI command and option against documentation in `cli-microsoft365/docs/` folder.
-  - **Common pitfalls**:
-    - Assuming CLI options exist without verification (e.g., `--url` to rename lists)
-    - Over-engineering with unnecessary command building patterns
-    - Adding options at the end when they could be inline (e.g., `--output json` position)
-    - Not testing command assumptions against actual CLI behavior
+  - Verify all commands against docs.
+  - Score honestly (start at 6-7, not 9-10).
+  - Mark complete in plan.md with score, features, gaps.
+  - **Validate README structure**: Run `grep -n '^# \[' README.md` to ensure no duplicate tab markers.
 
-### README Tab Order Self-Check (CRITICAL)
+### README Structure Validation
+After completing script implementation, verify structure with these commands:
 
-Before completing any script implementation, **ALWAYS verify README.md tab structure**:
+```bash
+# Check for duplicate tab markers - should show exactly 2 lines
+grep -n '^# \[' scripts/<script-name>/README.md
 
-1. **Verify tab order** matches this pattern:
-   ```
-   ## Summary
-   ### Prerequisites
-   # [CLI for Microsoft 365](#tab/cli-m365-ps)
-   [CLI script content]
-   [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
-   # [PnP PowerShell](#tab/pnpps)
-   [PnP script content]
-   [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
-   ***
-   ## Source Credit
-   ## Contributors
-   [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
-   <img src="..." />
-   ```
+# Verify tabs appear before Contributors
+grep -n '^## Contributors' scripts/<script-name>/README.md
+```
 
-2. **Common mistakes to check**:
-   - ❌ CLI tab placed AFTER Contributors section
-   - ❌ CLI tab placed AFTER disclaimer or telemetry img tag
-   - ❌ Missing `***` separator before Source Credit
-   - ❌ Duplicate tab markers (e.g., two `# [PnP PowerShell]` lines)
-   - ❌ Script content appearing outside tab sections
+**Expected structure**:
+```
+## Summary
+### Prerequisites
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+[CLI script]
+[!INCLUDE [More about CLI...]]
+# [PnP PowerShell](#tab/pnpps)
+[PnP script]
+[!INCLUDE [More about PnP...]]
+***
+## Source Credit
+## Contributors
+[!INCLUDE [DISCLAIMER]]
+<img src="..." />
+```
 
-3. **Self-review checklist**:
-   - [ ] CLI/PnP tabs appear BEFORE `## Source Credit`
-   - [ ] Contributors section is AFTER all script tabs
-   - [ ] No content between disclaimer and telemetry img
-   - [ ] Tab order is consistent (CLI → PnP or PnP → CLI)
-   - [ ] `***` separator closes all tabs before Source Credit
-
-4. **Quick verification command**:
-   ```bash
-   grep -n "^# \[" scripts/<script-name>/README.md
-   grep -n "^## Contributors" scripts/<script-name>/README.md
-   ```
-   Tab markers (`# [CLI` or `# [PnP`) should have **lower line numbers** than `## Contributors`.
+**Common mistakes**:
+- ❌ Duplicate `# [CLI for Microsoft 365]` or `# [PnP PowerShell]` markers
+- ❌ Script content outside code blocks (between tab markers)
+- ❌ Missing `***` separator before Source Credit
+- ❌ Tab markers after Contributors section
 
 ## Quick Checklist
-- ✅ sample.json: date, version, metadata, authors, references updated. Validate with `python3 -m json.tool`.
-- ✅ Tags: no duplicates, match actual commands.
-- ✅ CLI README tab follows best practices; PnP tab untouched.
-- ✅ Long-form CLI options; use `--output json` and `--query` for filtering.
-- ✅ `ShouldProcess` protects destructive operations; no unexpected prompts.
-- ✅ Check `$LASTEXITCODE` after CLI commands.
-- ✅ Usage examples at end of script (3-4 examples).
-- ✅ Mark complete in plan.md.
+- sample.json: date, CLI version 11.2.0, metadata, authors, tags (no duplicates).
+- CLI tab follows structure; PnP tab untouched.
+- Long-form CLI options; `--output json` for parsing.
+- `ShouldProcess` wraps destructive operations.
+- Check `$LASTEXITCODE` after CLI commands.
+- Usage examples at end (not top), include WhatIf example.
+- Mark complete in plan.md.
 
 ## Guardrails
-- No throwaway helper scripts for tiny edits.
-- Never remove PnP content; mimic its behaviour.
-- Keep credentials/tenant info out of samples.
-- No backslash escaping: use `$variable` not `\$variable` in README scripts.
+- **NO Python scripts** for simple file edits. Use `apply_patch` directly.
+- Never remove PnP content.
+- No credentials/tenant info in samples.
+- No backslash escaping: `$variable` not `\\$variable`.

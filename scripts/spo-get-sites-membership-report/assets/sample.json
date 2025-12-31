@@ -9,11 +9,15 @@
       "The script gets site membership details including Site Admins, m365 Group Owners, m365 Group Members, m365 Group Guests, Site Owners, Site Members and Site Visitors and export it to a CSV file."
     ],
     "creationDateTime": "2023-10-12",
-    "updateDateTime": "2023-10-12",
+    "updateDateTime": "2025-12-21",
     "products": [
       "SharePoint"
     ],
     "metadata": [
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.2.0"
+      },
       {
         "key": "PNP-POWERSHELL",
         "value": "2.2.0"
@@ -29,6 +33,12 @@
       "Security"
     ],
     "tags": [
+      "m365 login",
+      "m365 spo site list",
+      "m365 spo site admin list",
+      "m365 entra m365group user list",
+      "m365 spo group list",
+      "m365 spo group member list",
       "Get-PnPTenantSite",
       "Get-PnPMicrosoft365GroupOwner",
       "Get-PnPMicrosoft365GroupMember",
@@ -48,6 +58,11 @@
         "gitHubAccount": "reshmee011",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
         "name": "Reshmee Auckloo"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/19216152?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -55,6 +70,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

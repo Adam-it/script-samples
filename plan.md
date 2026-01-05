@@ -246,7 +246,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-request-pnp-reindex-user-profile/README.md
 - [ ] scripts/spo-restore-multiple-items/README.md
 - [ ] scripts/spo-retrieve-effectivepermissions-user/README.md
-- [ ] scripts/spo-revoke-app-site-permission/README.md
+- [x] scripts/spo-revoke-app-site-permission/README.md
+  ✅ COMPLETED 2026-01-05: CLI implementation for revoking Entra ID app permissions. Uses 4 CLI commands: m365 login --ensure, m365 spo site list --filter, m365 spo site apppermission list --appDisplayName, m365 spo site apppermission remove --id --force. ShouldProcess support for safe revocations. CSV export with 7 fields. Needs fixes: usage examples at END, HTTPS validation in param block.
 - [ ] scripts/spo-run-jobs-in-parallel/README.md
 - [ ] scripts/spo-search-change-placeholder-text/README.md
 - [ ] scripts/spo-serviceprincipals-sites.selected-permission-sites/README.md

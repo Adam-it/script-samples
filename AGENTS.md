@@ -76,6 +76,13 @@ When retrieving SharePoint site Owner/Member/Visitor groups, always use web prop
   - **No backslash escaping**: `grep '\\$' README.md` should return ZERO. Use `$variable` NOT `\$variable`.
   - **README structure**: `grep -n '^# \[' README.md` should show exactly 2 lines. No duplicate tabs. Tabs BEFORE `## Contributors`.
 
+**Compare with PnP PowerShell**:
+  - Review the PnP PowerShell version of the script (if present in same README).
+  - Identify strong points: Does PnP have better UX, extra report fields, or validation logic worth adopting?
+  - Check if CLI can support those features (some PnP cmdlets return fields CLI doesn't expose).
+  - Suggest practical improvements (e.g., add missing report fields if CLI API supports them).
+  - Update script if improvements add clear value without extra API calls.
+
 **Completion**:
   - Mark complete in plan.md with date, score, commands, features, gaps.
 

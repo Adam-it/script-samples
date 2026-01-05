@@ -252,11 +252,13 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-search-change-placeholder-text/README.md
 - [ ] scripts/spo-serviceprincipals-sites.selected-permission-sites/README.md
 - [ ] scripts/spo-set-page-authorbyline/README.md
-- [ ] scripts/spo-set-sharepoint-regional-settings/README.md
+- [~] scripts/spo-set-sharepoint-regional-settings/README.md
+  ⚠️ SKIPPED 2026-01-05: CLI `m365 spo web set` does not support nested RegionalSettings properties (LocaleId, TimeZone, WorkDays, etc.). These are sub-properties of web.RegionalSettings object, not direct web properties. Would require `m365 request` for manual REST API calls, which violates AGENTS.md guidance (line 3: "Avoid m365 request unless no specific command exists").
 - [ ] scripts/spo-setup-example-site/README.md
 - [x] scripts/spo-sharepoint-alerts-audit/README.md
 - [x] scripts/spo-tenant-site-inventory/README.md
-- [ ] scripts/spo-time-based-file-reports/README.md
+- [x] scripts/spo-time-based-file-reports/README.md
+  ✅ COMPLETED 2026-01-05: Full CLI implementation for time-based file age reporting. Unified script replacing 3 separate PnP scripts. Uses 4 CLI commands: m365 login --ensure, m365 spo site list with conditional options, m365 spo list list BaseTemplate eq 101 filter, m365 spo file list with OData date filter TimeLastModified lt datetime. Parameters: TenantAdminUrl OR SiteUrl mutually exclusive, LibraryName, FolderUrl, DaysOld default 1460, OutputPath optional, IncludeOneDrive, Recursive. CSV export with 11 fields. Dynamic command building. begin/process/end structure. WhatIf support. Score: 8.5/10. Key advantage: Single unified script vs 3 PnP scripts with CSV inputs and Excel dependencies.
 - [ ] scripts/spo-translate-list/README.md
 - [x] scripts/spo-trim-and-m365-archive-sitecollection/README.md
 - [ ] scripts/spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/README.md

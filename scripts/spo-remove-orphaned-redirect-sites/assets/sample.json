@@ -7,7 +7,7 @@
     "title": "Remove orphaned redirect sites",
     "url": "https://pnp.github.io/script-samples/spo-remove-orphaned-redirect-sites/README.html",
     "creationDateTime": "2020-07-17",
-    "updateDateTime": "2022-02-08",
+    "updateDateTime": "2026-01-05",
     "shortDescription": "Provides you with an overview of all orphaned redirect sites and allows you to quickly delete them",
     "longDescription": null,
     "products": [
@@ -22,9 +22,16 @@
       "Connect-PnPOnline",
       "Get-PnPTenant",
       "Get-PnPTenantSite",
-      "Remove-PnPTenantSite"
+      "Remove-PnPTenantSite",
+      "m365 login",
+      "m365 spo site list",
+      "m365 spo site remove"
     ],
     "metadata": [
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
+      },
       {
         "key": "PNP-POWERSHELL",
         "value": "1.9.0"
@@ -41,6 +48,11 @@
     ],
     "authors": [
       {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
+      {
         "gitHubAccount": "LeonArmston",
         "company": "Intelogy",
         "pictureUrl": "https://avatars.githubusercontent.com/u/12968962?v=4",
@@ -52,6 +64,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "CLI for Microsoft 365",
+        "description": "Manage Microsoft 365 and SharePoint Framework projects on any platform.",
+        "url": "https://pnp.github.io/cli-microsoft365/"
       }
     ]
   }

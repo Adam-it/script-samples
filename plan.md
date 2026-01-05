@@ -96,6 +96,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 
 ## SPO
 - [ ] scripts/spo-add-contenttypehub-format-field-to-List/README.md
+  ✅ COMPLETED 2026-01-05: Full CLI implementation for Content Type Hub with custom calendar field formatting. Uses 13 CLI commands across 15 workflow steps: m365 login --ensure, m365 spo contenttypehub get, m365 spo contenttype get/add, m365 spo field add/set, m365 spo contenttype field set, m365 spo contenttype sync, m365 spo list add, m365 spo list contenttype remove/add, m365 spo list view list, m365 spo list view field add. Creates CT in hub with DateTime field + custom JSON formatter (GitHub), syncs to destination site, creates list, removes default Item CT, adds custom CT, adds Title + CalendarDemo fields to default view. HTTPS validation in param block. Usage examples at END of script. Score: TBD (self-review pending).
 - [ ] scripts/spo-add-demo-content-from-site/README.md
 - [ ] scripts/spo-add-language-settings/README.md
 - [ ] scripts/spo-add-modern-calendar-view/README.md

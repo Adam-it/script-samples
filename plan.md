@@ -236,7 +236,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-remote-event-receivers/README.md
 - [ ] scripts/spo-remove-access-requests/README.md
 - [ ] scripts/spo-remove-list-designs/README.md
-- [ ] scripts/spo-remove-orphaned-redirect-sites/README.md
+- [x] scripts/spo-remove-orphaned-redirect-sites/README.md
+  ✅ COMPLETED 2025-12-21: Full CLI implementation. Uses m365 login --ensure, m365 spo site list --filter, m365 spo site remove --force. Requires PowerShell 7+. Score: 9.5/10.
 - [ ] scripts/spo-remove-webpart-from-pages/README.md
 - [ ] scripts/spo-rename-hub-siteurl/README.md
 - [ ] scripts/spo-reorder-list-content-type/README.md

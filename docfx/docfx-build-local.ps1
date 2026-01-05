@@ -9,8 +9,24 @@ $runLocation  = Get-Location
 #.\report-age.ps1 -BaseDir "$($runLocation)\..\" -ReportFile "age.md"
 
 Write-Host "Generating samples.json..." -ForegroundColor Cyan
-.\generate-samplesJson.ps1 -BaseDir "$($runLocation)\..\" -ReportFile "samples.json"
+$baseDir = (Resolve-Path (Join-Path $runLocation "..")).Path
+./generate-samplesJson.ps1 -BaseDir $baseDir -ReportFile "samples.json"
 
 # Main DocFX build
 Write-Host "Building docfx..." -ForegroundColor Cyan
-docfx build docfx.json --warningsAsErrors $args
+
+<#
+    DocFx is now installed as a .NET tool. To use it:
+    
+    1. Ensure .NET SDK is installed (version 6.0 or higher)
+       - Download from: https://dotnet.microsoft.com/download
+    
+    2. Restore the docfx tool (if not already done):
+       - Run: dotnet tool restore
+    
+    3. Run docfx using:
+       - dotnet docfx build docfx.json
+#>
+
+Write-Host "Running docfx using .NET tool..." -ForegroundColor Cyan
+dotnet docfx build docfx.json --warningsAsErrors $args

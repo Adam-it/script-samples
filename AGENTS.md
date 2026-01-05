@@ -6,14 +6,25 @@
    - Use `--listId` or `--listUrl` over `--listTitle` (prevents confirmation prompts).
    - Filter hidden lists: `--filter "Hidden eq false"` excludes system lists.
 
-## Metadata (sample.json)
+## Metadata Updates (sample.json)
+**Required changes**:
    - Update `updateDateTime` (today) and CLI version from `../cli-microsoft365/package.json`.
    - Add `CLI-FOR-MICROSOFT365` metadata entry.
-   - Add Adam Wójcik to `authors` (`gitHubAccount`: `Adam-it`).
    - Add CLI commands to `tags` (unique values only).
    - Add CLI reference; keep existing PnP references.
 
-## README
+**Author format** (copy from existing scripts):
+```json
+{
+  "gitHubAccount": "Adam-it",
+  "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+  "name": "Adam Wójcik"
+}
+```
+- Verify with: `grep -A3 'Adam-it' scripts/bulk-undelete-from-recyclebin/assets/sample.json`
+- **Never use** Unicode escapes (`\u00f3`), GitHub URLs (`github.com/Adam-it.png`), or empty `company` field.
+
+## README Updates
    - Add CLI tab alongside PnP tab (preserve existing content).
    - Update summary to mention CLI.
    - Add Adam to Contributors table.
@@ -52,17 +63,24 @@ When retrieving SharePoint site Owner/Member/Visitor groups, always use web prop
  - **CSV Export**: Initialize `$script:ReportCollection` in `begin` block, populate in `process` block, export in `end` block. Use `($array | Where-Object { $_ }) -join '|'` for multi-value fields.
  - **Use WhatIf, not custom ReportOnly**: Rely on `-WhatIf` via `ShouldProcess`. No custom `[switch]$ReportOnly`.
  - **Transcript Logging**: Add `Start-Transcript` in `begin`, `Stop-Transcript` in `end`.
- - **Usage Examples**: Add 3-4 commented examples at END of script (not at top). Include WhatIf, basic usage, Verbose.
+ - **Usage Examples**: Add 3-4 commented examples at END of script (not at top). Include WhatIf, basic usage, Verbose. Add single blank line between examples and descriptive comment above each.
 
 ## Self-Review
+**Metadata**:
+  - Verify Adam's author entry: `grep -A3 'Adam-it' scripts/.../assets/sample.json` matches reference format above.
+  - Check no Unicode escapes: `grep '\\u00' assets/sample.json` should return ZERO.
+
+**Script**:
   - Verify all commands/options against docs in `../cli-microsoft365/docs/`.
   - Score honestly (start at 6-7, not 9-10).
   - **No backslash escaping**: `grep '\\$' README.md` should return ZERO. Use `$variable` NOT `\$variable`.
   - **README structure**: `grep -n '^# \[' README.md` should show exactly 2 lines. No duplicate tabs. Tabs BEFORE `## Contributors`.
+
+**Completion**:
   - Mark complete in plan.md with date, score, commands, features, gaps.
 
 ## Guardrails
 - **NO Python scripts** for simple file edits. Use `apply_patch` directly.
 - Never remove PnP content.
-- No credentials/tenant info in samples.
+- No hardcoded credentials, plaintext passwords, or tenant-specific info in samples. Use `m365 login --ensure`.
 - No backslash escaping: `$variable` not `\$variable`.

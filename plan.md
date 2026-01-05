@@ -215,7 +215,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-import-taxonomy-terms-labels/README.md
 - [ ] scripts/spo-large-list-items-to-pnp-template/README.md
 - [ ] scripts/spo-list-formatting/README.md
-- [ ] scripts/spo-list-site-externalusers/README.md
+- [x] scripts/spo-list-site-externalusers/README.md
+  ✅ COMPLETED 2025-12-21: Full CLI implementation for listing external users across SharePoint sites. Uses 3 CLI commands: m365 login --ensure, m365 spo site list --filter, m365 spo externaluser list (with pagination). Exports CSV with 10 fields. Score: 9.5/10. Key advantages over PnP: Token-based auth (no plaintext passwords), persistent session (1 login vs N), richer CSV (10 fields vs 5), error resilience, transcript logging, progress bar, summary stats. Verified all commands against docs, pagination implemented correctly (50-user limit). Added security guidance to AGENTS.md.
 - [ ] scripts/spo-list-spfx-field-customizer/README.md
 - [ ] scripts/spo-list-update-contenttype-systemupdate/README.md
 - [ ] scripts/spo-locate-orphaned-termstore-terms/README.md

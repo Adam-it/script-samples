@@ -9,11 +9,15 @@
         "Script will export all Checked-Out files in all SharePoint Online sites associated with a Hub site to a CSV file."
       ],
       "creationDateTime": "2022-08-14",
-      "updateDateTime": "2022-08-14",
+      "updateDateTime": "2026-01-06",
       "products": [
         "SharePoint"
       ],
       "metadata": [
+        {
+          "key": "CLI-FOR-MICROSOFT365",
+          "value": "11.3.0"
+        },
         {
           "key": "PNP-POWERSHELL",
           "value": "1.11.0"
@@ -25,7 +29,10 @@
         "Report"
       ],
       "tags": [
-        "m365",
+        "m365 login",
+        "m365 spo hubsite get",
+        "m365 spo list list",
+        "m365 spo listitem list",
         "sharepoint",
         "documents",
         "checkedout",
@@ -41,6 +48,11 @@
       ],
       "authors": [
         {
+          "gitHubAccount": "Adam-it",
+          "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+          "name": "Adam Wójcik"
+        },
+        {
           "name": "Arash Aghajani",
           "gitHubAccount": "ArashAghajani",
           "company": "Spot Solutions",
@@ -48,6 +60,11 @@
         }
       ],
       "references": [
+        {
+          "name": "CLI for Microsoft 365",
+          "description": "Manage Microsoft 365 and SharePoint Framework projects on any platform",
+          "url": "https://pnp.github.io/cli-microsoft365/"
+        },
         {
           "name": "Want to learn more about PnP PowerShell and the cmdlets",
           "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",

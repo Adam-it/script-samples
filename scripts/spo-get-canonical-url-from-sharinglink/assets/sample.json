@@ -9,12 +9,16 @@
       "Converting SharePoint Sharing Links to Canonical URLs"
     ],
     "creationDateTime": "2025-07-16",
-    "updateDateTime": "2025-07-16",
+    "updateDateTime": "2026-01-06",
     "products": [
       "SharePoint",
       "Sites"
     ],
     "metadata": [
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
+      },
       {
         "key": "PNP-POWERSHELL",
         "value": "3.1.41"
@@ -25,6 +29,11 @@
     ],
     "tags": [
       "modern",
+      "m365 login",
+      "m365 spo list list",
+      "m365 spo listitem list",
+      "m365 spo file sharinglink list",
+      "m365 spo folder sharinglink list",
       "Connect-PnPOnline",
       "Get-PnPList",
       "Get-PnPListItem",
@@ -41,6 +50,11 @@
     ],
     "authors": [
       {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
+      {
         "gitHubAccount": "reshmee011",
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
@@ -48,6 +62,11 @@
       }
     ],
     "references": [
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
+      },
       {
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",

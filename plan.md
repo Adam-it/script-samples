@@ -110,14 +110,15 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-bulk-import-data/README.md
 - [ ] scripts/spo-bulk-publish-syntex-model/README.md
 - [x] scripts/spo-bulk-remove-retention-labels/README.md
-- [ ] scripts/spo-change-list-url/README.md
+- [~] scripts/spo-change-list-url/README.md
+  ⚠️ SKIPPED 2026-01-05: Script makes little sense - there is no practical benefit in updating list URLs on SharePoint. Changing list URLs can break existing links, workflows, and user bookmarks without providing meaningful value. Organizations should maintain stable list URLs for consistency.
 - [x] scripts/spo-change-retention-labels/README.md
   **✅ COMPLETED 2025-12-21:** Full CLI implementation with dynamic hashtable-based label mapping, CSV site list, server-side OData filtering (`--filter "ComplianceTag ne null"`), WhatIf support, transcript logging, CSV export, two-level progress bars, comprehensive error handling. Score: 6.5/10. **Production Gaps**: Missing label validation in begin block (could fail after hours of processing if target label doesn't exist), no throttling protection (could hit API limits on large tenants with 10K+ items). CLI version superior to PnP due to dynamic mapping vs hardcoded if/elseif. Used `--listId` (unique) per AGENTS.md guidance.
 - [ ] scripts/spo-clean-comments/README.md
 - [x] scripts/spo-clean-comments/README.md
   **⚠️ SKIPPED - NOT FEASIBLE:** CLI for Microsoft 365 lacks comment management commands. No equivalent to `Get-PnPListItemComment` or `Remove-PnPListItemComment`. Core functionality (list/delete comments, filter by user) requires SharePoint REST API calls via `m365 request`, which violates AGENTS.md guidance. PnP PowerShell is the appropriate tool for this scenario.
 - [x] scripts/spo-compare-files/README.md
-- [ ] scripts/spo-configure-documentid-feature/README.md
+- [~] scripts/spo-configure-documentid-feature/README.md
 - [x] scripts/spo-configure-documentid-feature/README.md
   **⚠️ SKIPPED - PARTIAL FUNCTIONALITY:** CLI for Microsoft 365 lacks Document ID prefix configuration. No equivalent to PnP's `Set-PnPSiteDocumentIdPrefix` command for setting custom prefix, scheduling ID assignment, or overwriting existing IDs. While CLI can enable the feature and add columns to views, the core configuration (prefix) requires SharePoint UI or REST API via `m365 request`, which violates AGENTS.md guidance. Partial implementation provides insufficient value.
 - [x] scripts/spo-copy-directory-structure-to-sharepoint-list/README.md
@@ -131,7 +132,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
   **✅ COMPLETED 2025-12-21:** Full CLI implementation copying ALL web parts from source to destination page. Uses `m365 spo page control list/get` + `m365 spo page clientsidewebpart add` + `m365 spo page publish`. Preserves positions (section/column/order, 1-based indexing), handles vertical sections (zoneIndex === 2 check), copies full web part properties (-Depth 100). WhatIf support via ShouldProcess, transcript logging, progress bar, per-web-part error handling with continue (never breaks loop). Score: 8.5/10 (CLI: 9/10, PS: 8.5/10). **Fixed Issues**: (1) Changed from `$control.id` (instance ID) to `$control.controlData.webPartId` (definition ID) on line 110 - CRITICAL bug that would cause complete failure; (2) Changed `--pageName` to `--name` for publish command on line 140 per docs. **Strengths**: Correct position preservation, vertical section support, robust per-item error handling, clean readable code, good UX (transcript, progress, color-coded summary). **Minor Gaps**: No validation that `controlData.webPartId` exists (-0.5), uncertainty if standard web parts need `--standardWebPart` instead of `--webPartId` (-0.5). **Testing Needed**: Standard web parts (Image, BingMap), vertical sections, pages with 10+ web parts, complex nested properties.
 - [x] scripts/spo-create-documentset/README.md
   **⚠️ SKIPPED 2025-12-21:** CLI for Microsoft 365 v11.2.0 does not have dedicated document set commands. Cannot replicate Add-PnPDocumentSet functionality.
-- [ ] scripts/spo-create-modern-pages-add-web-parts/README.md
+- [x] scripts/spo-create-modern-pages-add-web-parts/README.md
+  ✅ COMPLETED 2026-01-05: Full CLI implementation for modern page creation with sections and web parts. Uses 8 CLI commands (m365 login, m365 spo page add/remove/header set/section add/text add/clientsidewebpart add/publish). Creates page with Article layout, ColorBlock header with custom image/topic, 3 sections (TwoColumnLeft, OneColumnFullWidth, OneColumn), adds text content, Image, Hero, and QuickLinks web parts, then publishes. Includes CleanExistingPage switch for idempotent runs. Score: 8/10.
 - [x] scripts/spo-create-multi-hub-sites/README.md
 - [ ] scripts/spo-csom-properties/README.md
 - [x] scripts/spo-delete-companywide-anonymous-sharinglink/README.md

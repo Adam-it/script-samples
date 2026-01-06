@@ -16,6 +16,195 @@ This shows:
 > [!div class="full-image-size"]
 > ![Example Screenshot](assets/example.png)
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "URL of the SharePoint site")]
+    [ValidatePattern('^https://')]
+    [string]$SiteUrl,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Name of the page to create")]
+    [string]$PageName = "Script-Built-Page.aspx",
+
+    [Parameter(Mandatory = $false, HelpMessage = "Title of the page")]
+    [string]$PageTitle = "Baking up a page",
+
+    [Parameter(Mandatory = $false, HelpMessage = "Remove existing page before creating new one")]
+    [switch]$CleanExistingPage
+)
+
+begin {
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $logPath = ".\CreateModernPage-$timestamp.log"
+    Start-Transcript -Path $logPath
+
+    Write-Host "Starting modern page creation workflow..." -ForegroundColor Cyan
+
+    m365 login --ensure
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate with CLI for Microsoft 365"
+    }
+
+    $script:Summary = @{
+        SectionsAdded = 0
+        WebPartsAdded = 0
+        Failures = 0
+    }
+}
+
+process {
+    try {
+        if ($CleanExistingPage) {
+            Write-Host "Checking for existing page '$PageName'..." -ForegroundColor Yellow
+            $removeResult = m365 spo page remove --webUrl $SiteUrl --name $PageName --force 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "  Removed existing page" -ForegroundColor Green
+            }
+        }
+
+        Write-Host "Creating page '$PageName'..." -ForegroundColor Cyan
+        m365 spo page add --webUrl $SiteUrl --name $PageName --title $PageTitle --layoutType Article
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to create page"
+        }
+        Write-Host "  Page created successfully" -ForegroundColor Green
+
+        Write-Host "Configuring page header with image and topic..." -ForegroundColor Cyan
+        m365 spo page header set --webUrl $SiteUrl --pageName $PageName --type Custom --layout ColorBlock --imageUrl "https://cdn.hubblecontent.osi.office.net/m365content/publish/3c506e10-e846-4698-a041-f133fc505b7b/1140201187.jpg" --topicHeader "Example" --translateX 49.6248124062031 --translateY 37.5 --showTopicHeader
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to set page header"
+            $script:Summary.Failures++
+        } else {
+            Write-Host "  Header configured" -ForegroundColor Green
+        }
+
+        Write-Host "Adding section 1 (Two Column Left layout)..." -ForegroundColor Cyan
+        m365 spo page section add --webUrl $SiteUrl --pageName $PageName --sectionTemplate TwoColumnLeft --order 1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to add section 1"
+            $script:Summary.Failures++
+        } else {
+            $script:Summary.SectionsAdded++
+            Write-Host "  Section 1 added" -ForegroundColor Green
+        }
+
+        $textContent = "<h2>Welcome to Modern Pages</h2><p>This page demonstrates how to create modern SharePoint pages using CLI for Microsoft 365. You can add rich text content, images, and various web parts to create engaging pages for your users.</p><p>Modern pages provide a responsive, mobile-friendly experience that works seamlessly across devices.</p>"
+        
+        Write-Host "Adding text content to Section 1, Column 1..." -ForegroundColor Cyan
+        m365 spo page text add --webUrl $SiteUrl --pageName $PageName --section 1 --column 1 --order 1 --text $textContent
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to add text content"
+            $script:Summary.Failures++
+        } else {
+            $script:Summary.WebPartsAdded++
+            Write-Host "  Text content added" -ForegroundColor Green
+        }
+
+        Write-Host "Adding Image web part to Section 1, Column 2..." -ForegroundColor Cyan
+        m365 spo page clientsidewebpart add --webUrl $SiteUrl --pageName $PageName --standardWebPart Image --section 1 --column 2 --order 1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to add Image web part"
+            $script:Summary.Failures++
+        } else {
+            $script:Summary.WebPartsAdded++
+            Write-Host "  Image web part added" -ForegroundColor Green
+        }
+
+        Write-Host "Adding section 2 (One Column Full Width)..." -ForegroundColor Cyan
+        m365 spo page section add --webUrl $SiteUrl --pageName $PageName --sectionTemplate OneColumnFullWidth --order 2
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to add section 2"
+            $script:Summary.Failures++
+        } else {
+            $script:Summary.SectionsAdded++
+            Write-Host "  Section 2 added" -ForegroundColor Green
+        }
+
+        Write-Host "Adding Hero web part to Section 2..." -ForegroundColor Cyan
+        $heroProperties = '{"heroLayoutOption":3}'
+        m365 spo page clientsidewebpart add --webUrl $SiteUrl --pageName $PageName --standardWebPart Hero --section 2 --column 1 --order 1 --webPartProperties $heroProperties
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to add Hero web part"
+            $script:Summary.Failures++
+        } else {
+            $script:Summary.WebPartsAdded++
+            Write-Host "  Hero web part added" -ForegroundColor Green
+        }
+
+        Write-Host "Adding section 3 (One Column)..." -ForegroundColor Cyan
+        m365 spo page section add --webUrl $SiteUrl --pageName $PageName --sectionTemplate OneColumn --order 3
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to add section 3"
+            $script:Summary.Failures++
+        } else {
+            $script:Summary.SectionsAdded++
+            Write-Host "  Section 3 added" -ForegroundColor Green
+        }
+
+        Write-Host "Adding Quick Links web part to Section 3..." -ForegroundColor Cyan
+        m365 spo page clientsidewebpart add --webUrl $SiteUrl --pageName $PageName --standardWebPart QuickLinks --section 3 --column 1 --order 1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to add Quick Links web part"
+            $script:Summary.Failures++
+        } else {
+            $script:Summary.WebPartsAdded++
+            Write-Host "  Quick Links web part added" -ForegroundColor Green
+        }
+
+        Write-Host "Publishing page..." -ForegroundColor Cyan
+        m365 spo page publish --webUrl $SiteUrl --name $PageName
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to publish page"
+            $script:Summary.Failures++
+        } else {
+            Write-Host "  Page published successfully" -ForegroundColor Green
+        }
+
+    }
+    catch {
+        Write-Error "Error during page creation: $_"
+        $script:Summary.Failures++
+    }
+}
+
+end {
+    Write-Host "`n========================================" -ForegroundColor Cyan
+    Write-Host "Page Creation Summary" -ForegroundColor Cyan
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "Page Name       : $PageName"
+    Write-Host "Sections Added  : $($script:Summary.SectionsAdded)"
+    Write-Host "Web Parts Added : $($script:Summary.WebPartsAdded)"
+    
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host "Failures        : $($script:Summary.Failures)" -ForegroundColor Red
+    } else {
+        Write-Host "Failures        : $($script:Summary.Failures)" -ForegroundColor Green
+    }
+    
+    Write-Host "Page URL        : $SiteUrl/SitePages/$PageName" -ForegroundColor Cyan
+    Write-Host "========================================`n" -ForegroundColor Cyan
+
+    Stop-Transcript
+}
+
+# Basic usage
+# .\Create-ModernPage.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/Marketing"
+
+# Create page with custom name and title
+# .\Create-ModernPage.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/Marketing" -PageName "TeamPage.aspx" -PageTitle "Team Collaboration Hub"
+
+# Remove existing page and create new one
+# .\Create-ModernPage.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/Marketing" -CleanExistingPage
+
+# Create page with verbose output
+# .\Create-ModernPage.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/Marketing" -Verbose
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
+***
 
 # [PnP PowerShell](#tab/pnpps)
 
@@ -218,6 +407,7 @@ end{
 | Author(s) |
 |-----------|
 | Paul Bullock |
+| [Adam Wójcik](https://github.com/Adam-it) |
 
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

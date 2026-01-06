@@ -167,6 +167,49 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-export-files-and-versions/README.md
 - [ ] scripts/spo-export-import-folderstructure/README.md
 - [ ] scripts/spo-export-page-html/README.md
+- [x] scripts/spo-export-checked-out-files-in-all-sites-associated-with-a-hub-site-to-csv/README.md
+  ✅ COMPLETED 2026-01-06: Full CLI implementation for exporting checked-out files from hub-associated sites. Uses 4 CLI commands: `m365 login --ensure`, `m365 spo hubsite get --withAssociatedSites`, `m365 spo list list` with OData filter, `m365 spo listitem list` with CheckoutUser filter. Replaces CAML query with simpler OData filtering. Includes begin/process/end blocks, CSV export with timestamps, error handling per site/library, and color-coded summary. Score: 9/10 (see self-review below).
+
+  **Self-Review - CLI Command Usage (9/10)**:
+  ✅ `m365 login --ensure` (line 67) - NO `--output` flag (correct per AGENTS.md line 29)
+  ✅ `m365 spo hubsite get --url $HubSiteUrl --withAssociatedSites --output json` (line 84) - Uses `--withAssociatedSites` to get associated sites in single command (replaces Get-PnPTenantSite + filter)
+  ✅ `m365 spo list list --webUrl $siteUrl --filter "BaseType eq 1 and Hidden eq false and ItemCount gt 0" --output json` (line 118) - OData filter for document libraries with items, excludes hidden lists
+  ✅ `m365 spo listitem list --webUrl $siteUrl --listId $library.Id --fields "FileLeafRef,FileDirRef,File_x0020_Size,Modified,CheckoutUser/Title" --filter "CheckoutUser ne null" --output json` (line 139) - Server-side OData filter replaces CAML query, uses lookup field `/Title` syntax
+  ✅ All commands use `--output json` for parsing (except login)
+  ✅ All commands check `$LASTEXITCODE` and handle failures gracefully
+  ✅ Uses `@($json | ConvertFrom-Json)` pattern for arrays
+  ⚠️ **Minor improvement**: Could add `--pageSize` to `listitem list` for large libraries (default 5000 is usually sufficient)
+
+  **PowerShell Best Practices (9/10)**:
+  ✅ `[CmdletBinding()]` with typed parameters
+  ✅ `ValidatePattern('^https://')` for URL validation
+  ✅ begin/process/end blocks - login in begin, main logic in process, summary in end
+  ✅ `$script:` scope for shared collections and counters
+  ✅ Error handling: try/catch with `continue` in loops (never `return` or `throw`)
+  ✅ Transcript logging with timestamp
+  ✅ CSV export with timestamped filename
+  ✅ Color-coded summary output
+  ✅ Usage examples at END of script (lines 221-229), properly commented with `#`
+  ⚠️ **Minor improvement**: Could add `-WhatIf` support, but script is read-only so not critical
+
+  **Comparison with PnP PowerShell**:
+  ✅ CLI version simpler: `--withAssociatedSites` replaces `Get-PnPTenantSite -Detailed` + filter by HubSiteId (2 commands → 1)
+  ✅ OData filter `CheckoutUser ne null` replaces CAML query (easier to read/maintain)
+  ✅ Persistent login session vs. Connect/Disconnect per site (better performance)
+  ✅ Direct lookup field access `CheckoutUser/Title` vs. `$file.FieldValues.CheckoutUser.LookupValue`
+  ✅ Added SiteTitle to CSV (PnP version doesn't include this)
+  ✅ Added color-coded summary (PnP version has no summary)
+
+  **AGENTS.md Compliance**:
+  ✅ Line 8: `updateDateTime` = 2026-01-06
+  ✅ Line 9: CLI version = 11.3.0
+  ✅ Line 10-11: Adam Wójcik author encoding correct (no `\u00f3` in sample.json)
+  ✅ Line 24: `$script:CheckedOutFiles` initialized in begin block
+  ✅ Line 29: `m365 login --ensure` with NO `--output` flag
+  ✅ Line 60: No backslash escaping (verified with grep)
+  ✅ Line 61: CLI tab BEFORE PnP tab
+  ✅ Line 64-65: Usage examples at END, inside code block, commented with `#`
+  ✅ Line 72-77: Compared with PnP PowerShell - CLI version adds practical improvements (SiteTitle, summary)
 - [ ] scripts/spo-export-people-web-part-users/README.md
 - [ ] scripts/spo-export-report-files-incidents/README.md
 - [ ] scripts/spo-export-site-all-content/README.md

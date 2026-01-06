@@ -16,6 +16,157 @@ The script is particularly useful in identifying the site creation sources. Howe
 - PnP PowerShell module installed
 - Entra ID registration with correct permissions
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "SharePoint Admin Center URL (e.g., 'https://contoso-admin.sharepoint.com')")]
+    [ValidatePattern('^https://.*-admin\.sharepoint\.(com|us|mil|cn)$')]
+    [string]$AdminUrl,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Path where the CSV report will be saved")]
+    [string]$OutputPath
+)
+
+begin {
+    $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+    $transcriptPath = "SiteCreationSource_Transcript_$timestamp.txt"
+    Start-Transcript -Path $transcriptPath
+
+    if ($OutputPath) {
+        if (-not (Test-Path -Path (Split-Path -Path $OutputPath -Parent))) {
+            throw "The directory for OutputPath does not exist: $(Split-Path -Path $OutputPath -Parent)"
+        }
+    }
+    else {
+        $OutputPath = "SiteCreationSource_Report_$timestamp.csv"
+    }
+
+    Write-Host "[INFO] Authenticating to Microsoft 365..." -ForegroundColor Cyan
+    m365 login --ensure
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate to Microsoft 365"
+    }
+
+    $siteCreationSources = @{
+        "00000000-0000-0000-0000-000000000000" = "Unknown"
+        "a958918c-a597-4058-8ac8-8a98b6e58b45" = "SharePoint start page"
+        "55cff85e-f373-4768-a7c8-56e7e318e760" = "OneDrive"
+        "39966a89-5583-4e7f-a348-af1bf160ae49" = "SharePoint admin center"
+        "36d0e864-21ac-40c2-bb7e-7902c1d57c4a" = "PowerShell"
+        "62aeb6b0-f7c5-4659-9f0a-0e08978661ff" = "API"
+        "70fbaeeb-90ae-4a83-bec4-72273ea97b89" = "Migration"
+        "37c03f2d-ef6a-4baf-b79d-58ab39757312" = "Hub site"
+        "2042b5d3-c5ec-41d1-b13c-0e53936c2c67" = "Microsoft 365 group"
+        "00000003-0000-0ff1-ce00-000000000000" = "SharePoint app"
+        "00000002-0000-0ff1-ce00-000000000000" = "Outlook"
+        "00000003-0000-0000-c000-000000000000" = "Microsoft 365 group"
+        "cc15fd57-2c6c-4117-a88c-83b1d56b4bbe" = "Microsoft Teams"
+        "00000005-0000-0ff1-ce00-000000000000" = "Viva Engage"
+        "09abbdfd-ed23-44ee-a2d9-a627aa1c90f3" = "Planner"
+        "410e0a1c-77e2-4166-b91c-ba5cec4f658d" = "PnP provisioning"
+        "03cd98f4-670d-44c4-8866-1a9a93079b6c" = "Microsoft"
+        "74658136-14ec-4630-ad9b-26e160ff0fc6" = "My AAD Portal"
+        "65d91a3d-ab74-42e6-8a2f-0add61688c74" = "My Apps portal"
+        "de8bc8b5-d9f9-48b1-a8ad-b748da725064" = "Graph Explorer"
+        "00000006-0000-0ff1-ce00-000000000000" = "Microsoft 365 admin center"
+        "f53895d3-095d-408f-8e93-8f94b391404e" = "Project"
+        "2634dd23-5e5a-431c-81ca-11710d9079f4" = "Microsoft Stream"
+        "23f32c44-e2e8-48e1-80c7-b8530e09668d" = "Microsoft Teams"
+        "48ac35b8-9aa8-4d74-927d-1f4a14a0b239" = "OneDrive"
+        "9cd82b53-79e1-472e-8398-e1e5e4929c18" = "Web Create"
+        "e3950012-90ba-4cc9-9f1c-1f7ca57ab59d" = "SharePoint Spaces"
+    }
+
+    $script:siteCollection = [System.Collections.Generic.List[PSObject]]::new()
+    $script:summary = @{
+        TotalSites = 0
+        CreationSources = @{}
+    }
+}
+
+process {
+    Write-Host "[INFO] Querying tenant admin list at: $AdminUrl" -ForegroundColor Cyan
+
+    try {
+        $sites = m365 spo listitem list --webUrl $AdminUrl --listTitle "DO_NOT_DELETE_SPLIST_TENANTADMIN_AGGREGATED_SITECOLLECTIONS" --fields "Title,SiteUrl,SiteId,SiteCreationSource,TemplateName,PageViews,TimeDeleted" --filter "TimeDeleted eq null" --output json | ConvertFrom-Json
+        
+        if (-not $sites) {
+            Write-Warning "No sites found or unable to access tenant admin list. Ensure you have SharePoint Administrator permissions."
+            return
+        }
+
+        $script:summary.TotalSites = $sites.Count
+        Write-Host "[INFO] Found $($sites.Count) active site(s). Processing..." -ForegroundColor Green
+
+        foreach ($site in $sites) {
+            $creationSourceGuid = $site.SiteCreationSource
+            $creationSourceName = if ($siteCreationSources.ContainsKey($creationSourceGuid)) {
+                $siteCreationSources[$creationSourceGuid]
+            }
+            else {
+                "Custom/Unknown ($creationSourceGuid)"
+            }
+
+            if ($script:summary.CreationSources.ContainsKey($creationSourceName)) {
+                $script:summary.CreationSources[$creationSourceName]++
+            }
+            else {
+                $script:summary.CreationSources[$creationSourceName] = 1
+            }
+
+            $script:siteCollection.Add([PSCustomObject]@{
+                    Title              = $site.Title
+                    SiteUrl            = $site.SiteUrl
+                    SiteId             = $site.SiteId
+                    SiteCreationSource = $creationSourceName
+                    TemplateName       = $site.TemplateName
+                    PageViews          = $site.PageViews
+                })
+        }
+    }
+    catch {
+        Write-Warning "Failed to query tenant admin list: $_"
+        throw
+    }
+}
+
+end {
+    if ($script:siteCollection.Count -gt 0) {
+        $script:siteCollection | Export-Csv -Path $OutputPath -NoTypeInformation -Encoding UTF8
+        Write-Host "`n========================================" -ForegroundColor Cyan
+        Write-Host "   SITE CREATION SOURCE SUMMARY" -ForegroundColor Cyan
+        Write-Host "========================================" -ForegroundColor Cyan
+        Write-Host "Total sites processed: $($script:summary.TotalSites)" -ForegroundColor White
+        Write-Host "`nSites by creation source:" -ForegroundColor Yellow
+        $script:summary.CreationSources.GetEnumerator() | Sort-Object -Property Value -Descending | ForEach-Object {
+            Write-Host "  - $($_.Key): $($_.Value)" -ForegroundColor White
+        }
+        Write-Host "`nReport saved to: $OutputPath" -ForegroundColor Green
+        Write-Host "========================================`n" -ForegroundColor Cyan
+    }
+    else {
+        Write-Host "`n[WARNING] No sites were processed. No report generated." -ForegroundColor Yellow
+    }
+
+    Stop-Transcript
+    Write-Host "Transcript saved to: $transcriptPath" -ForegroundColor Gray
+}
+
+# Export all site creation sources for a tenant
+# .\Find-SiteCreationSource.ps1 -AdminUrl "https://contoso-admin.sharepoint.com"
+
+# Export with custom output path
+# .\Find-SiteCreationSource.ps1 -AdminUrl "https://contoso-admin.sharepoint.com" -OutputPath "C:\Reports\SiteCreationSources.csv"
+
+# Run with verbose output
+# .\Find-SiteCreationSource.ps1 -AdminUrl "https://contoso-admin.sharepoint.com" -Verbose
+
+# GCC High tenant example
+# .\Find-SiteCreationSource.ps1 -AdminUrl "https://contoso-admin.sharepoint.us"
+```
+
 # [PnP PowerShell](#tab/pnpps)
 
 ```powershell
@@ -116,6 +267,7 @@ Sample first appeared on [PowerShell: Identifying SharePoint Site Creation Sourc
 | Author(s) |
 |-----------|
 | [Reshmee Auckloo](https://github.com/reshmee011) |
+| [Adam Wójcik](https://github.com/Adam-it) |
 
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

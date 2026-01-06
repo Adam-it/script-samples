@@ -9,7 +9,7 @@
       "This scripts gets the report of sites in a tenant which is having unique permissions."
     ],
     "creationDateTime": "2023-08-03",
-    "updateDateTime": "2023-08-03",
+    "updateDateTime": "2026-01-06",
     "products": [
       "SharePoint"
     ],
@@ -21,6 +21,10 @@
       {
         "key": "POWERSHELL",
         "value": "7.3.6"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
       }
     ],
     "categories": [
@@ -31,7 +35,11 @@
     "tags": [
       "Connect-PnPOnline",
       "Get-PnPWeb",
-      "Get-PnPGroup"
+      "Get-PnPGroup",
+      "m365 login",
+      "m365 spo site list",
+      "m365 spo web get",
+      "m365 spo group member list"
     ],
     "thumbnails": [
       {
@@ -53,6 +61,11 @@
         "company": "",
         "pictureUrl": "https://github.com/NishkalankBezawada.png",
         "name": "Nishkalank Bezawada"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -60,6 +73,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

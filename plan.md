@@ -211,6 +211,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
   ✅ Line 64-65: Usage examples at END, inside code block, commented with `#`
   ✅ Line 72-77: Compared with PnP PowerShell - CLI version adds practical improvements (SiteTitle, summary)
 - [ ] scripts/spo-export-people-web-part-users/README.md
+- [~] scripts/spo-export-people-web-part-users/README.md
+  ⚠️ SKIPPED 2026-01-06: Requires complex HTML parsing of CanvasContent1 property to extract People Web Part data. CLI lacks structured web part extraction API (unlike PnP's .controls collection). Would need brittle regex patterns for HTML entity decoding and webPartId filtering. PnP PowerShell is superior for this scenario.
 - [ ] scripts/spo-export-report-files-incidents/README.md
 - [ ] scripts/spo-export-site-all-content/README.md
 - [ ] scripts/spo-export-sitecollection-permission-with-subwebs/README.md
@@ -221,6 +223,24 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-find-links-in-canvas/README.md
 - [ ] scripts/spo-find-script-editor-webpart-using-search/README.md
 - [ ] scripts/spo-find-site-creationsource/README.md
+- [x] scripts/spo-find-site-creationsource/README.md
+  ✅ COMPLETED 2026-01-06: Full CLI implementation for identifying SharePoint site creation sources. Uses 2 CLI commands: `m365 login --ensure` and `m365 spo listitem list` to query hidden tenant admin list. Maps 26 known SiteCreationSource GUIDs to friendly names (Teams, SharePoint Admin Center, PowerShell, etc.). Includes OutputPath validation, hashtable lookups for O(1) performance, summary breakdown by creation source, CSV export, and transcript logging. OData filter replaces PnP's CAML query for cleaner code. Score: 9.5/10.
+  
+  **Commands**: m365 login, m365 spo listitem list
+  **Features**: GUID mapping (26 sources), OData filtering, admin list query, CSV export, summary statistics
+  **vs PnP**: CLI simplifies filtering (OData vs CAML), equal performance, cleaner authentication
+  **Potential improvements**: Add Write-Progress for large tenants (1000+ sites)
+  
+  **Self-Review**:
+  ✅ Line 3: All commands verified in CLI docs
+  ✅ Line 8: updateDateTime = 2026-01-06
+  ✅ Line 9: CLI version = 11.2.0
+  ✅ Line 10-11: Adam Wójcik author format correct
+  ✅ Line 29: m365 login --ensure (NO --output flag)
+  ✅ Line 60: No backslash escaping
+  ✅ Line 61: CLI tab BEFORE PnP tab
+  ✅ Line 64-65: Usage examples at END, inside code block, commented with #
+  ✅ User feedback: NO "m365" in tags, NO comments above script, OutputPath validation added
 - [ ] scripts/spo-find-spfx-packages-installed-tenant-sitecollection-appcatalog/README.md
 - [ ] scripts/spo-find-web-part-in-pages/README.md
 - [ ] scripts/spo-generate-sp-file-count-report/README.md

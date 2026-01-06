@@ -58,6 +58,18 @@ When retrieving SharePoint site Owner/Member/Visitor groups, always use web prop
 - **❌ BAD**: `if ($group.Title -like "*Owner*")` - breaks on renamed/non-English groups  
 - **✅ GOOD**: Use `m365 spo web get --url --withGroups --output json` to get `AssociatedOwnerGroup.Id`, `AssociatedMemberGroup.Id`, `AssociatedVisitorGroup.Id`, then match by exact ID
 
+## SharePoint Admin URLs
+**Never construct admin URLs from tenant domain**. Always accept full admin URL as parameter:
+- **❌ BAD**: `$adminUrl = "https://$TenantDomain-admin.sharepoint.com"` - breaks for GCC, GCC High, DoD tenants  
+- **✅ GOOD**: `[Parameter(Mandatory)][string]$AdminUrl` - user provides exact URL
+- **Why**: GCC tenants may have custom admin URLs without "-admin" suffix (e.g., `https://contoso-admin.sharepoint.us`)
+- **Example cloud URLs**:
+  - Commercial: `https://contoso-admin.sharepoint.com`
+  - GCC: `https://contoso-admin.sharepoint.com` (standard) or custom
+  - GCC High: `https://contoso-admin.sharepoint.us`
+  - DoD: `https://contoso-admin.dps.mil`
+  - China: `https://contoso-admin.sharepoint.cn`
+
 ## Output & UX
  - **Progress**: Use `Write-Verbose` for progress; `Write-Host` with colors only in `end` block summaries.
  - **CSV Export**: Initialize `$script:ReportCollection` in `begin` block, populate in `process` block, export in `end` block. Use `($array | Where-Object { $_ }) -join '|'` for multi-value fields.

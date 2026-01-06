@@ -59,16 +59,20 @@ When retrieving SharePoint site Owner/Member/Visitor groups, always use web prop
 - **✅ GOOD**: Use `m365 spo web get --url --withGroups --output json` to get `AssociatedOwnerGroup.Id`, `AssociatedMemberGroup.Id`, `AssociatedVisitorGroup.Id`, then match by exact ID
 
 ## SharePoint Admin URLs
-**Never construct admin URLs from tenant domain**. Always accept full admin URL as parameter:
+**⚠️ CRITICAL: Never construct OR validate admin URLs with "-admin" pattern**. Always accept full admin URL as parameter:
 - **❌ BAD**: `$adminUrl = "https://$TenantDomain-admin.sharepoint.com"` - breaks for GCC, GCC High, DoD tenants  
+- **❌ BAD**: `ValidatePattern('^https://.*-admin\\.sharepoint\\.(com|us|mil|cn)$')` - GCC tenants may have fully custom URLs without "-admin"  
 - **✅ GOOD**: `[Parameter(Mandatory)][string]$AdminUrl` - user provides exact URL
-- **Why**: GCC tenants may have custom admin URLs without "-admin" suffix (e.g., `https://contoso-admin.sharepoint.us`)
+- **✅ GOOD**: `ValidatePattern('^https://.*\\.sharepoint\\.(com|us|mil|cn)$')` - accepts any SharePoint URL (user responsible for correctness)
+- **Why**: GCC tenants may have COMPLETELY custom admin URLs without any "-admin" text (e.g., `https://contoso.sharepoint.com`, `https://contosogovadmin.sharepoint.com`)
 - **Example cloud URLs**:
   - Commercial: `https://contoso-admin.sharepoint.com`
-  - GCC: `https://contoso-admin.sharepoint.com` (standard) or custom
+  - GCC: `https://contoso-admin.sharepoint.com` (standard) OR `https://contosogov.sharepoint.com` (custom, no "-admin")
   - GCC High: `https://contoso-admin.sharepoint.us`
   - DoD: `https://contoso-admin.dps.mil`
   - China: `https://contoso-admin.sharepoint.cn`
+
+**Remember**: If user provides wrong URL, CLI command will fail with clear error. Don't try to be too smart with validation.
 
 ## Output & UX
  - **Progress**: Use `Write-Verbose` for progress; `Write-Host` with colors only in `end` block summaries.

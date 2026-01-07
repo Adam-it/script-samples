@@ -9,7 +9,7 @@
 ## Metadata Updates (sample.json)
 **Required changes**:
    - **ALWAYS verify current date first**: Run `date +%Y-%m-%d` to get today's date. Update `updateDateTime` to this exact value.
-   - **ALWAYS check CLI version**: Run `cat ../cli-microsoft365/package.json | grep '"version"'` to get exact version. Use this value (e.g., "11.2.0"), NOT guessed values.
+   - **ALWAYS check CLI version**: Run `cat ../cli-microsoft365/package.json | grep '"version"'` to get exact version. The version format should be semantic (e.g., "11.3.0" NOT "11.3" or "v11.3.0"). NEVER guess or use outdated values. If package.json shows "11.2.0" but documentation or user indicates "11.3.0", ASK for clarification before proceeding.
    - Add `CLI-FOR-MICROSOFT365` metadata entry.
    - Add CLI commands to `tags` (unique values only).
    - Add CLI reference; keep existing PnP references.
@@ -48,7 +48,10 @@
  - **Filter by HasUniqueRoleAssignments**: Only items with unique permissions can have sharing links/permissions. Use `--fields "...,HasUniqueRoleAssignments"` + client-side filter to skip 90% of items.
  - **Prefer server-side filtering**: Use `--filter` (OData) or `--query` (JMESPath) over PowerShell `Where-Object` when possible.
    - `--filter`: OData queries like `"Hidden eq false"` or `"BaseTemplate eq 101"`
-   - `--query`: JMESPath expressions like `"[?Hidden == \`false\` && BaseTemplate == \`101\`]"` for complex conditions
+   - `--query`: JMESPath expressions like `"[?Hidden == \`false\` && BaseTemplate == \`101\`]"` for complex conditions. Common patterns:
+     - Contains: `--query "[?contains(FileRef, 'folder')]"` (case-sensitive substring match)
+     - Multiple conditions: `--query "[?contains(FileRef, 'folder') && FSObjType == \`0\`]"` (files only in folder)
+     - **CRITICAL**: ALWAYS prefer `--query` over PowerShell `| Where-Object` for filtering CLI results. Use `Where-Object` ONLY when JMESPath cannot express the condition (e.g., `-like` wildcard patterns, regex).
    - Example: `m365 spo list list --query "[?!(contains(['Form Templates','Style Library','Site Pages'], Title))]"` filters out system libraries server-side
  - Use `--fields` to limit columns.
 

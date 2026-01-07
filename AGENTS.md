@@ -44,8 +44,15 @@
 ## Performance Optimization
 **Minimize API requests**:
  - **Filter by HasUniqueRoleAssignments**: Only items with unique permissions can have sharing links/permissions. Use `--fields "...,HasUniqueRoleAssignments"` + client-side filter to skip 90% of items.
- - Use `--filter` (OData) or `--query` (JMESPath) for server-side filtering when possible.
+ - **Prefer server-side filtering**: Use `--filter` (OData) or `--query` (JMESPath) over PowerShell `Where-Object` when possible.
+   - `--filter`: OData queries like `"Hidden eq false"` or `"BaseTemplate eq 101"`
+   - `--query`: JMESPath expressions like `"[?Hidden == \`false\` && BaseTemplate == \`101\`]"` for complex conditions
+   - Example: `m365 spo list list --query "[?!(contains(['Form Templates','Style Library','Site Pages'], Title))]"` filters out system libraries server-side
  - Use `--fields` to limit columns.
+
+## Output Path Validation
+ - Only validate `$OutputPath` in `begin` block if user explicitly specified it (not when using default `(Get-Location).Path`)
+ - Pattern: `if ($PSBoundParameters.ContainsKey('OutputPath')) { Test-Path validation }`
 
 ## Error Handling
  - `begin`: Use `throw` for critical errors (login, invalid paths).

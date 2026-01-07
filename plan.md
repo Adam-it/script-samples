@@ -246,6 +246,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-generate-sp-file-count-report/README.md
 - [ ] scripts/spo-generate-sp-storage-savings-report/README.md
 - [ ] scripts/spo-get-agent-list/README.md
+- [x] scripts/spo-get-agent-list/README.md
+  ✅ COMPLETED 2026-01-06: Added CLI implementation with server-side filtering. Commands: `m365 login --ensure`, `m365 spo list list --query` (JMESPath), `m365 spo listitem list --listId`, `m365 spo file get --asString`. Score: 8.75/10 (PowerShell 9.0, CLI 8.5). Searches document libraries for .agent files, downloads JSON content, extracts 14 metadata fields to CSV. Per-library error handling, timestamped outputs. **Improvements**: Conditional OutputPath validation, server-side filtering. Verified `--asString` returns raw content.
 - [ ] scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/README.md
 - [ ] scripts/spo-get-canonical-url-from-sharinglink/README.md
 - [x] scripts/spo-get-canonical-url-from-sharinglink/README.md

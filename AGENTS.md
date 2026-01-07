@@ -8,7 +8,8 @@
 
 ## Metadata Updates (sample.json)
 **Required changes**:
-   - Update `updateDateTime` (today) and CLI version from `../cli-microsoft365/package.json`.
+   - **ALWAYS verify current date first**: Run `date +%Y-%m-%d` to get today's date. Update `updateDateTime` to this exact value.
+   - **ALWAYS check CLI version**: Run `cat ../cli-microsoft365/package.json | grep '"version"'` to get exact version. Use this value (e.g., "11.2.0"), NOT guessed values.
    - Add `CLI-FOR-MICROSOFT365` metadata entry.
    - Add CLI commands to `tags` (unique values only).
    - Add CLI reference; keep existing PnP references.
@@ -28,6 +29,7 @@
    - Add CLI tab alongside PnP tab (preserve existing content).
    - Update summary to mention CLI.
    - Add Adam to Contributors table.
+   - **NO comment blocks above PowerShell script**: Usage examples should be INSIDE the script code block at the END, commented with `#`. Do NOT add `.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, `.EXAMPLE` blocks above the script.
 
 ## Script Structure
  - `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.
@@ -90,10 +92,13 @@ When retrieving SharePoint site Owner/Member/Visitor groups, always use web prop
 
 ## Self-Review
 **Metadata**:
+  - **Date verification**: Run `date +%Y-%m-%d` BEFORE updating sample.json. Verify `updateDateTime` matches.
+  - **CLI version verification**: Run `cat ../cli-microsoft365/package.json | grep '\"version\"'` to confirm exact version. Check sample.json uses this value.
   - Verify Adam's author entry: `grep -A3 'Adam-it' scripts/.../assets/sample.json` matches reference format above.
   - Check no Unicode escapes: `grep '\\u00' assets/sample.json` should return ZERO.
 
 **Script**:
+  - **NO comment blocks above script**: Check README.md does NOT have `.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, `.EXAMPLE` blocks above the PowerShell script. Examples should be at END of script, inside code block, commented with `#`.
   - Verify all commands/options against docs in `../cli-microsoft365/docs/`.
   - Score honestly (start at 6-7, not 9-10).
   - **No backslash escaping**: `grep '\\$' README.md` should return ZERO. Use `$variable` NOT `\$variable`.

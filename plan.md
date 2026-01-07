@@ -249,6 +249,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/spo-get-agent-list/README.md
   ✅ COMPLETED 2026-01-06: Added CLI implementation with server-side filtering. Commands: `m365 login --ensure`, `m365 spo list list --query` (JMESPath), `m365 spo listitem list --listId`, `m365 spo file get --asString`. Score: 8.75/10 (PowerShell 9.0, CLI 8.5). Searches document libraries for .agent files, downloads JSON content, extracts 14 metadata fields to CSV. Per-library error handling, timestamped outputs. **Improvements**: Conditional OutputPath validation, server-side filtering. Verified `--asString` returns raw content.
 - [ ] scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/README.md
+- [x] scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/README.md
+  ⏭️ SKIPPED 2026-01-06: CLI lacks child navigation node support. PnP uses `Get-PnPNavigationNode -Id $id` which returns `.Children` collection. CLI commands (`m365 spo navigation node list`, `m365 spo navigation node get`) only return top-level nodes without child hierarchy. Would require `m365 request` to REST API (discouraged per AGENTS.md). Core functionality cannot be replicated.
 - [ ] scripts/spo-get-canonical-url-from-sharinglink/README.md
 - [x] scripts/spo-get-canonical-url-from-sharinglink/README.md
   ✅ COMPLETED 2026-01-06: Added CLI implementation. Commands: m365 login, m365 spo list list, m365 spo listitem list, m365 spo file sharinglink list, m365 spo folder sharinglink list. Score: 8/10. Resolves SharePoint sharing links to canonical URLs by parsing link URL, searching all document libraries, checking sharing links for each item until match found. Handles both files (FileSystemObjectType=0) and folders (FileSystemObjectType=1). Per-library error handling, timestamped transcript logging.
@@ -278,7 +280,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-get-details-spfx-packages-tenant-sitecollection-appcatalog/README.md
 - [ ] scripts/spo-get-everyone-everyoneexceptexternalusers/README.md
 - [ ] scripts/spo-get-existing-site-structure/README.md
-- [ ] scripts/spo-get-files-and-creators-modifiers/README.md
+  - [x] scripts/spo-get-files-and-creators-modifiers/README.md
+    ✅ COMPLETED 2026-01-07: Added CLI implementation. Commands: m365 login --ensure, m365 spo list list, m365 spo listitem list. Score: 7.5/10. Retrieves all files from document libraries with creator/modifier info. Uses lookup field expansion (Author/Title, Editor/Title), conditional OutputPath validation, per-library error handling, timestamped CSV export. CLI v11.2.0.
 - [ ] scripts/spo-get-files-retentionlabel-sensitivitylabel/README.md
 - [ ] scripts/spo-get-folder-item/README.md
 - [ ] scripts/spo-get-items-not-indexed-since-last-update/README.md

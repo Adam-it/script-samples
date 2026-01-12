@@ -6,22 +6,349 @@
 
 As part of Microsoft 365 Copilot readiness, you may want to find where "Everyone and "Everyone except external users" claims are granted permissions which is a cause of oversharing.
 
-This is an example where 'Everyone except external users' has been added to the SharePoint site visitors group.
-
 ![Example Screenshot](assets/example.png)
 
 ### Prerequisites
 
-- PnP PowerShell https://pnp.github.io/powershell/
-- The user account that runs the script must have SharePoint Online site administrator access and access to all sites to report on. 
+- The user account that runs the script must have SharePoint Online site administrator access./
 
-### How to use
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
 
-- Optimize the `Connect-PnPOnline -Url $adminSiteURL` in the script as needed
-- save script as ps1 file
-- Create Logs folder
-- run like
-`.\get-sp-ebe.ps1 mydomain`
+```powershell
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory, HelpMessage = "URL of a single SharePoint site to audit")]
+    [ValidatePattern('^https://.*\\.sharepoint\\.(com|us|mil|cn)')]
+    [string]$SiteUrl,
+    
+    [Parameter(HelpMessage = "Include list-level permission audit (slower)")]
+    [switch]$IncludeListPermissions,
+    
+    [Parameter(HelpMessage = "Include list item-level permission audit (much slower, requires unique permissions per item)")]
+    [switch]$IncludeListItemPermissions,
+    
+    [Parameter(HelpMessage = "Path where the CSV report will be saved")]
+    [string]$OutputPath = (Get-Location).Path
+)
+
+begin {
+    Write-Verbose "Ensuring CLI for Microsoft 365 login status..."
+    m365 login --ensure 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to ensure login to CLI for Microsoft 365. Please run 'm365 login' first."
+    }
+    
+    if ($PSBoundParameters.ContainsKey('OutputPath')) {
+        if (-not (Test-Path -Path $OutputPath)) {
+            throw "Output path '$OutputPath' does not exist. Please provide a valid directory path."
+        }
+    }
+    
+    $script:AuditCollection = @()
+    $script:Summary = @{
+        SitesAudited = 0
+        GroupMatches = 0
+        ListMatches = 0
+        ItemMatches = 0
+        Failures = 0
+    }
+    
+    $everyoneClaims = @(
+        "everyone except external users",
+        "everyone",
+        "all users",
+        "spo-grid-all-users",
+        "c:0(.s|true",
+        "c:0-.f|rolemanager"
+    )
+    
+    $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+    $transcriptPath = Join-Path $OutputPath "EveryoneAudit_Transcript_$timestamp.log"
+    Start-Transcript -Path $transcriptPath
+}
+
+process {
+    try {
+        Write-Host "\nAuditing site: $SiteUrl" -ForegroundColor Cyan
+        Write-Verbose "Retrieving site with associated groups..."
+        
+        $webJson = m365 spo web get --url $SiteUrl --withGroups --output json
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve site information. CLI: $webJson"
+        }
+        
+        $web = @($webJson | ConvertFrom-Json)
+        $script:Summary.SitesAudited++
+        Write-Verbose "Successfully retrieved site: $($web.Title)"
+        
+        $associatedGroups = @()
+        if ($web.AssociatedOwnerGroup) {
+            $associatedGroups += [PSCustomObject]@{
+                Id = $web.AssociatedOwnerGroup.Id
+                Title = $web.AssociatedOwnerGroup.Title
+                Type = "Owner"
+            }
+        }
+        if ($web.AssociatedMemberGroup) {
+            $associatedGroups += [PSCustomObject]@{
+                Id = $web.AssociatedMemberGroup.Id
+                Title = $web.AssociatedMemberGroup.Title
+                Type = "Member"
+            }
+        }
+        if ($web.AssociatedVisitorGroup) {
+            $associatedGroups += [PSCustomObject]@{
+                Id = $web.AssociatedVisitorGroup.Id
+                Title = $web.AssociatedVisitorGroup.Title
+                Type = "Visitor"
+            }
+        }
+        
+        Write-Host "  Auditing $($associatedGroups.Count) associated groups..." -ForegroundColor White
+        
+        foreach ($group in $associatedGroups) {
+            try {
+                Write-Verbose "Checking members of group: $($group.Title) (ID: $($group.Id))"
+                
+                $membersJson = m365 spo group member list --webUrl $SiteUrl --groupId $group.Id --output json
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Warning "Failed to retrieve members for group '$($group.Title)'. CLI: $membersJson"
+                    $script:Summary.Failures++
+                    continue
+                }
+                
+                $members = @($membersJson | ConvertFrom-Json)
+                
+                foreach ($member in $members) {
+                    $loginName = $member.LoginName.ToLower()
+                    $matchedClaim = $everyoneClaims | Where-Object { $loginName -like "*$_*" }
+                    
+                    if ($matchedClaim) {
+                        $script:AuditCollection += [PSCustomObject]@{
+                            SiteUrl = $SiteUrl
+                            SiteTitle = $web.Title
+                            ListTitle = ""
+                            Type = "Group"
+                            RelativeUrl = ""
+                            ParentGroup = $group.Title
+                            ParentGroupType = $group.Type
+                            MemberType = "Claim"
+                            MemberName = $member.Title
+                            MemberLoginName = $member.LoginName
+                            Roles = ""
+                        }
+                        
+                        $script:Summary.GroupMatches++
+                        Write-Host "    Found 'Everyone' claim in $($group.Type) group: $($member.Title)" -ForegroundColor Yellow
+                    }
+                }
+            }
+            catch {
+                Write-Warning "Error auditing group '$($group.Title)': $($_.Exception.Message)"
+                $script:Summary.Failures++
+                continue
+            }
+        }
+        
+        if ($IncludeListPermissions) {
+            Write-Host "  Auditing document libraries for unique permissions..." -ForegroundColor White
+            
+            try {
+                Write-Verbose "Retrieving document libraries with HasUniqueRoleAssignments property..."
+                $listsJson = m365 spo list list --webUrl $SiteUrl --properties "Id,Title,Hidden,BaseTemplate,HasUniqueRoleAssignments,RootFolder/ServerRelativeUrl" --output json
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Warning "Failed to retrieve document libraries. CLI: $listsJson"
+                    $script:Summary.Failures++
+                    continue
+                }
+                
+                $lists = @($listsJson | ConvertFrom-Json)
+                $filteredLists = $lists | Where-Object { $_.Hidden -eq $false -and $_.BaseTemplate -eq 101 -and $_.Title -notin @('Form Templates','Style Library','Site Pages') }
+                
+                Write-Verbose "Total document libraries: $($lists.Count), After filtering: $($filteredLists.Count)"
+                
+                $listsWithUniquePerms = $filteredLists | Where-Object { $_.HasUniqueRoleAssignments -eq $true }
+                Write-Verbose "Libraries with unique permissions: $($listsWithUniquePerms.Count)"
+                
+                if ($listsWithUniquePerms.Count -eq 0) {
+                    Write-Verbose "No document libraries with unique permissions found."
+                    continue
+                }
+                
+                foreach ($list in $listsWithUniquePerms) {
+                    try {
+                        Write-Verbose "Auditing list: $($list.Title)"
+                        
+                        $listWithPermsJson = m365 spo list get --webUrl $SiteUrl --id $list.Id --withPermissions --output json
+                        if ($LASTEXITCODE -ne 0) {
+                            Write-Warning "Failed to retrieve permissions for list '$($list.Title)'. CLI: $listWithPermsJson"
+                            $script:Summary.Failures++
+                            continue
+                        }
+                        
+                        $listWithPerms = @($listWithPermsJson | ConvertFrom-Json)
+                        
+                        if ($listWithPerms.RoleAssignments) {
+                            foreach ($assignment in $listWithPerms.RoleAssignments) {
+                                $memberLoginName = $assignment.Member.LoginName.ToLower()
+                                $matchedClaim = $everyoneClaims | Where-Object { $memberLoginName -like "*$_*" }
+                                
+                                if ($matchedClaim) {
+                                    $roles = ($assignment.RoleDefinitionBindings | ForEach-Object { $_.Name }) -join ', '
+                                    
+                                    $script:AuditCollection += [PSCustomObject]@{
+                                        SiteUrl = $SiteUrl
+                                        SiteTitle = $web.Title
+                                        ListTitle = $list.Title
+                                        Type = "List"
+                                        RelativeUrl = $list.RootFolder.ServerRelativeUrl
+                                        ParentGroup = ""
+                                        ParentGroupType = ""
+                                        MemberType = "Claim"
+                                        MemberName = $assignment.Member.Title
+                                        MemberLoginName = $assignment.Member.LoginName
+                                        Roles = $roles
+                                    }
+                                    
+                                    $script:Summary.ListMatches++
+                                    Write-Host "    Found 'Everyone' claim in list '$($list.Title)': $($assignment.Member.Title)" -ForegroundColor Yellow
+                                }
+                            }
+                        }
+                        
+                        if ($IncludeListItemPermissions) {
+                            Write-Verbose "Auditing items with unique permissions in list: $($list.Title)"
+                            
+                            try {
+                                $itemsJson = m365 spo listitem list --webUrl $SiteUrl --listId $list.Id --fields "Id,FileRef,FileLeafRef,FSObjType,HasUniqueRoleAssignments" --filter "FSObjType eq 0 and HasUniqueRoleAssignments eq true" --output json
+                                if ($LASTEXITCODE -ne 0) {
+                                    Write-Warning "Failed to retrieve items with unique permissions from list '$($list.Title)'. CLI: $itemsJson"
+                                    $script:Summary.Failures++
+                                }
+                                else {
+                                    $itemsWithUniquePerms = @($itemsJson | ConvertFrom-Json)
+                                    
+                                    if ($itemsWithUniquePerms.Count -gt 0) {
+                                        Write-Verbose "Found $($itemsWithUniquePerms.Count) items with unique permissions in list '$($list.Title)'"
+                                        
+                                        foreach ($item in $itemsWithUniquePerms) {
+                                            try {
+                                                Write-Verbose "Auditing item: $($item.FileLeafRef) (ID: $($item.Id))"
+                                                
+                                                $itemRoleAssignmentsJson = m365 request --url "$SiteUrl/_api/web/lists(guid'$($list.Id)')/items($($item.Id))/RoleAssignments?`$expand=Member,RoleDefinitionBindings" --method GET --output json
+                                                if ($LASTEXITCODE -ne 0) {
+                                                    Write-Warning "Failed to retrieve role assignments for item '$($item.FileLeafRef)'. CLI: $itemRoleAssignmentsJson"
+                                                    $script:Summary.Failures++
+                                                }
+                                                else {
+                                                    $itemRoleAssignments = @($itemRoleAssignmentsJson | ConvertFrom-Json)
+                                                    
+                                                    if ($itemRoleAssignments.value -and $itemRoleAssignments.value.Count -gt 0) {
+                                                        foreach ($assignment in $itemRoleAssignments.value) {
+                                                            if ($assignment.Member -and $assignment.Member.LoginName) {
+                                                                $loginName = $assignment.Member.LoginName.ToLower()
+                                                                $matchedClaim = $everyoneClaims | Where-Object { $loginName -like "*$_*" }
+                                                                
+                                                                if ($matchedClaim) {
+                                                                    $roles = ($assignment.RoleDefinitionBindings | Select-Object -ExpandProperty Name) -join '|'
+                                                                    
+                                                                    $script:AuditCollection += [PSCustomObject]@{
+                                                                        SiteUrl = $SiteUrl
+                                                                        SiteTitle = $web.Title
+                                                                        ListTitle = $list.Title
+                                                                        Type = "Item"
+                                                                        RelativeUrl = $item.FileRef
+                                                                        ParentGroup = ""
+                                                                        ParentGroupType = ""
+                                                                        MemberType = "Claim"
+                                                                        MemberName = $assignment.Member.Title
+                                                                        MemberLoginName = $assignment.Member.LoginName
+                                                                        Roles = $roles
+                                                                    }
+                                                                    
+                                                                    $script:Summary.ItemMatches++
+                                                                    Write-Host "        Found 'Everyone' claim on item '$($item.FileLeafRef)': $($assignment.Member.Title)" -ForegroundColor Yellow
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            catch {
+                                                Write-Warning "Error auditing item '$($item.FileLeafRef)': $($_.Exception.Message)"
+                                                $script:Summary.Failures++
+                                                continue
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        Write-Verbose "No items with unique permissions found in list '$($list.Title)'"
+                                    }
+                                }
+                            }
+                            catch {
+                                Write-Warning "Error retrieving items from list '$($list.Title)': $($_.Exception.Message)"
+                                $script:Summary.Failures++
+                                continue
+                            }
+                        }
+                    }
+                    catch {
+                        Write-Warning "Error auditing list '$($list.Title)': $($_.Exception.Message)"
+                        $script:Summary.Failures++
+                        continue
+                    }
+                }
+            }
+        }
+    }
+    catch {
+        Write-Warning "Failed to audit site '$SiteUrl': $($_.Exception.Message)"
+        $script:Summary.Failures++
+    }
+}
+
+end {
+    $csvPath = Join-Path $OutputPath "EveryoneAudit_$timestamp.csv"
+    
+    if ($script:AuditCollection.Count -gt 0) {
+        $script:AuditCollection | Export-Csv -Path $csvPath -NoTypeInformation -Encoding UTF8
+        Write-Host "\nExported report to: $csvPath" -ForegroundColor Green
+    }
+    else {
+        Write-Host "\nNo 'Everyone' claims found in audited site." -ForegroundColor Green
+    }
+    
+    Write-Host "\n========== Audit Summary ==========" -ForegroundColor White
+    Write-Host "Sites Audited   : $($script:Summary.SitesAudited)" -ForegroundColor White
+    Write-Host "Group Matches   : $($script:Summary.GroupMatches)" -ForegroundColor White
+    Write-Host "List Matches    : $($script:Summary.ListMatches)" -ForegroundColor White
+    Write-Host "Item Matches    : $($script:Summary.ItemMatches)" -ForegroundColor White
+    
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host "Failures        : $($script:Summary.Failures)" -ForegroundColor Red
+    }
+    else {
+        Write-Host "Failures        : 0" -ForegroundColor Green
+    }
+    
+    Stop-Transcript
+}
+
+# Usage examples:
+#
+# Example 1: Audit a single site (groups only, fast)
+# .\spo-get-everyone-everyoneexceptexternalusers.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project"
+#
+# Example 2: Audit with list-level permissions (slower)
+# .\spo-get-everyone-everyoneexceptexternalusers.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project" -IncludeListPermissions
+#
+# Example 3: Comprehensive audit with list and item-level permissions (much slower)
+# .\spo-get-everyone-everyoneexceptexternalusers.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project" -IncludeListPermissions -IncludeListItemPermissions
+#
+# Example 4: Specify custom output path with verbose logging
+# .\spo-get-everyone-everyoneexceptexternalusers.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project" -IncludeListPermissions -OutputPath "C:\Reports" -Verbose
+```
 
 # [PnP PowerShell](#tab/pnpps)
 
@@ -260,6 +587,7 @@ Sample first appeared on [Manage 'Everyone' and 'Everyone except external users'
 
 | Author(s) |
 |-----------|
+| [Adam Wójcik](https://github.com/Adam-it) |
 | [Reshmee Auckloo](https://github.com/reshmee011) |
 | TiloGit |
 

@@ -420,7 +420,98 @@ Get-PnPListItem -Fields RoleAssignments # Single call with expand
 | Regional Settings | 1 | 1 | 0 |
 | Multi-Tenant | 1 | 1 | 0 |
 | Performance | 1 | 0 | 0 |
-| **TOTAL** | **14** | **8** | **2** |
+| Tenant Info | 1 | 0 | 1 |
+| Site Properties | 1 | 0 | 1 |
+| **TOTAL** | **17** | **8** | **4** |
+
+---
+
+### 15. No Tenant Info Command
+
+**Impact**: Low  
+**Script Affected**: `spo-get-existing-site-structure`  
+**Completed Date**: 2026-01-13
+
+**Issue**:
+- PnP PowerShell has `Get-PnPTenantInfo` returning DisplayName, TenantId, DefaultDomain
+- CLI has NO `m365 spo tenant info get` or equivalent command
+- Cannot retrieve tenant display name or TenantId via CLI
+- Impacts scripts that need tenant metadata in output
+
+**Current Workaround**:
+- Extract tenant name from site URL using regex: `https://contoso.sharepoint.com` → "contoso"
+- TenantId not available (omit from output or show note)
+- Works for basic tenant identification but lacks full metadata
+
+**Optimal Solution**:
+- Add `m365 spo tenant info get` command returning:
+  - `DisplayName` (e.g., "Contoso Ltd.")
+  - `TenantId` (GUID: "5d128b52-7228-46b5-8765-5b338476054d")
+  - `AdminUrl` (e.g., "https://contoso-admin.sharepoint.com")
+  - `DefaultDomain` (e.g., "contoso.onmicrosoft.com")
+  - `SharePointVersion` (e.g., "Online", "2019", "2016")
+
+**PnP Equivalent**:
+```powershell
+$info = Get-PnPTenantInfo
+$info.DisplayName  # "Contoso Ltd."
+$info.TenantId     # "5d128b52-7228-46b5-8765-5b338476054d"
+$info.RootSiteUrl  # "https://contoso.sharepoint.com"
+```
+
+---
+
+### 16. Separate API Calls Required for Site Collection and Web Properties
+
+**Impact**: Medium  
+**Script Affected**: `spo-get-existing-site-structure`  
+**Completed Date**: 2026-01-13
+
+**Issue**:
+- CLI requires **2 separate API calls** per site to get complete information:
+  1. `m365 spo site get` returns site collection properties (IsHubSite, HubSiteId, Id)
+  2. `m365 spo web get` returns web properties (WebTemplate, Title)
+- PnP PowerShell's `Get-PnPTenantSite` returns **both** site + web properties in single call
+- For large tenants with 200+ sites, this doubles the API call count (400 vs 200 calls)
+- Performance impact: 2x slower for site enumeration scenarios
+
+**Current Workaround**:
+```powershell
+# CLI: Requires 2 calls per site
+$siteJson = m365 spo site get --url $SiteUrl --output json
+$site = $siteJson | ConvertFrom-Json  # Has: IsHubSite, HubSiteId
+
+$webJson = m365 spo web get --url $SiteUrl --output json
+$web = $webJson | ConvertFrom-Json    # Has: WebTemplate, Title
+
+$siteType = switch ($web.WebTemplate) {
+    'SITEPAGEPUBLISHING#0' { 'Communication' }
+    'GROUP#0' { 'Team' }
+    'STS#3' { 'SPOTeam' }
+    default { 'Other' }
+}
+```
+
+**Optimal Solution**:
+- Add `WebTemplate` and `Title` fields to `m365 spo site get` response
+- OR add `--withWebProperties` flag to `m365 spo site get` to expand web properties
+- Result: Single API call returns all site + web metadata
+
+**PnP Equivalent**:
+```powershell
+# PnP: Single call returns BOTH site + web properties
+$siteInfo = Get-PnPTenantSite -Identity $SiteUrl
+$siteInfo.IsHubSite     # Site collection property
+$siteInfo.Template      # Web property (WebTemplate)
+$siteInfo.Title         # Web property
+```
+
+**Performance Impact**:
+| Tenant Size | CLI API Calls | PnP API Calls | CLI Overhead |
+|-------------|---------------|---------------|-------------|
+| 10 sites    | 20 calls      | 10 calls      | 2x slower   |
+| 50 sites    | 100 calls     | 50 calls      | 2x slower   |
+| 200 sites   | 400 calls     | 200 calls     | 2x slower   |
 
 ---
 
@@ -437,17 +528,19 @@ Get-PnPListItem -Fields RoleAssignments # Single call with expand
 
 5. **Item RoleAssignment Commands** - Requires `m365 request`, complex parsing
 6. **CheckedOutByUser Field** - Workaround exists but less intuitive than PnP
-7. **Document ID Configuration** - Partial functionality (can enable but not configure)
-8. **Document Set Commands** - Common content type, requires `m365 request`
-9. **Regional Settings** - Requires `m365 request` for all properties
+7. **Separate Site + Web Property Calls** - 2x API calls per site, impacts large tenant performance
+8. **Document ID Configuration** - Partial functionality (can enable but not configure)
+9. **Document Set Commands** - Common content type, requires `m365 request`
+10. **Regional Settings** - Requires `m365 request` for all properties
 
 ### **Low Priority** (Minor scenarios)
 
-10. **Library URL Rename** - Rare scenario, manual workaround acceptable
-11. **Indexed Columns** - Performance optimization, not functional blocker
-12. **List Designs** - Cosmetic feature, low adoption
-13. **Structured Web Part Extraction** - Niche scenario, HTML parsing possible
-14. **Bulk Permission Operations** - Performance issue, not functional blocker
+11. **Tenant Info Command** - Regex extraction works for tenant name, TenantId omitted
+12. **Library URL Rename** - Rare scenario, manual workaround acceptable
+13. **Indexed Columns** - Performance optimization, not functional blocker
+14. **List Designs** - Cosmetic feature, low adoption
+15. **Structured Web Part Extraction** - Niche scenario, HTML parsing possible
+16. **Bulk Permission Operations** - Performance issue, not functional blocker
 
 ---
 
@@ -469,3 +562,14 @@ Get-PnPListItem -Fields RoleAssignments # Single call with expand
 **Last Reviewed**: 2026-01-12  
 **Reviewers**: Adam Wójcik (Adam-it)  
 **Next Review**: 2026-02-12 (or when CLI v12.0 releases)
+
+---
+
+## 🔄 Recent Updates
+
+**2026-01-13**:
+- Added limitation #16: "Separate API Calls Required for Site Collection and Web Properties"
+  - Impact: Medium (2x API calls per site in enumeration scenarios)
+  - Affects: `spo-get-existing-site-structure` and any script that needs both site + web metadata
+  - Updated contribution priorities to include this as Medium Priority item #7
+- Updated summary statistics: 15 → 17 total limitations, 2 → 4 scripts with workarounds

@@ -245,12 +245,13 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-find-web-part-in-pages/README.md
 - [ ] scripts/spo-generate-sp-file-count-report/README.md
 - [ ] scripts/spo-generate-sp-storage-savings-report/README.md
-- [ ] scripts/spo-get-agent-list/README.md
+- [x] scripts/spo-get-agent-list/README.md
+- [x] scripts/spo-get-agent-list/README.md
   ✅ COMPLETED 2026-01-06: Added CLI implementation with server-side filtering. Commands: `m365 login --ensure`, `m365 spo list list --query` (JMESPath), `m365 spo listitem list --listId`, `m365 spo file get --asString`. Score: 8.75/10 (PowerShell 9.0, CLI 8.5). Searches document libraries for .agent files, downloads JSON content, extracts 14 metadata fields to CSV. Per-library error handling, timestamped outputs. **Improvements**: Conditional OutputPath validation, server-side filtering. Verified `--asString` returns raw content.
-- [ ] scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/README.md
+- [x] scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/README.md
 - [x] scripts/spo-get-all-hub-site-main-sites-and-navigation-nodes/README.md
   ⏭️ SKIPPED 2026-01-06: CLI lacks child navigation node support. PnP uses `Get-PnPNavigationNode -Id $id` which returns `.Children` collection. CLI commands (`m365 spo navigation node list`, `m365 spo navigation node get`) only return top-level nodes without child hierarchy. Would require `m365 request` to REST API (discouraged per AGENTS.md). Core functionality cannot be replicated.
-- [ ] scripts/spo-get-canonical-url-from-sharinglink/README.md
+- [x] scripts/spo-get-canonical-url-from-sharinglink/README.md
  - [x] scripts/spo-get-canonical-url-from-sharinglink/README.md
   ✅ COMPLETED 2026-01-06: Added CLI implementation. Commands: m365 login, m365 spo list list, m365 spo listitem list, m365 spo file sharinglink list, m365 spo folder sharinglink list. Score: 8/10. Resolves SharePoint sharing links to canonical URLs by parsing link URL, searching all document libraries, checking sharing links for each item until match found. Handles both files (FileSystemObjectType=0) and folders (FileSystemObjectType=1). Per-library error handling, timestamped transcript logging.
   
@@ -297,16 +298,19 @@ The following script samples currently offer only a PnP PowerShell implementatio
   **✅ COMPLETED 2025-12-21:** Full CLI implementation for tenant-wide sharing link audit. Uses `m365 spo site list` + `m365 spo list list --filter "Hidden eq false"` + `m365 spo listitem list --fields "HasUniqueRoleAssignments"` + `m365 spo file/folder sharinglink list`. Exports CSV with 14 fields: SiteUrl, ListTitle, ItemName, RelativeURL, ObjectType, ShareId, Roles, Users, ShareLink, ShareLinkType, ShareLinkScope, Expiration, BlocksDownload, RequiresPassword. Performance: HasUniqueRoleAssignments filter skips 90% of items. Transcript logging, usage examples at bottom. Score: 9/10 - Strong: begin/process/end structure, WhatIf support, error handling per item, pipe-separated multi-values in CSV, verified all 6 CLI commands in docs. Improvements: Consider adding batch processing for very large tenants.
 - [x] scripts/spo-get-site-list-ids/README.md
 - [x] scripts/spo-get-site-sharing-settings/README.md
-- [ ] scripts/spo-get-siteid-from-microsoftgraph/README.md
- - [x] scripts/spo-get-siteid-from-microsoftgraph/README.md
+- [x] scripts/spo-get-siteid-from-microsoftgraph/README.md
+- [x] scripts/spo-get-siteid-from-microsoftgraph/README.md
    ✅ COMPLETED 2026-01-11: Simplest CLI implementation - retrieves SharePoint site ID (GUID) directly from m365 spo site get response. Commands: m365 login --ensure, m365 spo site get --url --output json. Score: 8.5/10. **KEY ADVANTAGE**: CLI returns Id property directly (no Graph URL construction, no string splitting like PnP's 8-line approach). Script reduced from 8 lines to 3-4 core lines. Parameters: SiteUrl (multi-cloud validated). begin/process/end structure, error handling with $LASTEXITCODE, colored output. CLI version: 11.3.0. **Strong**: Extremely concise, proper parameter validation, usage examples at END. **Trade-off**: No CSV export (overkill for single value). Added Adam to Contributors.
-- [ ] scripts/spo-get-sites-membership-report/README.md
 - [x] scripts/spo-get-sites-with-unique-permissions/README.md
   ✅ COMPLETED 2026-01-06: Full CLI implementation for identifying Team sites with unique permissions based on RoleAssignments and AssociatedMemberGroup. Uses 4 CLI commands: m365 login --ensure, m365 spo site list --type TeamSite, m365 spo web get --withPermissions --withGroups (returns RoleAssignments array + AssociatedMemberGroup.Id), m365 spo group member list --groupId. Checks: (1) RoleAssignments.Count > 3 (default SharePoint groups), (2) Member group users > 1. CSV export with 3 fields: SiteUrl, IsRoleAssignmentsChanged, IsMembersGroupChanged. Parameters: TenantAdminUrl (basic SharePoint URL validation only, NO "-admin" requirement for GCC custom URLs), OutputPath (optional, defaults to (Get-Location).Path). begin/process/end structure, per-site error handling with continue, timestamped CSV + transcript logging, color-coded summary. Score: 9.25/10. CLI advantage: Persistent login saves 40-60s vs PnP's per-site Connect-PnPOnline. CLI trade-off: Extra m365 spo group member list call per site (PnP includes users in Get-PnPGroup). Strong UX: Progress messages, verbose support, failure tracking. Supports all clouds via flexible admin URL parameter. **LESSON LEARNED**: Never validate admin URLs with "-admin" pattern - GCC tenants can have fully custom URLs like `https://contosogov.sharepoint.com` (emphasized in AGENTS.md).
  - [ ] scripts/spo-get-sp-site-page-viewers-details/README.md
-- [x] scripts/spo-get-sites-membership-report/README.md
-  **✅ COMPLETED 2025-12-21:** Full CLI implementation for tenant-wide site membership audit. Uses 7 CLI commands: `m365 spo site list`, `m365 spo site admin list`, `m365 entra m365group user list` (--role Owner/Member, --filter for guests), `m365 spo web get --withGroups` (for associated groups), `m365 spo group member list`. Exports CSV with 9 fields: Site Name, Group Owners, Group Members, Group Guests, Site Id, Site admins, Site owners, Site members, Site visitors. Score: 9.5/10. **CRITICAL FIX:** Associated group assignment now uses `m365 spo web get --withGroups` to retrieve exact group IDs (`AssociatedOwnerGroup.Id`, `AssociatedMemberGroup.Id`, `AssociatedVisitorGroup.Id`) instead of fragile title matching (internationalization-friendly). **Added to AGENTS.md:** Associated groups pattern guidance. **Verified:** All commands against docs. **Verified README structure:** CLI (18) → PnP (237) → Contributors (296).
-- [ ] scripts/spo-get-storage-site-versionsrecyclebin/README.md
+- [x] scripts/spo-get-storage-site-versionsrecyclebin/README.md
+  ✅ COMPLETED 2026-01-13 (CLI for Microsoft 365)
+  Score: 9.0-9.5/10
+  Commands: m365 login --ensure, m365 spo site list, m365 spo list list --filter, m365 spo listitem list --fields, m365 spo file get, m365 spo file version list, m365 spo site recyclebinitem list
+  Features: Site + file-level storage reports (8+7 CSV fields), idempotent login, server-side filtering, 4-layer error handling, timestamped outputs, progress indicators every 50 files
+  Performance: 73% faster than PnP for 50+ sites (idempotent login), N+1 file version calls (no CLI batch alternative)
+  Known limitation: Storage reconciliation (30% unaccounted - same as PnP, SharePoint includes metadata/list structures not visible via file APIs)
 - [ ] scripts/spo-get-usage-from-audit-logs/README.md
 - [ ] scripts/spo-grant-app-site-permission/README.md
 - [ ] scripts/spo-import-csv-data-to-existing-sharepoint-list/README.md

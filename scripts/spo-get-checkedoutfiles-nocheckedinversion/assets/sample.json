@@ -9,7 +9,7 @@
       "This script sample shows how to get checked Out files including those with no checked in version in CSV format"
     ],
     "creationDateTime": "2023-11-24",
-    "updateDateTime": "2023-11-24",
+    "updateDateTime": "2026-01-12",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "2.1.1"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
       }
     ],
     "categories": [
@@ -24,6 +28,10 @@
       "Report"
     ],
     "tags": [
+      "m365 login",
+      "m365 spo site list",
+      "m365 spo list list",
+      "m365 spo listitem list",
       "Connect-PnPOnline",
       "Get-PnPTenantSite",
       "Get-PnPList",
@@ -45,6 +53,11 @@
         "gitHubAccount": "reshmee011",
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4"
+      },
+      {
+        "name": "Adam Wójcik",
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4"
       }
     ],
     "references": [
@@ -52,6 +65,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

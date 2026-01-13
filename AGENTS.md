@@ -40,8 +40,11 @@
    - `end`: Summary, CSV export, transcript. NO modifications.
  - `m365 login --ensure` in begin block (NO `--output` flag). Check `$LASTEXITCODE`, throw on failure.
  - Long-form options (`--url` not `-u`), use `--output json` for parsing.
- - Keep CLI invocations as single-line commands unless dynamic assembly needed.
- - Convert JSON: `@($json | ConvertFrom-Json)`.
+- Keep CLI invocations as single-line commands unless dynamic assembly needed.
+- **NEVER use `Invoke-Expression`** to run CLI commands. Use direct command calls. Invoke-Expression is a security risk and makes code harder to read/debug.
+ - **Direct command calls**: Use `m365 spo list get --url $SiteUrl --title "Documents" --output json` NOT `Invoke-Expression "m365 spo list get ..."`.
+ - **Dynamic options (rare)**: If you must build commands dynamically, use arrays with splatting: `$args = @('spo','list','get','--url',$SiteUrl); if ($Condition) { $args += '--withPermissions' }; m365 @args`. Avoid string concatenation.
+- Convert JSON: `@($json | ConvertFrom-Json)`.
 
 ## Performance Optimization
 **Minimize API requests**:

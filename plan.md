@@ -275,7 +275,8 @@ The following script samples currently offer only a PnP PowerShell implementatio
   - Add Write-Progress bars for large libraries (5000+ items)
   - Add -Top parameter to limit search to first N items per library
   - Add -LibraryName parameter to search specific library only
-- [ ] scripts/spo-get-checkedoutfiles-nocheckedinversion/README.md
+- [x] scripts/spo-get-checkedoutfiles-nocheckedinversion/README.md
+  ✅ COMPLETED 2026-01-12: Full CLI implementation with workaround for missing CheckedOutByUser field. Commands: m365 login --ensure, m365 spo site list, m365 spo list list --filter, m365 spo listitem list --fields "CheckoutUser/Title,_UIVersionString" --filter "CheckoutUser ne null". Score: 9.0/10. CLI version: 11.3.0. **Strong**: Idempotent login, 4-layer error handling, server-side filtering, progress tracking. **Trade-off**: Cannot replicate PnP's GetCheckedOutFiles() CSOM method. CLI limitation: No CheckedOutByUser field in file list/get commands.
 - [ ] scripts/spo-get-contenttype-usage-listitem-listversion/README.md
 - [ ] scripts/spo-get-details-spfx-packages-tenant-sitecollection-appcatalog/README.md
 - [x] scripts/spo-get-everyone-everyoneexceptexternalusers/README.md

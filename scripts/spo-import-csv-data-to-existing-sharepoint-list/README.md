@@ -14,6 +14,106 @@ With this sample you dont need to do it anymore as long you follow the bellow ru
   
 Excelsior, hum? :P  
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory, HelpMessage = "URL of the SharePoint site")]
+    [ValidatePattern('^https://.*\.sharepoint\.(com|us|mil|cn)')]
+    [string]$WebUrl,
+
+    [Parameter(Mandatory, HelpMessage = "Title of the SharePoint list")]
+    [string]$ListTitle,
+
+    [Parameter(Mandatory, HelpMessage = "Path to the CSV file containing list items")]
+    [ValidateScript({ Test-Path $_ -PathType Leaf })]
+    [string]$CsvFilePath,
+
+    [Parameter(HelpMessage = "Path where transcript log will be saved")]
+    [string]$OutputPath = (Get-Location).Path
+)
+
+begin {
+    Write-Verbose "Ensuring login to Microsoft 365..."
+    m365 login --ensure
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate with Microsoft 365"
+    }
+
+    Write-Verbose "Validating CSV file: $CsvFilePath"
+    $csvData = Import-Csv -Path $CsvFilePath
+    $totalRows = $csvData.Count
+    Write-Host "Found $totalRows rows in CSV file" -ForegroundColor Cyan
+
+    $script:Summary = @{
+        TotalRows = $totalRows
+        Success   = $false
+        Failures  = 0
+    }
+
+    $transcriptPath = Join-Path $OutputPath "spo-import-csv_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
+    Start-Transcript -Path $transcriptPath
+    Write-Host "Transcript started: $transcriptPath" -ForegroundColor Cyan
+}
+
+process {
+    Write-Host "Importing $($script:Summary.TotalRows) items to list '$ListTitle'..." -ForegroundColor Cyan
+
+    try {
+        $output = m365 spo listitem batch add --webUrl $WebUrl --listTitle $ListTitle --filePath $CsvFilePath 2>&1
+
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Batch add operation failed: $output"
+            $script:Summary.Failures++
+        }
+        else {
+            $script:Summary.Success = $true
+        }
+    }
+    catch {
+        Write-Warning "Exception during batch add: $($_.Exception.Message)"
+        $script:Summary.Failures++
+    }
+}
+
+end {
+    Stop-Transcript
+
+    Write-Host "`n========================================" -ForegroundColor Cyan
+    Write-Host "Import Summary" -ForegroundColor Cyan
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "Total Rows in CSV: $($script:Summary.TotalRows)"
+
+    if ($script:Summary.Success) {
+        Write-Host "Status: SUCCESS" -ForegroundColor Green
+        Write-Host "All items were imported successfully!" -ForegroundColor Green
+    }
+    else {
+        Write-Host "Status: FAILED" -ForegroundColor Red
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor Red
+        Write-Host "Review the transcript log for details: $transcriptPath" -ForegroundColor Yellow
+    }
+
+    Write-Host "========================================" -ForegroundColor Cyan
+}
+
+# Example 1: Import CSV to list using site URL and list title
+# .\your-script.ps1 -WebUrl "https://contoso.sharepoint.com/sites/project-x" -ListTitle "Demo List" -CsvFilePath "C:\Data\items.csv"
+
+# Example 2: Import with verbose output
+# .\your-script.ps1 -WebUrl "https://contoso.sharepoint.com/sites/project-x" -ListTitle "Demo List" -CsvFilePath "C:\Data\items.csv" -Verbose
+
+# Example 3: Import with custom transcript location
+# .\your-script.ps1 -WebUrl "https://contoso.sharepoint.com/sites/project-x" -ListTitle "Demo List" -CsvFilePath "C:\Data\items.csv" -OutputPath "C:\Logs"
+
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
+***
+
 # [PnP PowerShell](#tab/pnpps)
 
 ```powershell
@@ -85,7 +185,7 @@ end{
 | Author(s) |
 |-----------|
 | Rodrigo Pinto |
+| Adam Wójcik |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-import-csv-data-to-existing-sharepoint-list" aria-hidden="true" />
-

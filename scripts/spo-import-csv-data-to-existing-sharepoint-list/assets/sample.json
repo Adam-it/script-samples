@@ -9,7 +9,7 @@
       "This script shows how to import a CSV to a SharePoint list  . Main idea here is use PnP-AddListItem without needing to enumerate each and every field in the code . "
     ],
     "creationDateTime": "2021-10-16",
-    "updateDateTime": "2021-10-16",
+    "updateDateTime": "2026-01-14",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.5.0,1.7.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
       }
     ],
     "categories": [
@@ -27,7 +31,9 @@
       "New-PnPBatch",
       "Invoke-PnPBatch",
       "Add-PnPListItem",
-      "Disconnect-PnPOnline"
+      "Disconnect-PnPOnline",
+      "m365 login",
+      "m365 spo listitem batch add"
     ],
     "thumbnails": [
       {
@@ -42,6 +48,11 @@
         "gitHubAccount": "scoutmanpt",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7837053?v=4",
         "name": "Rodrigo Pinto"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -49,6 +60,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

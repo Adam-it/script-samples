@@ -409,3 +409,15 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/teams-get-channel-spo-urls/README.md
 - [x] scripts/spo-get-files-retentionlabel-sensitivitylabel/README.md
   ✅ COMPLETED 2026-01-12 (IMPROVED): Full CLI implementation with major UX improvements over PnP. Commands: m365 login --ensure, m365 spo site list (with --withOneDriveSites option), m365 spo list list --filter (OData server-side filtering), m365 spo listitem list --fields. **IMPROVEMENTS**: (1) No mandatory parameters (audit all SharePoint sites by default vs PnP's required $domain), (2) Explicit -IncludeOneDrive switch (vs PnP's implicit exclusion), (3) Optional -SiteUrlFilter for targeted audits (vs PnP's hardcoded filter), (4) 4-layer error handling (vs PnP's single try/catch), (5) Idempotent login (1 prompt vs N+1 in PnP), (6) Transcript logging (none in PnP), (7) Progress tracking with failure counts. Score: 9.8/10 (vs PnP 8.0/10). Parameters: SiteUrlFilter (optional), IncludeOneDrive (optional switch), OutputPath (conditional validation). Exports 8 CSV fields (adds SiteTitle + LibraryTitle vs PnP's 6 fields). CLI version: 11.3.0. **Strong**: Production-ready, superior UX to PnP, flexible filtering, comprehensive error handling, enterprise-ready logging. **Trade-off**: 200 lines vs PnP's 64 (justified by robustness). **Verdict**: CLI version is objectively better for production/automation scenarios after refactor.
+- [x] scripts/spo-import-csv-data-to-existing-sharepoint-list/README.md
+
+✅ COMPLETED 2026-01-14 (CLI for Microsoft 365)
+Score: 9.5/10
+Commands: m365 login --ensure, m365 spo listitem batch add
+Features: CSV import to SharePoint list with dynamic field mapping (CSV columns → list columns), built-in CLI batching, colored summary, transcript logging, try/catch error handling
+Parameters: WebUrl (Mandatory, validated), ListTitle (Mandatory), CsvFilePath (Mandatory, validated), OutputPath (optional, default current location)
+CLI advantages: Built-in field mapping (no custom filter), simpler code (single command vs manual loop), better error handling (try/catch + transcript)
+PnP advantages: Per-item progress indicators, flexible field transformations via custom filter, granular batch control
+Trade-offs: CLI silent success (no batch operation details - inherent CLI limitation), all-or-nothing error reporting
+Known limitations: Cannot show per-item progress, cannot determine which specific items failed (CLI returns no details on success)
+CSV format: First line = internal column names, supports complex types (ContentType, Choice, Metadata, People, Hyperlink, Number, DateTime with format yyyy-MM-dd HH:mm:ss)

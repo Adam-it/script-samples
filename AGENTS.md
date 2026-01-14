@@ -30,7 +30,7 @@
    - Add CLI tab alongside PnP tab (preserve existing content).
    - Update summary to mention CLI.
    - Add Adam to Contributors table.
-   - **NO comment blocks above PowerShell script**: Usage examples should be INSIDE the script code block at the END, commented with `#`. Do NOT add `.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, `.EXAMPLE` blocks above the script.
+   - **NO comment blocks above or at top of PowerShell script**: Do NOT add `.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, `.EXAMPLE`, `.NOTES` blocks anywhere in the script (not above code block, not at beginning of code block). Usage examples should be INSIDE the script code block at the VERY END, commented with `#`. Start script directly with `[CmdletBinding()]` or `param()` block.
 
 ## Script Structure
  - `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.

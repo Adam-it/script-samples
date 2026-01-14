@@ -350,6 +350,15 @@ The following script samples currently offer only a PnP PowerShell implementatio
   Potential improvements: Add [CmdletBinding(SupportsShouldProcess)] for -WhatIf support (optional), OneDrive site filtering switch (optional), batch progress updates for large tenants (optional)
   Fixed issues: Removed backslash escaping (\$ → $, \\ → \), removed duplicate Adam contributor entry
 - [ ] scripts/spo-list-update-contenttype-systemupdate/README.md
+- [x] scripts/spo-list-update-contenttype-systemupdate/README.md
+  ✅ COMPLETED 2026-01-14 (CLI for Microsoft 365)
+  Score: 9.5/10 (PowerShell 9.5, CLI 9.5, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo listitem list, m365 spo listitem set
+  Features: Updates content type of files in folder using system update (preserves Modified/ModifiedBy), OData server-side filtering (startswith() + FileSystemObjectType eq 0), per-item error handling (try/catch with continue), transcript logging (timestamped .log), colored summary (3 metrics: Total/Updated/Failures), 5 validated parameters (SiteUrl with ValidatePattern, ListTitle, FolderPath, ContentTypeName, OutputPath with ValidateScript)
+  CLI advantages: Single persistent login, per-item error resilience, transcript logging, richer UX (3 metrics vs 0), stronger validation, server-side filtering
+  PnP advantages: None (CLI version equal or better in all aspects)
+  Potential improvements: Add [CmdletBinding(SupportsShouldProcess)] for -WhatIf support, optional CSV export, optional progress bar
+  Known issues: No batch operation optimization (CLI limitation)
 - [ ] scripts/spo-locate-orphaned-termstore-terms/README.md
 - [ ] scripts/spo-mailchimp-integration/README.md
 - [ ] scripts/spo-modern-page-url-report/README.md

@@ -336,9 +336,19 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-import-taxonomy-terms-labels/README.md
 - [ ] scripts/spo-large-list-items-to-pnp-template/README.md
 - [ ] scripts/spo-list-formatting/README.md
+  SKIPPED 2026-01-14: CLI has PARTIAL support only. Can export/import column and view formatting but CANNOT import form customizer JSON. PnP version required for full feature coverage.
 - [x] scripts/spo-list-site-externalusers/README.md
   ✅ COMPLETED 2025-12-21: Full CLI implementation for listing external users across SharePoint sites. Uses 3 CLI commands: m365 login --ensure, m365 spo site list --filter, m365 spo externaluser list (with pagination). Exports CSV with 10 fields. Score: 9.5/10. Key advantages over PnP: Token-based auth (no plaintext passwords), persistent session (1 login vs N), richer CSV (10 fields vs 5), error resilience, transcript logging, progress bar, summary stats. Verified all commands against docs, pagination implemented correctly (50-user limit). Added security guidance to AGENTS.md.
-- [ ] scripts/spo-list-spfx-field-customizer/README.md
+- [x] scripts/spo-list-spfx-field-customizer/README.md
+  ✅ COMPLETED 2026-01-14 (CLI for Microsoft 365)
+  Score: 9.5/10 (PowerShell 9.5, CLI 9.5, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo site list, m365 spo list list, m365 spo field list
+  Features: Tenant-wide SPFx field customizer scan, filters non-empty ClientSideComponentId GUID, 6 CSV fields (SiteUrl, ListTitle, FieldTitle, FieldInternalName, ClientSideComponentId, ClientSideComponentProperties), timestamped outputs (CSV + transcript), per-site/list error handling, colored summary (5 metrics: TotalSites, TotalLists, TotalFieldsScanned, CustomizersFound, FailedSites)
+  CLI advantages: Single persistent login (vs N connections), per-site/list error resilience, server-side hidden list filtering (--filter "Hidden eq false"), automatic transcript logging, richer summary stats (5 metrics vs 0), colored conditional output, timestamped filenames, parameter validation (AdminUrl pattern, OutputPath exists)
+  PnP advantages: Per-site progress messages (CLI only in verbose), Format-Table output before CSV, idiomatic [Guid]::Empty check, simpler code (~42 lines vs ~147)
+  Trade-offs: CLI 3.5x longer but production-ready with comprehensive error handling/logging. PnP simpler but fails on first error with no audit trail.
+  Potential improvements: Add [CmdletBinding(SupportsShouldProcess)] for -WhatIf support (optional), OneDrive site filtering switch (optional), batch progress updates for large tenants (optional)
+  Fixed issues: Removed backslash escaping (\$ → $, \\ → \), removed duplicate Adam contributor entry
 - [ ] scripts/spo-list-update-contenttype-systemupdate/README.md
 - [ ] scripts/spo-locate-orphaned-termstore-terms/README.md
 - [ ] scripts/spo-mailchimp-integration/README.md

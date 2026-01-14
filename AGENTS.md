@@ -24,6 +24,7 @@
 ```
 - Verify with: `grep -A3 'Adam-it' scripts/bulk-undelete-from-recyclebin/assets/sample.json`
 - **Never use** Unicode escapes (`\u00f3`), GitHub URLs (`github.com/Adam-it.png`), or empty `company` field.
+- **JSON Formatting**: Always ensure sample.json is properly formatted with consistent 2-space indentation. Use `python3 -m json.tool --indent 2 <file>` to format, then manually fix any Unicode escapes (e.g., `\u00f3` → literal `ó`). Verify with: `grep '\\u00' assets/sample.json` should return ZERO.
 
 ## README Updates
    - Add CLI tab alongside PnP tab (preserve existing content).
@@ -102,6 +103,7 @@ When retrieving SharePoint site Owner/Member/Visitor groups, always use web prop
   - **CLI version verification**: Run `cat ../cli-microsoft365/package.json | grep '\"version\"'` to confirm exact version. Check sample.json uses this value.
   - Verify Adam's author entry: `grep -A3 'Adam-it' scripts/.../assets/sample.json` matches reference format above.
   - Check no Unicode escapes: `grep '\\u00' assets/sample.json` should return ZERO.
+  - **JSON Formatting**: Verify consistent 2-space indentation. Run `python3 -c "import json; json.load(open('assets/sample.json'))"` to validate.
 
 **Script**:
   - **NO comment blocks above script**: Check README.md does NOT have `.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, `.EXAMPLE` blocks above the PowerShell script. Examples should be at END of script, inside code block, commented with `#`.

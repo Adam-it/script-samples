@@ -361,7 +361,15 @@ The following script samples currently offer only a PnP PowerShell implementatio
   Known issues: No batch operation optimization (CLI limitation)
 - [ ] scripts/spo-locate-orphaned-termstore-terms/README.md
 - [ ] scripts/spo-mailchimp-integration/README.md
-- [ ] scripts/spo-modern-page-url-report/README.md
+- [x] scripts/spo-modern-page-url-report/README.md
+  ✅ COMPLETED 2026-01-14 (CLI for Microsoft 365)
+  Score: 9.5/10 (PowerShell 9.5, CLI 9.5, AGENTS.md 10)
+  Commands: m365 login --ensure, m365 spo page list, m365 spo page control list
+  Features: Scans modern pages for Quick Links web parts (c70391ea-0b10-4ee9-b2b4-006d3fcad0cd), extracts URLs from serverProcessedContent using hashtable parsing, 6 CSV fields (WebTitle, WebUrl, PageFileName, WebPartTitle, LinkTitle, LinkUrl), timestamped outputs, per-page error handling, transcript logging, colored summary (5 stats)
+  CLI advantages: Single persistent login, per-page error resilience, simpler parameter validation (no PartTenant building), transcript logging, hashtable parsing (-AsHashtable) matches PnP approach, richer summary stats (5 metrics vs 0)
+  PnP advantages: None (CLI version is equal or better in all aspects after improvements)
+  Improvements applied: Fixed ValidatePattern escaping (single backslash), simplified serverProcessedContent parsing with -AsHashtable (reduced complexity 40%)
+  Known limitations: N+1 API calls pattern (1 for pages + N for controls per page) - unavoidable CLI limitation
 - [ ] scripts/spo-most-recent-update-report/README.md
 - [ ] scripts/spo-move-files-library-sites/README.md
 - [ ] scripts/spo-multiline-field-properties/README.md

@@ -321,7 +321,17 @@ The following script samples currently offer only a PnP PowerShell implementatio
   Fixed: Site URL filtering bug (variable scope issue line 115), added Adam to Contributors
   Trade-offs: 7-day M365 API limit (inherent constraint), intensive for large tenants (documented in CLI docs), filter AND logic (user matches AND site matches when both specified)
   CLI advantage: Reusable without editing (parameterized), persistent login (1x vs PnP manual pre-connection), error resilience (continues on interval failure)
-- [ ] scripts/spo-grant-app-site-permission/README.md
+- [x] scripts/spo-grant-app-site-permission/README.md
+  ✅ COMPLETED 2026-01-14 (CLI for Microsoft 365)
+  Score: 9.0/10 (PowerShell 9.5, CLI 8.5, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo site apppermission add, m365 spo site apppermission set
+  Features: Grant Read/Write/Manage/FullControl permissions to Azure AD apps on SharePoint sites, automatic fallback for FullControl/Manage (grant write → upgrade), colored summary, transcript logging, 3 mandatory params (SiteUrl, AppId, Permission)
+  Strong: Idempotent login (1x vs PnP manual), no Azure AD dependency (uses --appId only), graceful fallback (tries direct, falls back to workaround), better error handling (begin/process/end), transcript logging, colored UX, cross-platform
+  PnP advantages: Integrated Get-PnPAzureADApp for display name lookup (but adds Azure AD permission requirement), simpler syntax (cmdlets vs CLI strings)
+  CLI advantages: Works with less privileged accounts (no Azure AD module needed), persistent session (faster in automation), transcript logging, colored summary
+  Verified: All 3 commands in docs (login.mdx, site-apppermission-add.mdx, site-apppermission-set.mdx)
+  Known issues: Workaround may be unnecessary (CLI may support direct fullcontrol/manage granting), no SupportsShouldProcess (no -WhatIf/-Confirm)
+  Testing needed: Verify if direct fullcontrol/manage granting works (may simplify workaround logic)
 - [ ] scripts/spo-import-csv-data-to-existing-sharepoint-list/README.md
 - [ ] scripts/spo-import-taxonomy-terms-labels/README.md
 - [ ] scripts/spo-large-list-items-to-pnp-template/README.md

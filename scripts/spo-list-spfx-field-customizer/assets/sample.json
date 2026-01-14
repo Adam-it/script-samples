@@ -9,7 +9,7 @@
       "List all SPFx field customizers"
     ],
     "creationDateTime": "2025-06-18",
-    "updateDateTime": "2025-06-18",
+    "updateDateTime": "2026-01-14",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "3.1.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
       }
     ],
     "categories": [
@@ -25,6 +29,10 @@
       "Report"
     ],
     "tags": [
+      "m365 login",
+      "m365 spo site list",
+      "m365 spo list list",
+      "m365 spo field list",
       "Connect-PnPOnline",
       "Get-PnPList",
       "Get-PnPField"
@@ -43,14 +51,19 @@
         "company": "",
         "pictureUrl": "https://github.com/tanddant.png",
         "name": "Dan Toft"
-      }
-    ],
+      },
+     {
+       "gitHubAccount": "Adam-it",
+       "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+     }
+   ],
     "references": [
       {
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
-      },      
+      },
       {
         "name": "Want to learn more about CLI for Microsoft 365 and the commands",
         "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
@@ -82,13 +95,13 @@
         "url": "https://learn.microsoft.com/cli/azure/"
       },
       {
-        "name":"Want to learn more about Whiteboard Admin cmdlets",
-        "description":"Check out the Whiteboard Admin cmdlets documentation site to get started and for the reference to the commands.",
+        "name": "Want to learn more about Whiteboard Admin cmdlets",
+        "description": "Check out the Whiteboard Admin cmdlets documentation site to get started and for the reference to the commands.",
         "url": "https://learn.microsoft.com/powershell/module/whiteboard"
       },
       {
-        "name":"Want to learn more about Teams Toolkit CLI",
-        "description":"Check out the documentation site to get started and for the reference on performing operations on agents",
+        "name": "Want to learn more about Teams Toolkit CLI",
+        "description": "Check out the documentation site to get started and for the reference on performing operations on agents",
         "url": "https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/teams-toolkit-cli?pivots=version-three"
       }
     ]

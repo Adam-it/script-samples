@@ -440,3 +440,22 @@ PnP advantages: Per-item progress indicators, flexible field transformations via
 Trade-offs: CLI silent success (no batch operation details - inherent CLI limitation), all-or-nothing error reporting
 Known limitations: Cannot show per-item progress, cannot determine which specific items failed (CLI returns no details on success)
 CSV format: First line = internal column names, supports complex types (ContentType, Choice, Metadata, People, Hyperlink, Number, DateTime with format yyyy-MM-dd HH:mm:ss)
+- [x] scripts/spo-modern-page-url-report/README.md
+  
+  ✅ COMPLETED 2026-01-14 (CLI for Microsoft 365)
+  
+  **Score**: 9.3/10 (PowerShell 9.5, CLI 9.0, AGENTS.md 10.0)
+  
+  **Commands**: m365 login --ensure, m365 spo page list, m365 spo page control list
+  
+  **Features**: Scans modern pages for Quick Links web parts, extracts URLs from serverProcessedContent.links, 6 CSV fields (WebTitle, WebUrl, PageFileName, WebPartTitle, LinkTitle, LinkUrl), timestamped CSV + transcript outputs, per-page error resilience, colored summary (5 stats: TotalPages, PagesWithQuickLinks, TotalQuickLinks, TotalLinks, Failures)
+  
+  **CLI advantages**: Persistent login (vs Connect-PnPOnline per run), per-page error handling with continue (PnP stops on error), transcript logging, richer summary stats (5 metrics vs 0), timestamped outputs (CSV + log), verbose support via [CmdletBinding()], handles all SharePoint clouds (com/us/mil/cn)
+  
+  **PnP advantages**: Simpler web part filtering (direct WebPartId property access), single API call per page (Get-PnPPageComponent retrieves controls without second call)
+  
+  **Trade-offs**: N+1 API calls (1 for pages + N for controls per page) - unavoidable CLI limitation since page list returns CanvasContent1 as encoded HTML string, not parsed controls. serverProcessedContent parsing requires hashtable property iteration for items[*] keys vs PnP's direct property access.
+  
+  **QuickLinks Web Part ID**: c70391ea-0b10-4ee9-b2b4-006d3fcad0cd (verified in /root/pnp/cli-microsoft365/src/m365/spo/StandardWebPartTypes.ts)
+  
+  **Known issues**: None

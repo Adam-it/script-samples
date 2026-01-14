@@ -371,6 +371,13 @@ The following script samples currently offer only a PnP PowerShell implementatio
   Improvements applied: Fixed ValidatePattern escaping (single backslash), simplified serverProcessedContent parsing with -AsHashtable (reduced complexity 40%)
   Known limitations: N+1 API calls pattern (1 for pages + N for controls per page) - unavoidable CLI limitation
 - [ ] scripts/spo-most-recent-update-report/README.md
+  ✅ COMPLETED 2026-01-14 (CLI for Microsoft 365)
+  Score: 9.5/10 (PowerShell 9.5, CLI 9.5, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo site list, m365 spo web get, m365 spo report siteusagedetail
+  Features: Combines SharePoint LastItemUserModifiedDate with Graph Last Activity Date, hashtable caching (Graph data retrieved once), 5 CSV fields (SiteUrl, SiteTitle, LastItemUserModifiedDate, LastActivityDateGraph, UsagePeriod), parameterized usage period (D7/D30/D90/D180) and site type filter (TeamSite/CommunicationSite/All), timestamped outputs, per-site error handling, transcript logging, colored summary (3 stats)
+  CLI advantages: Single persistent login (vs N connections), O(1) hashtable lookup (vs O(N) linear search), server-side site type filtering, per-site error resilience, richer output (5 fields vs 4), timestamped filenames + transcript logging, parameterized with proper structure, colored summary with 3 metrics
+  PnP advantages: Certificate authentication support (more secure for automation)
+  Known limitations: N+1 API calls pattern (1 site list + N web get calls), Graph usage report limited to past 28 days (CLI limitation)
 - [ ] scripts/spo-move-files-library-sites/README.md
 - [ ] scripts/spo-multiline-field-properties/README.md
 - [ ] scripts/spo-pin-field-filterpane/README.md

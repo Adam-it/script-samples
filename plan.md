@@ -311,7 +311,16 @@ The following script samples currently offer only a PnP PowerShell implementatio
   Features: Site + file-level storage reports (8+7 CSV fields), idempotent login, server-side filtering, 4-layer error handling, timestamped outputs, progress indicators every 50 files
   Performance: 73% faster than PnP for 50+ sites (idempotent login), N+1 file version calls (no CLI batch alternative)
   Known limitation: Storage reconciliation (30% unaccounted - same as PnP, SharePoint includes metadata/list structures not visible via file APIs)
-- [ ] scripts/spo-get-usage-from-audit-logs/README.md
+- [x] scripts/spo-get-usage-from-audit-logs/README.md
+  ✅ COMPLETED 2026-01-13 (CLI for Microsoft 365)
+  Score: 9.5/10
+  Commands: m365 login --ensure, m365 purview auditlog list
+  Features: Interval-based audit log retrieval (parameterized time range, intervals, user/site filtering), 9 CSV fields, timestamped CSV + transcript, per-interval error handling with continue, color-coded summary, progress indicators
+  Parameters: LookbackMinutes (Mandatory, max 10080/7 days), IntervalMinutes (default 15), UserIds (optional array), SiteUrls (optional array), OutputPath (optional, default current location)
+  Strong: Parameterized vs PnP hardcoded values, idempotent auth, error resilience (per-interval try/catch), comprehensive UX (colors, progress, summary), production-ready (transcript, validation, timestamps), 9 CSV fields vs PnP 7
+  Fixed: Site URL filtering bug (variable scope issue line 115), added Adam to Contributors
+  Trade-offs: 7-day M365 API limit (inherent constraint), intensive for large tenants (documented in CLI docs), filter AND logic (user matches AND site matches when both specified)
+  CLI advantage: Reusable without editing (parameterized), persistent login (1x vs PnP manual pre-connection), error resilience (continues on interval failure)
 - [ ] scripts/spo-grant-app-site-permission/README.md
 - [ ] scripts/spo-import-csv-data-to-existing-sharepoint-list/README.md
 - [ ] scripts/spo-import-taxonomy-terms-labels/README.md

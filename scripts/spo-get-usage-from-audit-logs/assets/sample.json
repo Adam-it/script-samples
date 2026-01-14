@@ -2,15 +2,15 @@
     "name": "spo-get-usage-from-audit-logs",
     "source": "pnp",
     "title": "Gets usage from a particular user(s) or site(s) from the Unified Audit Log",
-    "shortDescription": "This script will scan the ULS Logs for the last week looking for all access by a user an or to a site and create an excel file summarizing the activity",
+    "shortDescription": "This script will scan the ULS Logs for the last week looking for all access by a user an or to a site and create a CSV file summarizing the activity",
     "url": "https://pnp.github.io/script-samples/spo-get-usage-from-audit-logs/README.html",
     "longDescription": [
-        "Say we have a user who has written a lot of flows and powerbi reports and is complaining tha she is getting throttled in sharepoint quite often.",
-        "We need to see all the calls being mad by that user and/or to particular sites to attempt to narrow down the issues.",
-        "This script will scan the ULS Logs for the last week looking for all access by a user an or to a site and create an excel file summarizing the activity."
+        "Say we have a user who has written a lot of flows and powerbi reports and is complaining that she is getting throttled in sharepoint quite often.",
+        "We need to see all the calls being made by that user and/or to particular sites to attempt to narrow down the issues.",
+        "This script will scan the Unified Audit Logs over a specified time range looking for all access by specific users and/or to specific sites and create a CSV file summarizing the activity."
     ],
     "creationDateTime": "2022-10-28",
-    "updateDateTime": "2022-10-28",
+    "updateDateTime": "2026-01-13",
     "products": [
         "SharePoint",
         "Graph"
@@ -18,11 +18,18 @@
     "metadata": [{
         "key": "PNP-POWERSHELL",
         "value": "1.11.0"
-      }],
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
+      }
+    ],
     "categories": [
         "Report"
     ],
     "tags": [
+        "m365 login",
+        "m365 purview auditlog list",
         "Unified Audit Logs",
         "ULS",
         "PDF"
@@ -38,8 +45,18 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/2412956?v=4",
         "name": "Russell Gove"
+    },
+    {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
     }],
     "references": [{
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://pnp.github.io/cli-microsoft365/"
+    },
+    {
         "name": "Want to learn more about the Microsoft Graph",
         "description": "Check out the documentation site to get started and for the reference to the endpoints.",
         "url": "https://developer.microsoft.com/graph/graph-explorer"

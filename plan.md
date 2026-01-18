@@ -388,7 +388,15 @@ The following script samples currently offer only a PnP PowerShell implementatio
   CLI advantages: Persistent login (single auth), idempotent behavior (PnP doesn't check current state), CSV report with before/after state (PnP has none), transcript logging, colored summary, begin/process/end structure (production-ready vs PnP function)
   PnP advantages: Simpler hashtable syntax (Set-PnPField -Values @{ShowInFiltersPane = 1})
   Known limitations: No batch operations (1 API call per field - unavoidable CLI limitation), no WhatIf support (could add SupportsShouldProcess for production use)
-- [ ] scripts/spo-provision-homepage/README.md
+- [x] scripts/spo-provision-homepage/README.md
+  ✅ COMPLETED 2026-01-18 (CLI for Microsoft 365)
+  Score: 9.5/10 (PowerShell 9.5, CLI 9.0, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo page copy, m365 spo page publish, m365 spo page set
+  Features: Cross-site homepage provisioning with web parts preserved, 3-step workflow (copy → publish → promote to homepage), WhatIf support for all modification steps, transcript logging, colored 3-metric summary (TotalSteps, Completed, Failed), per-step error handling (allows partial success), smart defaults (destination page name = source name if not specified), overwrite protection (--overwrite switch required)
+  CLI advantages: No file I/O (direct cross-site copy vs PnP Export → file → Invoke), simpler workflow (3 CLI commands vs 4 PnP cmdlets + file management), idempotent login (single m365 login --ensure vs Connect-PnPOnline per site), web part preservation confirmed in docs (page copy --targetUrl supports full cross-site URLs with all web parts), production-ready (WhatIf, transcript, error handling, summary)
+  PnP advantages: Template flexibility (Export-PnPPage creates reusable template file), offline capability (template can be version-controlled and deployed later)
+  Known limitations: Sequential API calls (3 separate commands - no CLI batch support for page operations), no source page validation (assumes source page exists, fails at copy step if not), no custom publish message option (could add --publishMessage parameter)
+  Trade-offs: CLI superior for direct site-to-site provisioning, PnP better for template-based scenarios
 - [ ] scripts/spo-quicklink-wp-creator/README.md
 - [ ] scripts/spo-record-lock-unlock-file/README.md
 - [ ] scripts/spo-recover-meeting-recordings/README.md

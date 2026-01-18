@@ -35,6 +35,10 @@
 ## Script Structure
  - `[CmdletBinding(SupportsShouldProcess)]` for destructive operations.
  - Typed parameters with `[Parameter(Mandatory/HelpMessage)]` attributes.
+ - **WhatIf Support**: For scripts that perform modifications (add, update, delete, set), ALWAYS add `[CmdletBinding(SupportsShouldProcess)]` and wrap modification commands in `if ($PSCmdlet.ShouldProcess($target, $action))` blocks. This enables `-WhatIf` and `-Confirm` parameters for safe testing.
+   - Use descriptive `$target` (e.g., field name, site URL) and `$action` (e.g., "Pin field to filter pane", "Delete file").
+   - In `end` block summaries, ensure counters reflect intended operations (not just actual executions) when in WhatIf mode.
+   - Example: `if ($PSCmdlet.ShouldProcess($fieldName, 'Pin field to filter pane')) { m365 spo field set ... }`
  - **begin/process/end blocks**:
    - `begin`: Login, validation, initialize script-level variables (e.g., `$script:ReportCollection`).
    - `process`: ALL modification commands (add, update, delete, publish) wrapped in `if ($PSCmdlet.ShouldProcess(...))`.

@@ -380,8 +380,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
   Known limitations: N+1 API calls pattern (1 site list + N web get calls), Graph usage report limited to past 28 days (CLI limitation)
 - [ ] scripts/spo-move-files-library-sites/README.md
 - [ ] scripts/spo-multiline-field-properties/README.md
-- [ ] scripts/spo-pin-field-filterpane/README.md
-- [ ] scripts/spo-provision-folders-libraries/README.md
+- [x] scripts/spo-pin-field-filterpane/README.md
+  ✅ COMPLETED 2026-01-18 (CLI for Microsoft 365)
+  Score: 9.2/10 (PowerShell 9.5, CLI 9.0, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo field get, m365 spo field set
+  Features: Pins fields to filter pane in SharePoint lists/libraries, idempotent (checks ShowInFiltersPane before updating, skips if already pinned), CSV report with 7 fields (SiteUrl, ListTitle, FieldName, PreviousState, NewState, Status, ErrorMessage), transcript logging, colored 4-metric summary (TotalFields, FieldsPinned, AlreadyPinned, Failures), per-field error handling
+  CLI advantages: Persistent login (single auth), idempotent behavior (PnP doesn't check current state), CSV report with before/after state (PnP has none), transcript logging, colored summary, begin/process/end structure (production-ready vs PnP function)
+  PnP advantages: Simpler hashtable syntax (Set-PnPField -Values @{ShowInFiltersPane = 1})
+  Known limitations: No batch operations (1 API call per field - unavoidable CLI limitation), no WhatIf support (could add SupportsShouldProcess for production use)
 - [ ] scripts/spo-provision-homepage/README.md
 - [ ] scripts/spo-quicklink-wp-creator/README.md
 - [ ] scripts/spo-record-lock-unlock-file/README.md

@@ -2,14 +2,14 @@
   {
     "name": "spo-provision-homepage",
     "source": "pnp",
-    "title": "Provision Home Page to a SharePoint site",
-    "shortDescription": "The script exports the page from a source site and provisions it to a destination site",
+    "title": "Provision Homepage to SharePoint Site",
+    "shortDescription": "Copy a homepage from source site to destination site with all web parts and set as homepage using PnP PowerShell or CLI for Microsoft 365",
     "url": "https://pnp.github.io/script-samples/spo-provision-homepage/README.html",
     "longDescription": [
-      "The script exports the page from a source site and provisions it to a destination site."
+      "Copy a homepage from source site to destination site with all web parts preserved and set as homepage using PnP PowerShell or CLI for Microsoft 365."
     ],
     "creationDateTime": "2021-09-02",
-    "updateDateTime": "2021-09-02",
+    "updateDateTime": "2026-01-18",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.5.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
       }
     ],
     "categories": [
@@ -28,7 +32,11 @@
       "Connect-PnPOnline",
       "Export-PnPPage",
       "Invoke-PnPSiteTemplate",
-      "Set-PnPHomePage"
+      "Set-PnPHomePage",
+      "m365 login",
+      "m365 spo page copy",
+      "m365 spo page set",
+      "m365 spo page publish"
     ],
     "thumbnails": [
       {
@@ -44,6 +52,11 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
         "name": "Reshmee Auckloo"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -51,6 +64,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

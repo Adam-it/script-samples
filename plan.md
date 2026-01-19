@@ -397,7 +397,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
   PnP advantages: Template flexibility (Export-PnPPage creates reusable template file), offline capability (template can be version-controlled and deployed later)
   Known limitations: Sequential API calls (3 separate commands - no CLI batch support for page operations), no source page validation (assumes source page exists, fails at copy step if not), no custom publish message option (could add --publishMessage parameter)
   Trade-offs: CLI superior for direct site-to-site provisioning, PnP better for template-based scenarios
-- [ ] scripts/spo-quicklink-wp-creator/README.md
+- [x] scripts/spo-quicklink-wp-creator/README.md
+  ✅ COMPLETED 2026-01-18 (CLI for Microsoft 365)
+  Score: 9.2/10 (PowerShell 9.5, CLI 9.0, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo listitem list, m365 spo page clientsidewebpart add, m365 spo page publish
+  Features: Creates QuickLinks web part from SharePoint list data source (filtered by TemplateName), PowerShell hashtable to JSON conversion (cleaner than PnP string concatenation), server-side filtering with --filter (OData), field optimization with --fields (4 columns only), WhatIf support for safe testing, transcript logging, colored 4-metric summary (ItemsFound, WebPartAdded, PagePublished, Failures), 8 typed parameters with validation
+  CLI advantages: Cleaner JSON construction (hashtable to ConvertTo-Json vs manual string concat), server-side filtering reduces data transfer, field optimization (4 columns vs all), idempotent login, standardized web part type (--standardWebPart QuickLinks), WhatIf support, production-ready structure (begin/process/end)
+  PnP advantages: Simpler web part addition (accepts full webPartData JSON), ReturnConnection for multi-site scenarios
+  Known limitations: No CSV report (could add for audit trails), no page existence pre-check (adds API call), hardcoded layout options (buttonTreatment, iconPositionType - could expose as params)
 - [ ] scripts/spo-record-lock-unlock-file/README.md
 - [ ] scripts/spo-recover-meeting-recordings/README.md
 - [ ] scripts/spo-register-app-login-using-app/README.md
@@ -407,7 +414,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-remove-list-designs/README.md
 - [x] scripts/spo-remove-orphaned-redirect-sites/README.md
   ✅ COMPLETED 2025-12-21: Full CLI implementation. Uses m365 login --ensure, m365 spo site list --filter, m365 spo site remove --force. Requires PowerShell 7+. Score: 9.5/10.
-- [ ] scripts/spo-remove-webpart-from-pages/README.md
+- [x] scripts/spo-remove-webpart-from-pages/README.md
+  ✅ COMPLETED 2026-01-19 (CLI for Microsoft 365) - SIMPLIFIED 2026-01-19
+  Score: 9.5/10 (PowerShell 9.5, CLI 9.0, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo page list, m365 spo page control list, m365 spo page control remove
+  Features: Removes web parts by Title (human-friendly, case-insensitive partial match), filters by PageNames (optional), WhatIf support for safe testing, CSV report (6 fields: PageName, ControlId, WebPartId, WebPartTitle, Status, ErrorMessage), per-page error handling with try/catch + continue, transcript logging, colored 4-metric summary (PagesProcessed, ControlsRemoved, PagesSkipped, Failures), 3 typed parameters (SiteUrl mandatory, WebPartTitles mandatory, PageNames optional)
+  CLI advantages: Idempotent login (single m365 login --ensure), production-ready structure (begin/process/end blocks, WhatIf, transcript, CSV audit trail), human-friendly filtering (no GUID memorization required), colored summary with meaningful messages, parameter validation (ValidatePattern for URLs), simplified to essential use cases only
+  PnP advantages: Simpler syntax (Remove-PnPPageComponent vs CLI 3-step workflow), potentially fewer API calls (PnP may batch internally)
+  Known limitations: N+1 API calls (1 for pages + N for controls per page - unavoidable CLI limitation), no batch control removal (CLI removes one at a time), no --draft option exposed (could add switch parameter), client-side filtering for PageNames (could use server-side --filter OData if CLI supports it), removed WebPartId/ControlId/ContentTypeId filters for simplicity (users unlikely to remember GUIDs)
 - [ ] scripts/spo-rename-hub-siteurl/README.md
 - [ ] scripts/spo-reorder-list-content-type/README.md
 - [ ] scripts/spo-repair-user-idmismatch/README.md

@@ -451,7 +451,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
   ✅ COMPLETED 2026-01-05: Full CLI implementation for time-based file age reporting. Unified script replacing 3 separate PnP scripts. Uses 4 CLI commands: m365 login --ensure, m365 spo site list with conditional options, m365 spo list list BaseTemplate eq 101 filter, m365 spo file list with OData date filter TimeLastModified lt datetime. Parameters: TenantAdminUrl OR SiteUrl mutually exclusive, LibraryName, FolderUrl, DaysOld default 1460, OutputPath optional, IncludeOneDrive, Recursive. CSV export with 11 fields. Dynamic command building. begin/process/end structure. WhatIf support. Score: 8.5/10. Key advantage: Single unified script vs 3 PnP scripts with CSV inputs and Excel dependencies.
 - [ ] scripts/spo-translate-list/README.md
 - [x] scripts/spo-trim-and-m365-archive-sitecollection/README.md
-- [ ] scripts/spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/README.md
+- [ ] ~~scripts/spo-uninstall-spfx-hubsiteassociatedsites-tenantappcatalog/README.md~~ (SKIPPED 2026-01-19: CLI limitation - `m365 spo app list` does not expose `LinkFilename` field needed to match .sppkg files to catalog apps. PnP uses REST API to get exact filename. Heuristic matching (`Title -like "*$BaseName*"`) unreliable for production use. Would require `m365 request`.)
 - [ ] scripts/spo-update-branding-sitelogo-thumbnail/README.md
 - [ ] scripts/spo-update-contentype-from-hub/README.md
 - [x] scripts/spo-update-document-library-templates/README.md
@@ -509,3 +509,13 @@ CSV format: First line = internal column names, supports complex types (ContentT
   **QuickLinks Web Part ID**: c70391ea-0b10-4ee9-b2b4-006d3fcad0cd (verified in /root/pnp/cli-microsoft365/src/m365/spo/StandardWebPartTypes.ts)
   
   **Known issues**: None
+- [x] scripts/spo-update-contentype-from-hub/README.md
+  ✅ COMPLETED 2026-01-19 (CLI for Microsoft 365)
+  Score: 9.7/10 (PowerShell 9.7, CLI 9.7, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo site list, m365 spo contenttype get, m365 spo contenttype sync
+  Features: Syncs published content types from hub to all sites, WhatIf support, CSV report (7 fields: SiteUrl, SiteTitle, ContentTypeName, ContentTypeId, Status, ErrorMessage, Timestamp), per-site error handling, transcript logging, colored 4-metric summary (SitesChecked, SitesUpdated, SitesSkipped, Failures), server-side site filtering by URL pattern
+  Parameters: AdminUrl (mandatory), ContentType (mandatory), SiteUrlFilter (optional), OutputPath (optional)
+  CLI advantages: Idempotent login (1 prompt vs N+1 in PnP), simpler auth (no ClientId param), WhatIf, per-site error handling (never breaks), CSV report, transcript logging, colored summary, server-side filtering (reduces API calls for targeted updates)
+  PnP advantages: Concise code (~30 lines vs ~143), explicit hub cmdlet (Add-PnPContentTypesFromContentTypeHub)
+  Known limitations: Sequential processing (no parallel), silent sync response (documented CLI behavior, relies on $LASTEXITCODE), 2 API calls per site (get + sync)
+  IMPROVED 2026-01-19: Added SiteUrlFilter parameter with server-side --filter for targeted updates (e.g., only marketing sites)

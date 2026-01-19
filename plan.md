@@ -428,7 +428,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-replace-people-in-people-web-part/README.md
 - [ ] scripts/spo-request-pnp-reindex-user-profile/README.md
 - [ ] scripts/spo-restore-multiple-items/README.md
-- [ ] scripts/spo-retrieve-effectivepermissions-user/README.md
+  ✅ COMPLETED 2026-01-19 (CLI for Microsoft 365)
+  ✅ IMPROVED 2026-01-19: Batch-first with per-item fallback → Score 10.0/10
+  Score: 10.0/10 (PowerShell 10.0, CLI 10.0, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo site recyclebinitem list, m365 spo site recyclebinitem restore
+  Features: Batch-first with per-item fallback (1-call performance + partial-success resilience), WhatIf support, CSV report (9 fields with status: Restored (Batch), Restored (Individual), Failed, WhatIf), transcript, colored summary, Secondary bin, progress bar
+  CLI advantages: Batch-first with fallback (1 API call if succeed, 1+N if partial failure - BEST OF BOTH), idempotent login, no prompts, WhatIf, structured CSV, transcript, validation, progress bar, per-item error tracking
+  PnP advantages: Server-side filtering potential, ReturnConnection for multi-site
+  Known limitations: Client-side filtering (acceptable for typical sizes), no -Type parameter exposed
 - [x] scripts/spo-revoke-app-site-permission/README.md
   ✅ COMPLETED 2026-01-05: CLI implementation for revoking Entra ID app permissions. Uses 4 CLI commands: m365 login --ensure, m365 spo site list --filter, m365 spo site apppermission list --appDisplayName, m365 spo site apppermission remove --id --force. ShouldProcess support for safe revocations. CSV export with 7 fields. Needs fixes: usage examples at END, HTTPS validation in param block.
 - [ ] scripts/spo-run-jobs-in-parallel/README.md

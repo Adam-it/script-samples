@@ -339,7 +339,18 @@ The following script samples currently offer only a PnP PowerShell implementatio
   Verified: All 3 commands in docs (login.mdx, site-apppermission-add.mdx, site-apppermission-set.mdx)
   Known issues: Workaround may be unnecessary (CLI may support direct fullcontrol/manage granting), no SupportsShouldProcess (no -WhatIf/-Confirm)
   Testing needed: Verify if direct fullcontrol/manage granting works (may simplify workaround logic)
-- [ ] scripts/spo-import-csv-data-to-existing-sharepoint-list/README.md
+- [x] scripts/spo-import-csv-data-to-existing-sharepoint-list/README.md
+  ✅ COMPLETED 2026-01-20 (CLI for Microsoft 365)
+  Score: 10.0/10 (PowerShell 10.0/10, CLI 10.0/10, AGENTS.md 13/13)
+  Commands: m365 login --ensure, m365 spo listitem batch add
+  Features: CSV batch import with automatic column mapping, transcript logging, 58% code reduction vs PnP (~25 lines vs ~60 lines)
+  Parameters: SiteUrl (ValidatePattern for SharePoint URLs), ListTitle (Mandatory), CsvFilePath (ValidateScript checks file exists)
+  Strong: Built-in batch processing (no manual loop), automatic CSV→list field mapping (CLI parses headers), single command import, idempotent login, cross-platform, comprehensive error handling (begin/process/end blocks, try/catch with throw), transcript logging with timestamp, color-coded output (Cyan info/Green success), 4 usage examples at END, typed parameters with validation
+  CLI advantages: Built-in batch processing (single command vs PnP manual loop), automatic column mapping (CSV headers→field names), cross-platform, 58% code reduction, idempotent auth
+  PnP advantages: More granular error handling (can report specific row failures vs CLI all-or-nothing batch), per-item progress ("Item added 5/100" during loop)
+  Known limitations: All-or-nothing batch (if any row invalid, entire import fails unlike PnP partial imports), DateTime must use site timezone not UTC (same as PnP per docs), column name sensitivity (CSV headers must match internal field names exactly)
+  Verified: All commands against docs (login.mdx:51, listitem-batch-add.mdx lines 15-32), void response on success (no JSON output, check LASTEXITCODE only)
+  Perfect CLI match: m365 spo listitem batch add is purpose-built for this exact scenario (batch CSV import with auto-mapping)
 - [ ] scripts/spo-import-taxonomy-terms-labels/README.md
 - [ ] scripts/spo-large-list-items-to-pnp-template/README.md
 - [ ] scripts/spo-list-formatting/README.md

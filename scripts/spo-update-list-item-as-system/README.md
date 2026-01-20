@@ -40,6 +40,27 @@ Disconnect-PnPOnline
 
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+# Define the site URL
+$SiteURL = "<SITE_URL>"
+
+# Set the list name where the item is located
+$ListName = "<LIST_NAME>"
+
+# Set the ID of the item to update
+$ItemID = <LIST_ITEM_ID>
+
+# Ensure logged in to Microsoft 365
+m365 login --ensure
+
+# Update the List Item with "systemUpdate" so it won't update Modified By and Modified fields or trigger any Power Automate flows
+m365 spo listitem set --webUrl $SiteURL --listTitle $ListName --id $ItemID --systemUpdate --<FIELD_INTERNAL_NAME> "<VALUE_TO_SET>"
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
 
 ***
 
@@ -48,6 +69,7 @@ Disconnect-PnPOnline
 
 | Author(s) |
 |-----------|
+| [Adam Wójcik](https://github.com/Adam-it) |
 | [Guido Zambarda](https://github.com/guidozam) |
 
 

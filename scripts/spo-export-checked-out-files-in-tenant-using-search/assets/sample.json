@@ -9,12 +9,16 @@
       "It requires a lot of work to iterate all Site Collections looking for checked out files. If you can accept that the quality is slightly lower ( some sites or libraries might be excluded from Search) this script can provide the list of checkout file is minutes, not hours"
     ],
     "creationDateTime": "2023-03-31",
-    "updateDateTime": "2023-03-31",
+    "updateDateTime": "2026-01-20",
     "products": [
       "SharePoint",
       "Azure"
     ],
     "metadata": [
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
+      },
       {
         "key": "PNP-POWERSHELL",
         "value": "1.11.0"
@@ -22,10 +26,11 @@
     ],
     "categories": [
       "Data",
-      "Report"      
+      "Report"
     ],
     "tags": [
-      "<Cmdlets-Used>"
+      "m365 login",
+      "m365 spo search"
     ],
     "thumbnails": [
       {
@@ -37,6 +42,11 @@
     ],
     "authors": [
       {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
+      {
         "gitHubAccount": "kasperbolarsen",
         "company": "Fellowmind",
         "pictureUrl": "https://github.com/kasperbolarsen.png",
@@ -44,6 +54,11 @@
       }
     ],
     "references": [
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://pnp.github.io/cli-microsoft365/"
+      },
       {
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",

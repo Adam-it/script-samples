@@ -4,7 +4,7 @@
 
 ## Summary
 
-It requires a lot of work to iterate all Site Collections looking for checked out files. If you can accept that the quality is slightly lower ( some sites or libraries might be excluded from Search) this script can provide the list of checkout file is minutes, not hours
+It requires a lot of work to iterate all Site Collections looking for checked out files. If you can accept that the quality is slightly lower ( some sites or libraries might be excluded from Search) this script can provide the list of checkout file in minutes, not hours
 
 ![Example Screenshot](assets/example.png)
 
@@ -60,6 +60,152 @@ Get-CheckedOutItems -emaildomain "contoso.com"
 
 ```
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
+
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $false, HelpMessage = "Email domain or specific user email to search (e.g., 'contoso.com' or 'john.doe@contoso.com'). Use '*' for all checked-out files.")]
+    [string]$EmailDomain = "*",
+
+    [Parameter(Mandatory = $false, HelpMessage = "Output path for CSV report")]
+    [string]$OutputPath = (Get-Location).Path,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Batch size for search results (default: 500)")]
+    [ValidateRange(1, 500)]
+    [int]$BatchSize = 500,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Tenant admin URL for enhanced search context")]
+    [ValidatePattern('^https://.*\\.sharepoint\\.(com|us|mil|cn)$')]
+    [string]$TenantAdminUrl
+)
+
+begin {
+    m365 login --ensure 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to login to Microsoft 365. Please run 'm365 login' first."
+    }
+
+    if ($PSBoundParameters.ContainsKey('OutputPath')) {
+        if (-not (Test-Path $OutputPath -PathType Container)) {
+            throw "Output path '$OutputPath' does not exist or is not a directory."
+        }
+    }
+
+    $script:ReportCollection = @()
+    $script:Summary = @{FilesFound = 0; ParseErrors = 0}
+
+    $transcriptPath = "$OutputPath\CheckedOutFiles_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
+    Start-Transcript -Path $transcriptPath
+}
+
+process {
+    try {
+        Write-Host "Searching for checked-out files..." -ForegroundColor Cyan
+        if ($EmailDomain -ne "*") {
+            Write-Host "  Filtering by email domain: $EmailDomain" -ForegroundColor White
+        } else {
+            Write-Host "  Searching across entire tenant" -ForegroundColor White
+        }
+
+        if ($EmailDomain -eq "*") {
+            $query = "CheckoutUserOWSUSER:*"
+        } else {
+            $query = "CheckoutUserOWSUSER:$EmailDomain"
+        }
+
+        $searchArgs = @(
+            'spo', 'search',
+            '--queryText', $query,
+            '--selectProperties', 'Path,CheckoutUserOWSUSER,LastModifiedTime,Title',
+            '--allResults',
+            '--rowLimit', $BatchSize,
+            '--output', 'json'
+        )
+
+        if ($TenantAdminUrl) {
+            $searchArgs += '--webUrl'
+            $searchArgs += $TenantAdminUrl
+        }
+
+        $resultsJson = m365 @searchArgs 2>&1
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Search query failed: $resultsJson"
+        }
+
+        $results = @($resultsJson | ConvertFrom-Json)
+        $script:Summary.FilesFound = $results.Count
+
+        Write-Host "  Found $($results.Count) checked-out files" -ForegroundColor Green
+
+        foreach ($item in $results) {
+            try {
+                $checkoutUser = $item.CheckoutUserOWSUSER
+
+                if ($checkoutUser -match "^([^|]+)\\|([^|]+)\\|") {
+                    $email = $matches[1]
+                    $name = $matches[2].Trim()
+                } else {
+                    Write-Warning "Failed to parse user from: $checkoutUser"
+                    $email = "Unknown"
+                    $name = $checkoutUser
+                    $script:Summary.ParseErrors++
+                }
+
+                $script:ReportCollection += [PSCustomObject]@{
+                    Title = $item.Title ?? "Unknown"
+                    CheckedOutToName = $name
+                    CheckedOutToEmail = $email
+                    URL = $item.Path
+                    LastModified = $item.LastModifiedTime
+                }
+            }
+            catch {
+                Write-Warning "Failed to process item: $($_.Exception.Message)"
+                $script:Summary.ParseErrors++
+            }
+        }
+    }
+    catch {
+        Write-Error "Search failed: $($_.Exception.Message)"
+        throw
+    }
+}
+
+end {
+    Stop-Transcript
+
+    if ($script:ReportCollection.Count -gt 0) {
+        $csvPath = "$OutputPath\CheckedOutFiles_$(Get-Date -Format 'yyyyMMdd_HHmmss').csv"
+        $script:ReportCollection | Export-Csv -Path $csvPath -NoTypeInformation -Encoding UTF8
+        Write-Host "\nCSV report saved: $csvPath" -ForegroundColor White
+    } else {
+        Write-Host "\nNo checked-out files found." -ForegroundColor Yellow
+    }
+
+    Write-Host "\n===== Summary =====" -ForegroundColor Cyan
+    Write-Host "Files Found: $($script:Summary.FilesFound)" -ForegroundColor Green
+    $parseColor = if ($script:Summary.ParseErrors -gt 0) { "Yellow" } else { "Green" }
+    Write-Host "Parse Errors: $($script:Summary.ParseErrors)" -ForegroundColor $parseColor
+}
+
+# Example: Search all checked-out files in tenant
+# .\Export-CheckedOutFiles.ps1
+
+# Example: Search for specific user
+# .\Export-CheckedOutFiles.ps1 -EmailDomain "john.doe@contoso.com"
+
+# Example: Search by domain with custom output path
+# .\Export-CheckedOutFiles.ps1 -EmailDomain "contoso.com" -OutputPath "C:\Reports"
+
+# Example: Search with tenant admin URL for broader scope and custom batch size
+# .\Export-CheckedOutFiles.ps1 -TenantAdminUrl "https://contoso-admin.sharepoint.com" -BatchSize 100 -Verbose
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
 ***
 
 
@@ -67,6 +213,7 @@ Get-CheckedOutItems -emaildomain "contoso.com"
 
 | Author(s) |
 |-----------|
+| Adam Wójcik |
 | Kasper Larsen |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

@@ -379,12 +379,272 @@ Write-Host "========================================" -ForegroundColor Cyan
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
 ***
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding(SupportsShouldProcess)]
+param (
+  [Parameter(Mandatory = $true, HelpMessage = "Array of SharePoint site URLs to process")]
+  [string[]]$SiteUrls,
+
+  [Parameter(Mandatory = $false, HelpMessage = "Name of the SharePoint list to check for webhooks")]
+  [string]$ListName = "Documents",
+
+  [Parameter(Mandatory = $false, HelpMessage = "The old webhook URL that should be replaced")]
+  [string]$OldWebhookUrl,
+
+  [Parameter(Mandatory = $true, HelpMessage = "The new webhook URL to add")]
+  [string]$NewWebhookUrl,
+
+  [Parameter(Mandatory = $false, HelpMessage = "Output folder for CSV and transcript")]
+  [string]$OutputPath = (Get-Location).Path,
+
+  [Parameter(Mandatory = $false, HelpMessage = "Number of days until webhook expiration (max: 180)")]
+  [ValidateRange(1, 180)]
+  [int]$ExpirationDays = 179,
+
+  [Parameter(Mandatory = $false, HelpMessage = "Maximum number of retry attempts for adding webhooks")]
+  [ValidateRange(1, 10)]
+  [int]$MaxRetries = 3,
+
+  [Parameter(Mandatory = $false, HelpMessage = "Delay in seconds between retry attempts")]
+  [ValidateRange(1, 60)]
+  [int]$RetryDelaySeconds = 5
+)
+
+begin {
+  if ($PSBoundParameters.ContainsKey('OutputPath')) {
+    if (-not (Test-Path -Path $OutputPath)) {
+      throw "Output path '$OutputPath' does not exist"
+    }
+  }
+
+  m365 login --ensure 2>&1 | Out-Null
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to login to Microsoft 365. Please run 'm365 login' first."
+  }
+
+  $script:Summary = @{
+    SitesProcessed = 0
+    WebhooksRemoved = 0
+    WebhooksAdded = 0
+    Failures = 0
+  }
+  $script:ReportCollection = @()
+  $script:ClientState = "WebhookUpdate-" + (Get-Date -Format "yyyyMMdd-HHmmss")
+
+  $logPath = Join-Path $OutputPath "WebhookMaintenance_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
+  Start-Transcript -Path $logPath
+
+  Write-Host "`n========================================" -ForegroundColor Cyan
+  Write-Host "Webhook Subscription Maintenance" -ForegroundColor Cyan
+  Write-Host "========================================" -ForegroundColor Cyan
+  Write-Host "List: $ListName" -ForegroundColor White
+  Write-Host "Sites to process: $($SiteUrls.Count)" -ForegroundColor White
+  if ($OldWebhookUrl) {
+    Write-Host "Old webhook URL: $OldWebhookUrl" -ForegroundColor Yellow
+  }
+  Write-Host "New webhook URL: $NewWebhookUrl" -ForegroundColor Green
+  Write-Host "========================================`n" -ForegroundColor Cyan
+}
+
+process {
+  foreach ($siteUrl in $SiteUrls) {
+    try {
+      $script:Summary.SitesProcessed++
+      Write-Host "Processing site: $siteUrl" -ForegroundColor Cyan
+
+      $webhooksJson = m365 spo list webhook list --webUrl $siteUrl --listTitle $ListName --output json 2>&1
+      if ($LASTEXITCODE -ne 0) {
+        throw "Failed to list webhooks: $webhooksJson"
+      }
+      $webhooks = @($webhooksJson | ConvertFrom-Json)
+      Write-Verbose "Found $($webhooks.Count) existing webhooks"
+
+      $newWebhookAlreadyExists = $false
+      $existingWebhook = $webhooks | Where-Object { $_.notificationUrl -eq $NewWebhookUrl }
+      if ($existingWebhook) {
+        $newWebhookAlreadyExists = $true
+        Write-Host "  New webhook already exists (ID: $($existingWebhook.id), Expires: $($existingWebhook.expirationDateTime))" -ForegroundColor Green
+      }
+
+      if ($OldWebhookUrl) {
+        $webhooksToRemove = $webhooks | Where-Object { $_.notificationUrl -eq $OldWebhookUrl }
+        
+        foreach ($webhook in $webhooksToRemove) {
+          if ($PSCmdlet.ShouldProcess("$siteUrl - Webhook ID: $($webhook.id)", "Remove webhook")) {
+            Write-Host "  Removing old webhook (ID: $($webhook.id))..." -ForegroundColor Yellow
+            m365 spo list webhook remove --webUrl $siteUrl --listTitle $ListName --id $webhook.id --force 2>&1 | Out-Null
+            
+            if ($LASTEXITCODE -eq 0) {
+              Write-Host "  SUCCESS: Removed old webhook" -ForegroundColor Green
+              $script:Summary.WebhooksRemoved++
+              $script:ReportCollection += [PSCustomObject]@{
+                SiteUrl = $siteUrl
+                ListName = $ListName
+                Action = "Removed"
+                OldWebhookUrl = $OldWebhookUrl
+                NewWebhookUrl = "N/A"
+                Status = "Success"
+                ErrorMessage = ""
+              Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+            }
+          }
+            else {
+              throw "Failed to remove webhook ID: $($webhook.id)"
+            }
+          }
+        }
+      }
+
+      if (-not $newWebhookAlreadyExists) {
+        $webhookAddSuccess = $false
+        $retryCount = 0
+        $newWebhook = $null
+
+        for ($retryCount = 0; $retryCount -lt $MaxRetries; $retryCount++) {
+          try {
+            if ($retryCount -gt 0) {
+              Write-Host "  Retry attempt $retryCount of $($MaxRetries - 1)..." -ForegroundColor Yellow
+              Start-Sleep -Seconds $RetryDelaySeconds
+            }
+
+            if ($PSCmdlet.ShouldProcess("$siteUrl - $ListName", "Add new webhook (attempt $($retryCount + 1))")) {
+              Write-Host "  Adding new webhook..." -ForegroundColor Yellow
+              
+              $expirationDate = (Get-Date).AddDays($ExpirationDays).ToString("yyyy-MM-ddTHH:mm:ss")
+              $newWebhookJson = m365 spo list webhook add --webUrl $siteUrl --listTitle $ListName --notificationUrl $NewWebhookUrl --expirationDateTime $expirationDate --clientState $script:ClientState --output json 2>&1
+              
+              if ($LASTEXITCODE -eq 0) {
+                $newWebhook = $newWebhookJson | ConvertFrom-Json
+                Write-Host "  SUCCESS: Added new webhook (ID: $($newWebhook.id), Expires: $($newWebhook.expirationDateTime))" -ForegroundColor Green
+                $webhookAddSuccess = $true
+                $script:Summary.WebhooksAdded++
+                $script:ReportCollection += [PSCustomObject]@{
+                  SiteUrl = $siteUrl
+                  ListName = $ListName
+                  Action = "Added"
+                  OldWebhookUrl = if ($OldWebhookUrl) { $OldWebhookUrl } else { "N/A" }
+                  NewWebhookUrl = $NewWebhookUrl
+                  NewWebhookId = $newWebhook.id
+                  NewWebhookExpiration = $newWebhook.expirationDateTime
+                  ClientState = $script:ClientState
+                  RetryAttempts = $retryCount
+                  Status = "Success"
+                  ErrorMessage = ""
+                  Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                }
+                break
+              }
+              else {
+                throw "CLI returned exit code $LASTEXITCODE : $newWebhookJson"
+              }
+            }
+            else {
+              break
+            }
+          }
+          catch {
+            Write-Warning "  Failed to add webhook (attempt $($retryCount + 1)): $($_.Exception.Message)"
+            
+            if ($retryCount -eq ($MaxRetries - 1)) {
+              Write-Host "  Max retries reached. Webhook addition failed." -ForegroundColor Red
+              $script:Summary.Failures++
+              $script:ReportCollection += [PSCustomObject]@{
+                SiteUrl = $siteUrl
+                ListName = $ListName
+                Action = "Failed (Max retries)"
+                OldWebhookUrl = if ($OldWebhookUrl) { $OldWebhookUrl } else { "N/A" }
+                NewWebhookUrl = $NewWebhookUrl
+                NewWebhookId = "N/A"
+                NewWebhookExpiration = "N/A"
+                ClientState = $script:ClientState
+                RetryAttempts = $retryCount + 1
+                Status = "Failed"
+                ErrorMessage = $_.Exception.Message
+                Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+              }
+            }
+          }
+        }
+      }
+      else {
+        $script:ReportCollection += [PSCustomObject]@{
+          SiteUrl = $siteUrl
+          ListName = $ListName
+          Action = "Already exists"
+          OldWebhookUrl = if ($OldWebhookUrl) { $OldWebhookUrl } else { "N/A" }
+          NewWebhookUrl = $NewWebhookUrl
+          NewWebhookId = $existingWebhook.id
+          NewWebhookExpiration = $existingWebhook.expirationDateTime
+          ClientState = $existingWebhook.clientState
+          RetryAttempts = 0
+          Status = "Success"
+          ErrorMessage = ""
+          Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        }
+      }
+    }
+    catch {
+      Write-Warning "Failed to process $siteUrl : $($_.Exception.Message)"
+      $script:Summary.Failures++
+      $script:ReportCollection += [PSCustomObject]@{
+        SiteUrl = $siteUrl
+        ListName = $ListName
+        Action = "Failed"
+        OldWebhookUrl = if ($OldWebhookUrl) { $OldWebhookUrl } else { "N/A" }
+        NewWebhookUrl = $NewWebhookUrl
+        NewWebhookId = "N/A"
+        NewWebhookExpiration = "N/A"
+        ClientState = "N/A"
+        RetryAttempts = 0
+        Status = "Failed"
+        ErrorMessage = $_.Exception.Message
+        Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+      }
+      continue
+    }
+  }
+}
+
+end {
+  Stop-Transcript
+
+  $csvPath = Join-Path $OutputPath "WebhookMaintenance_$(Get-Date -Format 'yyyyMMdd_HHmmss').csv"
+  $script:ReportCollection | Export-Csv -Path $csvPath -NoTypeInformation
+  Write-Host "`nCSV report saved: $csvPath" -ForegroundColor White
+
+  Write-Host "`n===== Summary =====" -ForegroundColor Cyan
+  Write-Host "Sites Processed: $($script:Summary.SitesProcessed)" -ForegroundColor White
+  Write-Host "Webhooks Removed: $($script:Summary.WebhooksRemoved)" -ForegroundColor White
+  Write-Host "Webhooks Added: $($script:Summary.WebhooksAdded)" -ForegroundColor Green
+  $failColor = if ($script:Summary.Failures -gt 0) { "Red" } else { "Green" }
+  Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor $failColor
+}
+
+# Example: Replace old webhook with new one (with WhatIf)
+# .\Maintain-WebhookSubscriptions.ps1 -SiteUrls @("https://contoso.sharepoint.com/sites/site1", "https://contoso.sharepoint.com/sites/site2") -ListName "Documents" -OldWebhookUrl "https://old-webhook.com" -NewWebhookUrl "https://new-webhook.com" -WhatIf
+
+# Example: Add new webhook to all sites (no old URL removal)
+# .\Maintain-WebhookSubscriptions.ps1 -SiteUrls @("https://contoso.sharepoint.com/sites/site1") -ListName "Tasks" -NewWebhookUrl "https://new-webhook.com"
+
+# Example: Replace with custom output path
+# .\Maintain-WebhookSubscriptions.ps1 -SiteUrls @("https://contoso.sharepoint.com/sites/site1") -OldWebhookUrl "https://old.com" -NewWebhookUrl "https://new.com" -OutputPath "C:\Logs"
+
+# Example: Process multiple sites with verbose output
+# .\Maintain-WebhookSubscriptions.ps1 -SiteUrls @("https://contoso.sharepoint.com/sites/site1", "https://contoso.sharepoint.com/sites/site2") -NewWebhookUrl "https://new-webhook.com" -Verbose
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+***
+
 
 ## Contributors
 
 | Author(s) |
 |-----------|
 | [Valeras Narbutas](https://github.com/ValerasNarbutas) |
+| [Adam Wójcik](https://github.com/Adam-it) |
 
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

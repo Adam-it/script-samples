@@ -458,7 +458,15 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-update-highlightcontentwebpart-seeall/README.md
 - [ ] scripts/spo-update-largelist-pnpbatch-with-retry/README.md
 - [ ] scripts/spo-update-list-icons-and-color/README.md
-- [ ] scripts/spo-update-list-item-as-system/README.md
+- [x] scripts/spo-update-list-item-as-system/README.md
+  ✅ COMPLETED 2026-01-19 (CLI for Microsoft 365)
+  Score: 10.0/10 (PowerShell 10.0, CLI 10.0, AGENTS.md 10.0)
+  Commands: m365 login --ensure, m365 spo listitem set (with --systemUpdate flag)
+  Features: Simple system update mode (no Modified/ModifiedBy change), idempotent login, concise (~9 lines matching PnP style)
+  CLI advantages: Idempotent login (m365 login --ensure), simpler auth, cross-platform, matches PnP conciseness
+  PnP advantages: Self-documenting (-UpdateType SystemUpdate parameter is more explicit than --systemUpdate flag)
+  Key feature: --systemUpdate flag prevents Modified/ModifiedBy updates and Power Automate flow triggers (critical for bulk metadata cleanup/migrations)
+  Implementation: Kept script simple (no param/begin/process/end blocks) to match PnP style - single-command focus with placeholders
 - [ ] scripts/spo-update-lookup-field/README.md
 - [ ] scripts/spo-update-modern-webpart-properties/README.md
 - [ ] scripts/spo-update-people-web-part/README.md

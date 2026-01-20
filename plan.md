@@ -162,7 +162,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/spo-export-author-byline-users/README.md
 - [x] scripts/spo-export-basic-sitecollection-info/README.md
 - [ ] scripts/spo-export-checked-out-files-in-all-sites-associated-with-a-hub-site-to-csv/README.md
-- [ ] scripts/spo-export-checked-out-files-in-tenant-using-search/README.md
+- [x] scripts/spo-export-checked-out-files-in-tenant-using-search/README.md
+  ✅ COMPLETED 2026-01-20 (CLI for Microsoft 365)
+  Score: 10.0/10 (PowerShell 10.0/10, CLI 10.0/10, AGENTS.md 13/13)
+  Commands: m365 login --ensure, m365 spo search (with --queryText, --selectProperties, --allResults, --rowLimit, --webUrl)
+  Features: Tenant-wide search for checked-out files, KQL query filtering by email domain, CSV export (5 fields: Title, CheckedOutToName, CheckedOutToEmail, URL, LastModified), transcript logging, parse error tracking, flexible email filtering (wildcard/domain/specific user), optional tenant admin URL for broader scope, configurable batch size
+  CLI advantages: Idempotent login, no connection object management, single search query across entire tenant (vs site-by-site iteration), server-side KQL filtering, comprehensive error handling (parse errors tracked separately), transcript audit trail, parameterized design (reusable without editing), cross-platform (Linux/macOS), standard CSV format
+  PnP advantages: More concise (~50 lines vs ~130 lines), simpler result parsing (direct .ResultRows access vs regex)
+  Known limitations: Regex parsing of CheckoutUserOWSUSER field (depends on | delimiter format), no progress bar for large result sets (10K+ files), no retry logic for transient search failures, search index may lag (some sites/libraries excluded)
 - [ ] scripts/spo-export-duplicate-files/README.md
 - [ ] scripts/spo-export-files-and-versions/README.md
 - [ ] scripts/spo-export-import-folderstructure/README.md

@@ -12,6 +12,104 @@ The filter pane allows users to quickly filter and find relevant data in librari
 
 - The user account that runs the script must have access to the SharePoint Online site.
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+
+[CmdletBinding(SupportsShouldProcess)]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "SharePoint site URL")]
+    [ValidatePattern('^https://.*\\.sharepoint\\.(com|us|mil|cn)')]
+    [string]$SiteUrl,
+
+    [Parameter(Mandatory = $true, HelpMessage = "List title where fields are located")]
+    [string]$ListTitle,
+
+    [Parameter(Mandatory = $true, HelpMessage = "Internal names or titles of fields to pin")]
+    [string[]]$FieldNames
+)
+
+begin {
+    Write-Verbose "Authenticating to Microsoft 365..."
+    m365 login --ensure 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to login to Microsoft 365"
+    }
+
+    $script:Summary = @{
+        Total    = $FieldNames.Count
+        Pinned   = 0
+        Failures = 0
+    }
+
+    $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+    Start-Transcript -Path "PinFields_$timestamp.log"
+}
+
+process {
+    Write-Host "Pinning $($script:Summary.Total) field(s) to filter pane in list '$ListTitle'..." -ForegroundColor Cyan
+
+    foreach ($fieldName in $FieldNames) {
+        $script:Summary.Total = $FieldNames.Count
+
+        try {
+            if ($PSCmdlet.ShouldProcess($fieldName, 'Pin field to filter pane')) {
+                Write-Verbose "Processing field: $fieldName"
+
+                m365 spo field set --webUrl $SiteUrl --listTitle $ListTitle --title $fieldName --ShowInFiltersPane 1 2>&1 | Out-Null
+
+                if ($LASTEXITCODE -ne 0) {
+                    throw "CLI command failed with exit code $LASTEXITCODE"
+                }
+
+                Write-Verbose "Successfully pinned field: $fieldName"
+                $script:Summary.Pinned++
+            } else {
+                $script:Summary.Pinned++
+            }
+        }
+        catch {
+            Write-Warning "Failed to pin field '$fieldName': $($_.Exception.Message)"
+            $script:Summary.Failures++
+            continue
+        }
+    }
+}
+
+end {
+    Stop-Transcript
+
+    Write-Host "`n===== Summary =====" -ForegroundColor Cyan
+    Write-Host "List: $ListTitle" -ForegroundColor White
+    Write-Host "Site: $SiteUrl" -ForegroundColor White
+    Write-Host "Total fields attempted: $($script:Summary.Total)" -ForegroundColor White
+    Write-Host "Successfully pinned: $($script:Summary.Pinned)" -ForegroundColor Green
+
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor Red
+    } else {
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor White
+    }
+}
+
+# Example 1: Pin two fields to filter pane
+# .\Pin-FieldsToFilterPane.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" -ListTitle "Documents" -FieldNames @("Modified", "Editor")
+
+# Example 2: Test with WhatIf (no changes applied)
+# .\Pin-FieldsToFilterPane.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/hr" -ListTitle "Policies" -FieldNames @("ContentType", "Modified") -WhatIf
+
+# Example 3: Pin multiple fields with verbose output
+# .\Pin-FieldsToFilterPane.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project" -ListTitle "Tasks" -FieldNames @("Status", "Priority", "DueDate") -Verbose
+
+# Example 4: Pin single field
+# .\Pin-FieldsToFilterPane.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/sales" -ListTitle "Leads" -FieldNames @("Stage")
+
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
+***
+
 # [PnP PowerShell](#tab/pnpps)
 
 ```powershell
@@ -61,6 +159,7 @@ Sample first appeared on [Pinning Fields to the Filter Pane in SharePoint Librar
 
 | Author(s) |
 |-----------|
+| [Adam Wójcik](https://github.com/Adam-it) |
 | [Reshmee Auckloo](https://github.com/reshmee011) |
 
 

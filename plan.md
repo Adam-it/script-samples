@@ -399,6 +399,13 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-move-files-library-sites/README.md
 - [ ] scripts/spo-multiline-field-properties/README.md
 - [x] scripts/spo-pin-field-filterpane/README.md
+  ✅ COMPLETED 2026-01-21 (CLI for Microsoft 365)
+  Score: 10.0/10 (PowerShell 10.0/10, CLI 10.0/10, AGENTS.md 13/13)
+  Commands: m365 login --ensure, m365 spo field set
+  Features: Pin fields to filter pane using ShowInFiltersPane property, WhatIf support, per-field error handling, transcript logging, comprehensive summary
+  CLI advantages: Idempotent login, single-line command, custom property support (--ShowInFiltersPane 1), void response handling, cross-platform, no Get-PnPField call needed (direct set operation)
+  PnP advantages: More concise (~50 lines vs ~90 lines), direct cmdlet calls (no external process), field existence check with Get-PnPField
+  Known limitations: No validation if field exists (assumes field name is correct), no progress bar for large field arrays
   ✅ COMPLETED 2026-01-18 (CLI for Microsoft 365)
   Score: 9.2/10 (PowerShell 9.5, CLI 9.0, AGENTS.md 10.0)
   Commands: m365 login --ensure, m365 spo field get, m365 spo field set

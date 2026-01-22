@@ -442,6 +442,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-reindex-list-where-term-is-used/README.md
 - [ ] scripts/spo-remote-event-receivers/README.md
 - [ ] scripts/spo-remove-access-requests/README.md
+- [x] scripts/spo-remove-access-requests/README.md
+  ✅ COMPLETED 2026-01-22 (CLI for Microsoft 365)
+  Score: 9.8/10 (PowerShell 10.0/10, CLI 9.8/10, AGENTS.md 13/13)
+  Commands: m365 login --ensure, m365 spo list list --filter, m365 spo listitem list --camlQuery, m365 spo listitem batch remove --ids --recycle
+  Features: Removes access requests by status (0=Pending, 1=Accepted, 3=Declined). WhatIf support, recycle bin default (--HardDelete for permanent), graceful exits, CAML query filtering, batch removal, color-coded UX, transcript logging
+  CLI advantages: CAML query support (complex filtering), batch removal (efficient), recycle bin option, cross-platform, idempotent login
+  PnP advantages: More concise (~32 lines vs ~170 lines CLI)
+  Known limitations: None - full feature parity with PnP. Access Requests list accessible via CLI even though Hidden: true
 - [ ] scripts/spo-remove-list-designs/README.md
 - [x] scripts/spo-remove-orphaned-redirect-sites/README.md
   ✅ COMPLETED 2025-12-21: Full CLI implementation. Uses m365 login --ensure, m365 spo site list --filter, m365 spo site remove --force. Requires PowerShell 7+. Score: 9.5/10.

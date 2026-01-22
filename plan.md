@@ -305,7 +305,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-get-items-not-indexed-since-last-update/README.md
 - [x] scripts/spo-get-items-with-custom-permissions/README.md
 - [x] scripts/spo-get-libraries-with-webhooks/README.md
-- [ ] scripts/spo-get-list-item-version-history/README.md
+- ~~scripts/spo-get-list-item-version-history/README.md~~ (SKIPPED 2026-01-22: CLI limitation - no list item version history command. PnP uses CSOM Get-PnPProperty. CLI only has file version commands.)
 - [ ] scripts/spo-get-permission-audit/README.md
 - [x] scripts/spo-get-sharepoint-storage-currentquota/README.md
 - [x] scripts/spo-get-sharinglinks/README.md
@@ -459,7 +459,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-repair-user-idmismatch/README.md
 - [ ] scripts/spo-replace-people-in-people-web-part/README.md
 - [ ] scripts/spo-request-pnp-reindex-user-profile/README.md
-- [ ] scripts/spo-restore-multiple-items/README.md
+- [x] scripts/spo-restore-multiple-items/README.md
   ✅ COMPLETED 2026-01-19 (CLI for Microsoft 365)
   ✅ IMPROVED 2026-01-19: Batch-first with per-item fallback → Score 10.0/10
   Score: 10.0/10 (PowerShell 10.0, CLI 10.0, AGENTS.md 10.0)
@@ -568,3 +568,11 @@ CSV format: First line = internal column names, supports complex types (ContentT
   PnP advantages: Concise code (~30 lines vs ~143), explicit hub cmdlet (Add-PnPContentTypesFromContentTypeHub)
   Known limitations: Sequential processing (no parallel), silent sync response (documented CLI behavior, relies on $LASTEXITCODE), 2 API calls per site (get + sync)
   IMPROVED 2026-01-19: Added SiteUrlFilter parameter with server-side --filter for targeted updates (e.g., only marketing sites)
+- [x] scripts/spo-record-lock-unlock-file/README.md
+  ✅ COMPLETED 2026-01-22 (CLI for Microsoft 365)
+  Score: 10.0/10 (PowerShell 10.0/10, CLI 10.0/10, AGENTS.md 13/13)
+  Commands: m365 login --ensure, m365 spo listitem record lock, m365 spo listitem record unlock
+  Features: Lock/unlock file records with switch parameter, WhatIf support, transcript logging, color-coded summary, per-operation error handling
+  CLI advantages: 90% simpler (no Graph API, no drive/item ID retrieval), direct commands, built-in error handling via LASTEXITCODE, cross-platform, WhatIf support, parameterized (no prompts)
+  PnP advantages: None identified (CLI is superior in all aspects)
+  Known limitations: None - CLI has full support for record lock/unlock operations

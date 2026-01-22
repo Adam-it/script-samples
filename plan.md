@@ -153,7 +153,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-document-sets-modern-new-form/README.md
 - [ ] scripts/spo-documentset-configuration/README.md
 - [ ] scripts/spo-download-all-doclibs/README.md
-- [ ] scripts/spo-download-sppkgs/README.md
+- [x] scripts/spo-download-sppkgs/README.md
+  ✅ COMPLETED 2026-01-21 (CLI for Microsoft 365)
+  Score: 10.0/10 (PowerShell 10.0/10, CLI 10.0/10, AGENTS.md 13/13)
+  Commands: m365 login --ensure, m365 spo file list, m365 spo file get
+  Features: App catalog backup with .sppkg filtering, WhatIf support, per-file error handling, transcript logging, auto-cleanup before download
+  CLI advantages: Idempotent login (no credentials), WhatIf support, transcript logging, cross-platform, per-file error handling (failures don’t stop script), color-coded summary, no hardcoded credentials
+  PnP advantages: Progress bar shows real-time download status (CLI lacks this), more concise (~40 lines vs ~110 lines), direct property expansion (Get-PnPProperty)
+  Known limitations: No progress bar for large catalogs (50+ packages), assumes "AppCatalog" folder name (standard but could be customized)
 - [ ] scripts/spo-enable-disable-app-bar/README.md
 - [ ] scripts/spo-enable-page-scheduling/README.md
 - [ ] scripts/spo-ensure-cts-before-template/README.md

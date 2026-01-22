@@ -2,18 +2,22 @@
   {
     "name": "spo-record-lock-unlock-file",
     "source": "pnp",
-    "title": "Lock and Unlock a file leveraging Microsoft Graph API",
-    "shortDescription": "lock and unlock a file which is a record in SharePoint Online using the Microsoft Graph API through PnP PowerShell. The script retrieves the drive id and drive item id before calling the endpoint to lock or unlock a file.",
+    "title": "Lock and Unlock a file record in SharePoint Online",
+    "shortDescription": "Lock and unlock a file which is a record in SharePoint Online. PnP uses Graph API; CLI uses direct commands for simpler implementation.",
     "url": "https://pnp.github.io/script-samples/spo-record-lock-unlock-file/README.html",
     "longDescription": [
-      "lock and unlock a file which is a record in SharePoint Online using the Microsoft Graph API through PnP PowerShell. The script retrieves the drive id and drive item id before calling the endpoint to lock or unlock a file."
+      "Lock and unlock a file which is a record in SharePoint Online. The PnP PowerShell version uses the Microsoft Graph API and retrieves the drive id and drive item id before calling the endpoint. The CLI for Microsoft 365 version uses direct commands for a simpler implementation."
     ],
     "creationDateTime": "2024-11-09",
-    "updateDateTime": "2024-11-09",
+    "updateDateTime": "2026-01-22",
     "products": [
       "SharePoint"
     ],
     "metadata": [
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.3.0"
+      },
       {
         "key": "PNP-POWERSHELL",
         "value": "2.99.0"
@@ -23,6 +27,9 @@
       "Data"
     ],
     "tags": [
+      "m365 login",
+      "m365 spo listitem record lock",
+      "m365 spo listitem record unlock",
       "Connect-PnPOnline",
       "Get-PnPList",
       "Invoke-PnPGraphMethod",
@@ -38,6 +45,11 @@
     ],
     "authors": [
       {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
+      {
         "gitHubAccount": "reshmee011",
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
@@ -45,6 +57,11 @@
       }
     ],
     "references": [
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
+      },
       {
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",

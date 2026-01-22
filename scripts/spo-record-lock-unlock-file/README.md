@@ -4,7 +4,104 @@
 
 ## Summary
 
-This script shows how to lock and unlock a file which is a record in SharePoint Online using the Microsoft Graph API through PnP PowerShell. The script retrieves the drive id and drive item id before calling the endpoint to lock or unlock a file.
+This script shows how to lock and unlock a file which is a record in SharePoint Online. The PnP PowerShell version uses the Microsoft Graph API and retrieves the drive id and drive item id before calling the endpoint. The CLI for Microsoft 365 version uses direct commands for a simpler implementation.
+
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+
+[CmdletBinding(SupportsShouldProcess)]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "SharePoint site URL (e.g., https://contoso.sharepoint.com/sites/project-x)")]
+    [ValidatePattern('^https://.*\\.sharepoint\\.(com|us|mil|cn)')]
+    [string]$SiteUrl,
+
+    [Parameter(Mandatory = $true, HelpMessage = "Library or list title (e.g., 'Documents', 'Shared Documents')")]
+    [string]$ListTitle,
+
+    [Parameter(Mandatory = $true, HelpMessage = "List item ID to lock/unlock")]
+    [int]$ItemId,
+
+    [Parameter(HelpMessage = "Lock the record. If not specified, unlocks the record")]
+    [switch]$Lock
+)
+
+begin {
+    m365 login --ensure 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to login to Microsoft 365"
+    }
+
+    $script:Summary = @{
+        Action   = if ($Lock) { "Lock" } else { "Unlock" }
+        Success  = $false
+    }
+
+    $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+    Start-Transcript -Path "RecordLockUnlock_$timestamp.log"
+}
+
+process {
+    try {
+        $actionVerb = if ($Lock) { "Locking" } else { "Unlocking" }
+        Write-Host "$actionVerb record for item ID $ItemId in list '$ListTitle'..." -ForegroundColor Cyan
+
+        if ($PSCmdlet.ShouldProcess("Item ID $ItemId in '$ListTitle'", "$($script:Summary.Action) record")) {
+            if ($Lock) {
+                m365 spo listitem record lock --webUrl $SiteUrl --listTitle $ListTitle --listItemId $ItemId 2>&1 | Out-Null
+            }
+            else {
+                m365 spo listitem record unlock --webUrl $SiteUrl --listTitle $ListTitle --listItemId $ItemId 2>&1 | Out-Null
+            }
+
+            if ($LASTEXITCODE -ne 0) {
+                throw "Failed to $($script:Summary.Action.ToLower()) record"
+            }
+
+            Write-Verbose "Record $($script:Summary.Action.ToLower())ed successfully"
+            $script:Summary.Success = $true
+        }
+        else {
+            $script:Summary.Success = $true
+        }
+    }
+    catch {
+        Write-Error "Failed to $($script:Summary.Action.ToLower()) record: $($_.Exception.Message)"
+        throw
+    }
+}
+
+end {
+    Stop-Transcript
+
+    Write-Host "`n===== Summary =====" -ForegroundColor Cyan
+    Write-Host "Site URL: $SiteUrl" -ForegroundColor White
+    Write-Host "List: $ListTitle" -ForegroundColor White
+    Write-Host "Item ID: $ItemId" -ForegroundColor White
+    Write-Host "Action: $($script:Summary.Action)" -ForegroundColor White
+    
+    $statusColor = if ($script:Summary.Success) { "Green" } else { "Red" }
+    $statusText = if ($script:Summary.Success) { "SUCCESS" } else { "FAILED" }
+    Write-Host "Status: $statusText" -ForegroundColor $statusColor
+}
+
+# Example 1: Lock a record
+# .\Lock-UnlockRecord.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project-x" -ListTitle "Documents" -ItemId 5 -Lock
+
+# Example 2: Unlock a record
+# .\Lock-UnlockRecord.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project-x" -ListTitle "Documents" -ItemId 5
+
+# Example 3: Test with WhatIf (see what would be locked)
+# .\Lock-UnlockRecord.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project-x" -ListTitle "Shared Documents" -ItemId 12 -Lock -WhatIf
+
+# Example 4: Lock with verbose output
+# .\Lock-UnlockRecord.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project-x" -ListTitle "Documents" -ItemId 5 -Lock -Verbose
+
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
+***
 
 # [PnP PowerShell](#tab/pnpps)
 
@@ -92,8 +189,8 @@ The script first appeared  ["Get Drive ID and Drive Item ID for File for Further
 
 | Author(s) |
 |-----------|
+| Adam Wójcik |
 | [Reshmee Auckloo](https://github.com/reshmee011) |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-record-lock-unlock-file" aria-hidden="true" />
-

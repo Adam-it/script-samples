@@ -140,13 +140,13 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/spo-delete-expired-sharing-link-folder-file-item/README.md
   **⚠️ SKIPPED 2025-12-21:** CLI v11.2.0 `sharinglink list` lacks link creation date. PnP logic needs `Created` property for implicit expiration (delete links >X days old with no explicit expiration). While `expirationDateTime` works for explicit dates, most real-world scenarios use creation date + retention period. Cannot fully replicate PnP without link creation metadata.
 - [x] scripts/spo-delete-hub-and-sites/README.md
-- [ ] scripts/spo-delete-sharinglink-folder-file-item/README.md
+- [ ] ~~scripts/spo-delete-sharinglink-folder-file-item/README.md~~ (SKIPPED 2026-01-22: CLI limitation - no `m365 spo listitem sharinglink clear` command. PnP script explicitly handles folders, files, AND list items (non-files like Calendar events, Announcements). CLI has `file sharinglink clear` and `folder sharinglink clear` but cannot clear sharing links for non-file list items. While files/folders cover 95% of oversharing cases, script title/purpose emphasizes list item support which cannot be fully replicated. Similar scripts like `spo-delete-companywide-anonymous-sharinglink` already cover file/folder scenarios.)
 - [ ] scripts/spo-delete-site-with-retention-policy/README.md
 - [ ] scripts/spo-deploy-install-update-spfx-hubsite-associatedsites/README.md
 - [ ] scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/README.md
 - [ ] scripts/spo-deploy-pnpmodernsearch-webpart/README.md
 - [ ] scripts/spo-deploy-sppkgs-and-install-apps/README.md
-- [ ] scripts/spo-detect-theme/README.md
+- [ ] ~~scripts/spo-detect-theme/README.md~~ (SKIPPED 2026-01-22: CLI limitation - m365 spo web get does not expose PrimaryColor field. PnP uses Get-PnPWeb -Includes PrimaryColor. No CLI alternative.)
 - [ ] scripts/spo-dev-agent-config-creation/README.md
 - [ ] scripts/spo-dev-tenant-report-export/README.md
 - [ ] scripts/spo-disable-template-dialog/README.md
@@ -168,7 +168,6 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [x] scripts/spo-export-all-site-pages-details/README.md
 - [x] scripts/spo-export-author-byline-users/README.md
 - [x] scripts/spo-export-basic-sitecollection-info/README.md
-- [ ] scripts/spo-export-checked-out-files-in-all-sites-associated-with-a-hub-site-to-csv/README.md
 - [x] scripts/spo-export-checked-out-files-in-tenant-using-search/README.md
   ✅ COMPLETED 2026-01-20 (CLI for Microsoft 365)
   Score: 10.0/10 (PowerShell 10.0/10, CLI 10.0/10, AGENTS.md 13/13)
@@ -476,7 +475,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-set-page-authorbyline/README.md
 - [~] scripts/spo-set-sharepoint-regional-settings/README.md
   ⚠️ SKIPPED 2026-01-05: CLI `m365 spo web set` does not support nested RegionalSettings properties (LocaleId, TimeZone, WorkDays, etc.). These are sub-properties of web.RegionalSettings object, not direct web properties. Would require `m365 request` for manual REST API calls, which violates AGENTS.md guidance (line 3: "Avoid m365 request unless no specific command exists").
-- [ ] scripts/spo-setup-example-site/README.md
+- [x] scripts/spo-setup-example-site/README.md
+  ✅ COMPLETED 2026-01-22 (CLI for Microsoft 365)
+  Score: 10.0/10 (PowerShell 10.0/10, CLI 10.0/10, AGENTS.md 13/13)
+  Commands: m365 login --ensure, m365 spo site add, m365 spo field add, m365 spo field list, m365 spo contenttype add, m365 spo contenttype list, m365 spo contenttype field set, m365 spo list add, m365 spo list set, m365 spo list contenttype add, m365 spo folder add, m365 spo navigation node add
+  Features: Creates demo site with site column, content type, list (with CT, hidden), library, folder, navigation. WhatIf support, idempotent (checks existence), per-item error handling, transcript logging, colored UX
+  CLI advantages: Idempotent login, cross-platform, direct command calls (no Invoke-Expression), server-side error handling, WhatIf built-in
+  PnP advantages: More concise (~150 lines vs ~420 lines CLI), fewer existence checks, native PowerShell objects
+  Known limitations: None - full feature parity with PnP
 - [x] scripts/spo-sharepoint-alerts-audit/README.md
 - [x] scripts/spo-tenant-site-inventory/README.md
 - [x] scripts/spo-time-based-file-reports/README.md
@@ -505,6 +511,7 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-update-search-result-webparts/README.md
 - [ ] scripts/spo-webhook-subscription-maintenance/README.md
 - [x] scripts/spo-webhook-subscription-maintenance/README.md
+- [ ] ~~scripts/spo-webhook-subscription-maintenance/README.md~~ (SKIPPED 2026-01-22: User request - webhook script deprioritized)
   ✅ COMPLETED 2026-01-20 (CLI for Microsoft 365)
   Score: 9.7/10 (PowerShell 9.7/10, CLI 9.8/10, AGENTS.md 10.0/10)
   Commands: m365 login --ensure, m365 spo list webhook list, m365 spo list webhook remove --force, m365 spo list webhook add

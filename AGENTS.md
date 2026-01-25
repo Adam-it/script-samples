@@ -8,9 +8,9 @@
 
 ## Metadata Updates (sample.json)
 **Required changes**:
-   - **ALWAYS verify current date first**: Run `date +%Y-%m-%d` to get today's date. Update `updateDateTime` to this exact value.
-   - **ALWAYS check CLI version**: Run `cat ../cli-microsoft365/package.json | grep '"version"'` to get exact version. The version format should be semantic (e.g., "11.3.0" NOT "11.3" or "v11.3.0"). NEVER guess or use outdated values. If package.json shows "11.2.0" but documentation or user indicates "11.3.0", ASK for clarification before proceeding.
-   - Add `CLI-FOR-MICROSOFT365` metadata entry.
+  - **ALWAYS verify current date first**: Run `date +%Y-%m-%d` to get today's date. Update `updateDateTime` to this exact value.
+  - **ALWAYS check CLI version**: Run `cat ../cli-microsoft365/package.json | grep '"version"'` to get exact version. The version format should be semantic (e.g., "11.4.0" NOT "11.4" or "v11.4.0"). NEVER guess or use outdated values. If the CLI repo is outdated, pull latest changes first: `git -C ../cli-microsoft365 checkout main && git -C ../cli-microsoft365 pull origin main`.
+  - Add `CLI-FOR-MICROSOFT365` metadata entry.
    - Add CLI commands to `tags` (unique values only).
    - Add CLI reference; keep existing PnP references.
 

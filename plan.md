@@ -591,3 +591,4 @@ CSV format: First line = internal column names, supports complex types (ContentT
   CLI advantages: 90% simpler (no Graph API, no drive/item ID retrieval), direct commands, built-in error handling via LASTEXITCODE, cross-platform, WhatIf support, parameterized (no prompts)
   PnP advantages: None identified (CLI is superior in all aspects)
   Known limitations: None - CLI has full support for record lock/unlock operations
+- [ ] ~~scripts/spo-add-language-settings/README.md~~ (SKIPPED 2026-01-25: CLI limitation - `m365 spo web set` can only set properties, not call CSOM methods. PnP uses `AddSupportedUILanguage()` method which CLI cannot invoke. Would require `m365 request`.)

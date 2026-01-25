@@ -9,7 +9,7 @@
       "The script might help to bulk import test data into an environment for testing purposes"
     ],
     "creationDateTime": "2023-02-02",
-    "updateDateTime": "2023-02-02",
+    "updateDateTime": "2026-01-25",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.12.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -30,7 +34,13 @@
       "Disconnect-PnPOnline",
       "Get-PnPList",
       "Get-PnPField",
-      "Add-PnPListItem"
+      "Add-PnPListItem",
+      "m365 login",
+      "m365 spo list get",
+      "m365 spo field list",
+      "m365 spo field get",
+      "m365 spo listitem list",
+      "m365 spo listitem add"
     ],
     "thumbnails": [
       {
@@ -46,6 +56,11 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
         "name": "Reshmee Auckloo"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -53,6 +68,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://pnp.github.io/cli-microsoft365/"
       }
     ]
   }

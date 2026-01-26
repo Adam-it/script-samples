@@ -4,7 +4,7 @@
 
 ## Summary
 
-I came across an interesting request on discord, someone wanted to report on the number of files in their SharePoint Online environment.
+I came across an interesting request on discord, someone wanted to report on the number of files in their SharePoint Online environment using PnP PowerShell or CLI for Microsoft 365.
 
 Not their storage usage, but the number of files, and the number across all sites, libraries and down to the folder level.
 
@@ -48,8 +48,8 @@ This script will generate a report of the number of files in each site, library 
 | TotalPercentageOfDocLib | The percentage of the total number of items in the document library, that are stored under the current object |
 | TotalPercentageOfSite | The percentage of the total number of items in the site collection, that are stored under the current object |
 
-# [PnP PowerShell](#tab/pnpps)
 
+# [PnP PowerShell](#tab/pnpps)
 ```powershell
 
 $DOCUMENT_LIBRARY_BASETEMPLATE = 101
@@ -134,6 +134,8 @@ foreach ($Site in $Sites) {
     
 
 
+
+
             foreach ($Folder in $Folders) {  
                 Write-Host "`t`t> $($Folder.FieldValues.FileRef)"
                 
@@ -174,6 +176,253 @@ Invoke-Item -Path "Report.csv"
 ```
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory, HelpMessage="SharePoint Admin Center URL (e.g., https://contoso-admin.sharepoint.com)")]
+    [ValidatePattern('^https://.*\.sharepoint\.(com|us|mil|cn)$')]
+    [string]$AdminUrl,
+    
+    [Parameter(HelpMessage="Output path for CSV report (default: current directory)")]
+    [string]$OutputPath = (Get-Location).Path,
+    
+    [Parameter(HelpMessage="Filter sites by URL pattern (e.g., 'project')")]
+    [string]$SiteFilter
+)
+
+begin {
+    $script:ReportCollection = @()
+    $script:Summary = @{
+        SitesProcessed = 0
+        LibrariesProcessed = 0
+        TotalFiles = 0
+        TotalFolders = 0
+        Failures = 0
+    }
+    
+    $timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+    $transcriptPath = "$OutputPath/spo-file-count-$timestamp.log"
+    Start-Transcript -Path $transcriptPath
+    
+    Write-Host "Starting file count report generation..." -ForegroundColor Cyan
+    
+    m365 login --ensure
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate with CLI for Microsoft 365. Please run 'm365 login' first."
+    }
+    
+    if ($PSBoundParameters.ContainsKey('OutputPath')) {
+        if (-not (Test-Path $OutputPath)) {
+            throw "Output path does not exist: $OutputPath"
+        }
+    }
+}
+
+process {
+    Write-Verbose "Retrieving sites from $AdminUrl..."
+    
+    $sitesJson = if ($SiteFilter) {
+        Write-Verbose "Applying site filter: $SiteFilter"
+        m365 spo site list --filter "Url -like '$SiteFilter'" --output json
+    } else {
+        m365 spo site list --output json
+    }
+    
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to retrieve sites from tenant"
+    }
+    
+    $sites = @($sitesJson | ConvertFrom-Json)
+    Write-Host "Found $($sites.Count) site(s) to process" -ForegroundColor Green
+    
+    foreach ($site in $sites) {
+        try {
+            Write-Host "Processing site: $($site.Title)" -ForegroundColor Yellow
+            Write-Verbose "  Site URL: $($site.Url)"
+            $script:Summary.SitesProcessed++
+            
+            $libsJson = m365 spo list list --webUrl $site.Url --query "[?BaseTemplate == \`101\` && !(Hidden)]" --output json
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to retrieve lists for site: $($site.Url)"
+                $script:Summary.Failures++
+                continue
+            }
+            
+            $libraries = @($libsJson | ConvertFrom-Json)
+            Write-Verbose "  Found $($libraries.Count) document library(ies)"
+            
+            $totalSiteFiles = 0
+            $totalSiteFolders = 0
+            $totalSiteItems = 0
+            
+            foreach ($lib in $libraries) {
+                try {
+                    Write-Verbose "    Processing library: $($lib.Title)"
+                    $script:Summary.LibrariesProcessed++
+                    
+                    if ($lib.ItemCount -eq 0) {
+                        Write-Verbose "      Library is empty, skipping"
+                        continue
+                    }
+                    
+                    $itemsJson = m365 spo listitem list --webUrl $site.Url --listId $lib.Id --fields "FileRef,FSObjType,FileDirRef,ItemChildCount,FolderChildCount" --output json
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Warning "Failed to retrieve items for library: $($lib.Title)"
+                        $script:Summary.Failures++
+                        continue
+                    }
+                    
+                    $items = @($itemsJson | ConvertFrom-Json)
+                    $files = @($items | Where-Object { $_.FSObjType -eq 0 })
+                    $folders = @($items | Where-Object { $_.FSObjType -eq 1 })
+                    
+                    Write-Verbose "      Found $($files.Count) file(s) and $($folders.Count) folder(s)"
+                    
+                    $totalSiteFiles += $files.Count
+                    $totalSiteFolders += $folders.Count
+                    $totalSiteItems += $lib.ItemCount
+                    
+                    $script:Summary.TotalFiles += $files.Count
+                    $script:Summary.TotalFolders += $folders.Count
+                    
+                    $rootLevelFiles = @($files | Where-Object { $_.FileDirRef -eq $lib.RootFolder.ServerRelativeUrl })
+                    $rootLevelFolders = @($folders | Where-Object { $_.FileDirRef -eq $lib.RootFolder.ServerRelativeUrl })
+                    $rootLevelItemCount = $rootLevelFiles.Count + $rootLevelFolders.Count
+                    
+                    $directPercentageOfDocLib = if ($lib.ItemCount -gt 0) { "{0:F2}%" -f (($rootLevelItemCount / $lib.ItemCount) * 100) } else { "0.00%" }
+                    $directPercentageOfSite = if ($totalSiteItems -gt 0) { "{0:F2}%" -f (($rootLevelItemCount / $totalSiteItems) * 100) } else { "0.00%" }
+                    $totalPercentageOfSite = if ($totalSiteItems -gt 0) { "{0:F2}%" -f (($lib.ItemCount / $totalSiteItems) * 100) } else { "0.00%" }
+                    
+                    $script:ReportCollection += [PSCustomObject]@{
+                        Type = "Document Library"
+                        Id = $lib.Id
+                        Path = $lib.RootFolder.ServerRelativeUrl
+                        WebUrl = $site.Url
+                        SiteTitle = $site.Title
+                        DocumentLibraryTitle = $lib.Title
+                        DocumentLibraryUrl = $lib.RootFolder.ServerRelativeUrl
+                        DocumentLibraryId = $lib.Id
+                        DirectFolderCount = $rootLevelFolders.Count
+                        DirectFilesCount = $rootLevelFiles.Count
+                        DirectItemCount = $rootLevelItemCount
+                        DirectPercentageOfDocLib = $directPercentageOfDocLib
+                        DirectPercentageOfSite = $directPercentageOfSite
+                        TotalFolderCount = $folders.Count
+                        TotalFilesCount = $files.Count
+                        TotalItemCount = $lib.ItemCount
+                        TotalPercentageOfDocLib = "100.00%"
+                        TotalPercentageOfSite = $totalPercentageOfSite
+                    }
+                    
+                    foreach ($folder in $folders) {
+                        $totalSubFolders = @($folders | Where-Object { $_.FileRef -like "$($folder.FileRef)/*" })
+                        $totalSubFiles = @($files | Where-Object { $_.FileRef -like "$($folder.FileRef)/*" })
+                        $totalFolderItemCount = $totalSubFolders.Count + $totalSubFiles.Count
+                        
+                        $directFolderItemCount = ([int]$folder.ItemChildCount + [int]$folder.FolderChildCount)
+                        
+                        $directPercentageOfDocLib = if ($lib.ItemCount -gt 0) { "{0:F2}%" -f (($directFolderItemCount / $lib.ItemCount) * 100) } else { "0.00%" }
+                        $directPercentageOfSite = if ($totalSiteItems -gt 0) { "{0:F2}%" -f (($directFolderItemCount / $totalSiteItems) * 100) } else { "0.00%" }
+                        $totalPercentageOfDocLib = if ($lib.ItemCount -gt 0) { "{0:F2}%" -f (($totalFolderItemCount / $lib.ItemCount) * 100) } else { "0.00%" }
+                        $totalPercentageOfSite = if ($totalSiteItems -gt 0) { "{0:F2}%" -f (($totalFolderItemCount / $totalSiteItems) * 100) } else { "0.00%" }
+                        
+                        $script:ReportCollection += [PSCustomObject]@{
+                            Type = "Folder"
+                            Id = $folder.Id
+                            Path = $folder.FileRef
+                            WebUrl = $site.Url
+                            SiteTitle = $site.Title
+                            DocumentLibraryTitle = $lib.Title
+                            DocumentLibraryUrl = $lib.RootFolder.ServerRelativeUrl
+                            DocumentLibraryId = $lib.Id
+                            DirectFilesCount = $folder.ItemChildCount
+                            DirectFolderCount = $folder.FolderChildCount
+                            DirectItemCount = $directFolderItemCount
+                            DirectPercentageOfDocLib = $directPercentageOfDocLib
+                            DirectPercentageOfSite = $directPercentageOfSite
+                            TotalFolderCount = $totalSubFolders.Count
+                            TotalFilesCount = $totalSubFiles.Count
+                            TotalItemCount = $totalFolderItemCount
+                            TotalPercentageOfDocLib = $totalPercentageOfDocLib
+                            TotalPercentageOfSite = $totalPercentageOfSite
+                        }
+                    }
+                }
+                catch {
+                    Write-Warning "Failed to process library $($lib.Title): $_"
+                    $script:Summary.Failures++
+                    continue
+                }
+            }
+            
+            $siteDirectPercentage = if ($totalSiteItems -gt 0) { "{0:F2}%" -f (($libraries.Count / $totalSiteItems) * 100) } else { "0.00%" }
+            
+            $script:ReportCollection += [PSCustomObject]@{
+                Type = "Site"
+                Id = ""
+                Path = $site.Url
+                WebUrl = $site.Url
+                SiteTitle = $site.Title
+                DocumentLibraryTitle = ""
+                DocumentLibraryUrl = ""
+                DocumentLibraryId = ""
+                DirectFolderCount = 0
+                DirectFilesCount = 0
+                DirectItemCount = $libraries.Count
+                DirectPercentageOfDocLib = "0.00%"
+                DirectPercentageOfSite = "100.00%"
+                TotalFolderCount = $totalSiteFolders
+                TotalFilesCount = $totalSiteFiles
+                TotalItemCount = $totalSiteItems
+                TotalPercentageOfDocLib = "0.00%"
+                TotalPercentageOfSite = "100.00%"
+            }
+        }
+        catch {
+            Write-Warning "Failed to process site $($site.Url): $_"
+            $script:Summary.Failures++
+            continue
+        }
+    }
+}
+
+end {
+    $csvPath = "$OutputPath/spo-file-count-$timestamp.csv"
+    $script:ReportCollection | Export-Csv -Path $csvPath -NoTypeInformation
+    
+    Write-Host "`nFile Count Report Summary:" -ForegroundColor Cyan
+    Write-Host "  Sites Processed: $($script:Summary.SitesProcessed)" -ForegroundColor Green
+    Write-Host "  Libraries Processed: $($script:Summary.LibrariesProcessed)" -ForegroundColor Green
+    Write-Host "  Total Files: $($script:Summary.TotalFiles)" -ForegroundColor Green
+    Write-Host "  Total Folders: $($script:Summary.TotalFolders)" -ForegroundColor Green
+    
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host "  Failures: $($script:Summary.Failures)" -ForegroundColor Red
+    }
+    
+    Write-Host "`n  Report saved to: $csvPath" -ForegroundColor Cyan
+    Write-Host "  Transcript saved to: $transcriptPath" -ForegroundColor Cyan
+    
+    Stop-Transcript
+}
+
+# Example 1: Generate report for all sites
+# .\Generate-FileCountReport.ps1 -AdminUrl "https://contoso-admin.sharepoint.com"
+
+# Example 2: Filter sites by URL pattern
+# .\Generate-FileCountReport.ps1 -AdminUrl "https://contoso-admin.sharepoint.com" -SiteFilter "project"
+
+# Example 3: Custom output path with verbose output
+# .\Generate-FileCountReport.ps1 -AdminUrl "https://contoso-admin.sharepoint.com" -OutputPath "C:\\Reports" -Verbose
+
+# Example 4: Generate report for communication sites only
+# .\Generate-FileCountReport.ps1 -AdminUrl "https://contoso-admin.sharepoint.com" -SiteFilter "sites" -Verbose
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
 ***
 
 ## Contributors
@@ -181,6 +430,7 @@ Invoke-Item -Path "Report.csv"
 | Author(s)                       |
 | ------------------------------- |
 | [Dan Toft](https://dan-toft.dk) |
+| [Adam Wójcik](https://github.com/Adam-it) |
 
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

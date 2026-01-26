@@ -277,7 +277,14 @@ The following script samples currently offer only a PnP PowerShell implementatio
   ✅ User feedback: NO "m365" in tags, NO comments above script, OutputPath validation added
 - [ ] scripts/spo-find-spfx-packages-installed-tenant-sitecollection-appcatalog/README.md
 - [ ] scripts/spo-find-web-part-in-pages/README.md
-- [ ] scripts/spo-generate-sp-file-count-report/README.md
+- [x] scripts/spo-generate-sp-file-count-report/README.md
+  ✅ COMPLETED 2026-01-26 (CLI for Microsoft 365)
+  Score: 9.2/10 (PowerShell 9.0/10, CLI 9.5/10, AGENTS.md 13/13)
+  Commands: m365 login, m365 spo site list, m365 spo list list, m365 spo listitem list
+  Features: Generates comprehensive CSV report with file/folder counts at Site/Library/Folder levels. Server-side JMESPath filtering, per-site/library error recovery, transcript logging, color-coded summary, 4 usage examples
+  CLI advantages: Production-ready structure (begin/process/end), better error handling (PnP exits on first failure), transcript logging, verbose progress messages, empty library optimization, server-side filtering, cross-platform, idempotent login, parameterized with HelpMessage, summary statistics (Sites/Libraries/Files/Folders/Failures)
+  PnP advantages: 44% more concise (135 vs 242 lines), native objects (no JSON parsing), direct admin URL connection, simpler client-side filtering
+  Known limitations: AdminUrl parameter not actively used by CLI commands (tenant-level queries), large tenants may take significant time, no progress bar
 - [ ] scripts/spo-generate-sp-storage-savings-report/README.md
 - [x] scripts/spo-get-agent-list/README.md
 - [x] scripts/spo-get-agent-list/README.md

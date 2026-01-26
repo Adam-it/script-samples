@@ -118,14 +118,18 @@ The following script samples currently offer only a PnP PowerShell implementatio
   FIXED 2026-01-25: Applied 5 critical improvements - (1) uses --listId instead of --listTitle per AGENTS.md (eliminates confirmation prompts), (2) server-side JMESPath filtering with --query (reduces data transfer), (3) three-level lookup caching (200x API reduction), (4) managed metadata support (TaxonomyFieldType/Multi), (5) DateTime time component support (dd/MM/yyyy HH:mm:ss)
 - [ ] scripts/spo-bulk-publish-syntex-model/README.md
 - [x] scripts/spo-bulk-remove-retention-labels/README.md
-- [ ] scripts/spo-change-list-url/README.md
+- [x] scripts/spo-change-list-url/README.md
+  ⏭️ SKIPPED 2026-01-25
+  Reason: Uncertain if `m365 spo folder move` supports moving list root folders (uses CreateCopyJobs API but not explicitly documented). Would need live testing to confirm. PnP uses `$list.RootFolder.MoveTo()` which may have different behavior than generic folder move.
 - [x] scripts/spo-change-retention-labels/README.md
   **✅ COMPLETED 2025-12-21:** Full CLI implementation with dynamic hashtable-based label mapping, CSV site list, server-side OData filtering (`--filter "ComplianceTag ne null"`), WhatIf support, transcript logging, CSV export, two-level progress bars, comprehensive error handling. Score: 6.5/10. **Production Gaps**: Missing label validation in begin block (could fail after hours of processing if target label doesn't exist), no throttling protection (could hit API limits on large tenants with 10K+ items). CLI version superior to PnP due to dynamic mapping vs hardcoded if/elseif. Used `--listId` (unique) per AGENTS.md guidance.
 - [ ] scripts/spo-clean-comments/README.md
 - [x] scripts/spo-clean-comments/README.md
   **⚠️ SKIPPED - NOT FEASIBLE:** CLI for Microsoft 365 lacks comment management commands. No equivalent to `Get-PnPListItemComment` or `Remove-PnPListItemComment`. Core functionality (list/delete comments, filter by user) requires SharePoint REST API calls via `m365 request`, which violates AGENTS.md guidance. PnP PowerShell is the appropriate tool for this scenario.
 - [x] scripts/spo-compare-files/README.md
-- [ ] scripts/spo-configure-documentid-feature/README.md
+- [x] scripts/spo-configure-documentid-feature/README.md
+  ⏭️ SKIPPED 2026-01-25
+  Reason: CLI limitation - no equivalent to `Set-PnPSiteDocumentIdPrefix`. PnP script sets custom Document ID prefix (4-12 chars) and schedules assignment using `Set-PnPSiteDocumentIdPrefix -ScheduleAssignment -OverwriteExistingIds`. CLI has `spo feature enable` (enables feature) and `spo list view field add` (adds _dlc_DocIdUrl to views) but NO command to set prefix/schedule assignment. Would require `m365 request` to call CSOM/REST endpoint directly.
 - [x] scripts/spo-configure-documentid-feature/README.md
   **⚠️ SKIPPED - PARTIAL FUNCTIONALITY:** CLI for Microsoft 365 lacks Document ID prefix configuration. No equivalent to PnP's `Set-PnPSiteDocumentIdPrefix` command for setting custom prefix, scheduling ID assignment, or overwriting existing IDs. While CLI can enable the feature and add columns to views, the core configuration (prefix) requires SharePoint UI or REST API via `m365 request`, which violates AGENTS.md guidance. Partial implementation provides insufficient value.
 - [x] scripts/spo-copy-directory-structure-to-sharepoint-list/README.md
@@ -153,7 +157,16 @@ The following script samples currently offer only a PnP PowerShell implementatio
 - [ ] scripts/spo-deploy-install-update-spfx-hubsite-associatedsites/README.md
 - [ ] scripts/spo-deploy-install-update-spfx-hubsiteassociatedsites-tenantappcatalog/README.md
 - [ ] scripts/spo-deploy-pnpmodernsearch-webpart/README.md
-- [ ] scripts/spo-deploy-sppkgs-and-install-apps/README.md
+- [x] scripts/spo-deploy-sppkgs-and-install-apps/README.md
+  ✅ COMPLETED 2026-01-26 (CLI for Microsoft 365)
+  Score: 9.2/10 (PowerShell 9.5/10, CLI 9.0/10, AGENTS.md 13/13)
+  Commands: m365 login --ensure, m365 spo app add, m365 spo app deploy, m365 spo app get, m365 spo app install
+  Features: Deploy SPFx packages from local folder to site collection app catalog. Upload, deploy, and install/upgrade apps with automatic version detection. WhatIf support, per-file error handling, transcript logging, color-coded UX, 4 usage examples at END.
+  CLI advantages: Secure authentication (no plaintext passwords), WhatIf safety, per-file error recovery (PnP exits on first failure), automatic upgrade detection and execution, transcript logging, comprehensive summary (Deployed/Installed/Upgraded/Skipped/Failures), parameterized folder path, cross-platform, verbose progress messages
+  PnP advantages: More concise (48 vs ~120 lines), simpler for ad-hoc tasks
+  Known limitations: No validation that SiteUrl contains app catalog (PnP doesn't validate either)
+  FIXED 2026-01-26: Updated CLI version to 11.4.0, added WhatIf support, proper error handling, transcript logging, per-file error recovery
+  REFACTORED 2026-01-26: Removed SkipFeatureDeployment parameter (too risky for tenant-wide deployment), added upgrade logic (checks InstalledVersion vs AppCatalogVersion and runs m365 spo app upgrade if different), updated summary to include Upgraded count
 - [ ] ~~scripts/spo-detect-theme/README.md~~ (SKIPPED 2026-01-22: CLI limitation - m365 spo web get does not expose PrimaryColor field. PnP uses Get-PnPWeb -Includes PrimaryColor. No CLI alternative.)
 - [ ] scripts/spo-dev-agent-config-creation/README.md
 - [ ] scripts/spo-dev-tenant-report-export/README.md
@@ -600,3 +613,4 @@ CSV format: First line = internal column names, supports complex types (ContentT
   PnP advantages: None identified (CLI is superior in all aspects)
   Known limitations: None - CLI has full support for record lock/unlock operations
 - [ ] ~~scripts/spo-add-language-settings/README.md~~ (SKIPPED 2026-01-25: CLI limitation - `m365 spo web set` can only set properties, not call CSOM methods. PnP uses `AddSupportedUILanguage()` method which CLI cannot invoke. Would require `m365 request`.)
+- [ ] ~~scripts/spo-delete-site-with-retention-policy/README.md~~ (SKIPPED 2026-01-26: CLI limitation - no equivalent to Set-RetentionCompliancePolicy cmdlet from Exchange Online PowerShell. Script requires adding/removing SharePoint location exceptions from retention compliance policies, which CLI cannot manage. CLI has `m365 spo site remove` for site deletion and `m365 purview retentionlabel *` for retention labels, but NO commands for retention compliance policy location management. Would require Exchange Online PowerShell integration.)

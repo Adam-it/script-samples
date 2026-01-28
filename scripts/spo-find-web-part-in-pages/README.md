@@ -4,7 +4,7 @@
 
 ## Summary
 
-This script will find all instances of the specified Web Part on a page or (if chosen) in templates too. The scripe example produces a report of all of the occurances of the Twitter Web Part in a site. You can specify any web part ID to find, but there is a deprecation happening soon and this maybe useful to find any occurances of the web part.
+This script will find all instances of the specified Web Part on a page or (if chosen) in templates too using PnP PowerShell or CLI for Microsoft 365. The scripe example produces a report of all of the occurances of the Twitter Web Part in a site. You can specify any web part ID to find, but there is a deprecation happening soon and this maybe useful to find any occurances of the web part.
 
 
 If you would like to delete the web parts, there is an existing script to do that here: [Delete Web Parts from Pages](https://pnp.github.io/script-samples/spo-remove-webpart-from-pages/README.html)
@@ -129,6 +129,156 @@ process{
 
 ```
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
+
+***
+
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory, HelpMessage = "Source URL e.g. https://contoso.sharepoint.com/sites/SiteA")]
+    [string]$SiteUrl,
+
+    [Parameter(Mandatory, HelpMessage = "Web Part ID (GUID) to search for, e.g., f6fdf4f8-4a24-437b-a127-32e66a5dd9b4 for Twitter")]
+    [string]$WebPartId,
+
+    [Parameter(HelpMessage = "Output folder path for CSV report")]
+    [string]$OutputPath = (Get-Location).Path,
+
+    [switch]$IncludeTemplates
+)
+
+begin {
+    $script:ReportCollection = @()
+    $script:Summary = @{
+        PagesScanned = 0
+        WebPartsFound = 0
+        Failures = 0
+    }
+
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $reportPath = Join-Path $OutputPath "WebPartReport-$timestamp.csv"
+    Start-Transcript -Path (Join-Path $OutputPath "FindWebPart-$timestamp.log")
+
+    Write-Verbose "Authenticating with Microsoft 365..."
+    m365 login --ensure
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate with Microsoft 365"
+    }
+
+    Write-Host "Retrieving pages from $SiteUrl..." -ForegroundColor Cyan
+    
+    try {
+        $pagesJson = m365 spo page list --webUrl $SiteUrl --output json
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve pages from site"
+        }
+        $pages = @($pagesJson | ConvertFrom-Json)
+        Write-Host "Found $($pages.Count) page(s)" -ForegroundColor Green
+    }
+    catch {
+        throw "Error retrieving pages: $_"
+    }
+
+    if ($IncludeTemplates) {
+        Write-Verbose "Retrieving page templates..."
+        try {
+            $templatesJson = m365 spo page template list --webUrl $SiteUrl --output json
+            if ($LASTEXITCODE -eq 0) {
+                $templates = @($templatesJson | ConvertFrom-Json)
+                $pages += $templates
+                Write-Host "Found $($templates.Count) template(s)" -ForegroundColor Green
+            }
+        }
+        catch {
+            Write-Warning "Failed to retrieve templates: $_"
+        }
+    }
+
+    $script:AllPages = $pages
+}
+
+process {
+    foreach ($page in $script:AllPages) {
+        $pageName = $page.Name
+        Write-Verbose "Processing page: $pageName"
+        
+        try {
+            $controlsJson = m365 spo page control list --webUrl $SiteUrl --pageName $pageName --output json
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to retrieve controls from $pageName"
+                $script:Summary.Failures++
+                continue
+            }
+
+            $controls = @($controlsJson | ConvertFrom-Json)
+            
+            $matchingControls = $controls | Where-Object { $_.controlData.webPartId -eq $WebPartId }
+            
+            if ($matchingControls.Count -gt 0) {
+                Write-Host "  Found $($matchingControls.Count) matching web part(s) in $pageName" -ForegroundColor Yellow
+                
+                foreach ($control in $matchingControls) {
+                    $propertiesJson = if ($control.controlData.webPartData.properties) {
+                        ($control.controlData.webPartData.properties | ConvertTo-Json -Depth 10 -Compress)
+                    } else {
+                        ""
+                    }
+
+                    $reportItem = [PSCustomObject]@{
+                        PageTitle = $page.Title
+                        PageUrl = $page.AbsoluteUrl
+                        WebPartTitle = $control.title
+                        WebPartId = $WebPartId
+                        WebPartProperties = $propertiesJson
+                    }
+
+                    $script:ReportCollection += $reportItem
+                    $script:Summary.WebPartsFound++
+                }
+            }
+
+            $script:Summary.PagesScanned++
+        }
+        catch {
+            Write-Warning "Error processing $pageName: $_"
+            $script:Summary.Failures++
+            continue
+        }
+    }
+}
+
+end {
+    Write-Host "`nExporting report to $reportPath..." -ForegroundColor Cyan
+    $script:ReportCollection | Export-Csv -Path $reportPath -NoTypeInformation
+
+    Write-Host "`nSummary:" -ForegroundColor Cyan
+    Write-Host "  Pages scanned: $($script:Summary.PagesScanned)" -ForegroundColor Green
+    Write-Host "  Web parts found: $($script:Summary.WebPartsFound)" -ForegroundColor Green
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host "  Failures: $($script:Summary.Failures)" -ForegroundColor Red
+    }
+    Write-Host "`nReport saved to: $reportPath" -ForegroundColor Green
+    
+    Stop-Transcript
+}
+
+# Example 1: Find Twitter web part in all pages
+# .\Find-WebPartInPages.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" -WebPartId "f6fdf4f8-4a24-437b-a127-32e66a5dd9b4"
+
+# Example 2: Find web part including templates with verbose output
+# .\Find-WebPartInPages.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" -WebPartId "f6fdf4f8-4a24-437b-a127-32e66a5dd9b4" -IncludeTemplates -Verbose
+
+# Example 3: Find Bing Maps web part with custom output path
+# .\Find-WebPartInPages.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/hr" -WebPartId "e377ea37-9047-43b9-8cdb-a761be2f8e09" -OutputPath "C:\Reports"
+
+# Example 4: Find any custom SPFx web part by its ID
+# .\Find-WebPartInPages.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/intranet" -WebPartId "a5df8fdf-b508-4b91-aed9-46d46f798c68"
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
 ***
 
 ## Contributors
@@ -136,6 +286,7 @@ process{
 | Author(s) |
 |-----------|
 | Paul Bullock |
+| Adam Wójcik |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-find-web-part-in-pages" aria-hidden="true" />

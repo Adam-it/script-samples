@@ -9,7 +9,7 @@
       "Starting April 2, 2026, Remote Event Receivers (RERs) in SharePoint Online will be deprecated in favor of more modern approaches like Power Automate and webhooks. This script helps administrators identify and manage existing RERs before the deprecation date."
     ],
     "creationDateTime": "2025-10-17",
-    "updateDateTime": "2025-10-17",
+    "updateDateTime": "2026-02-02",
     "products": [
       "SharePoint"
     ],
@@ -17,12 +17,20 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.11.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.4.0"
       }
     ],
     "categories": [
       "Modernize"
     ],
     "tags": [
+      "m365 login",
+      "m365 spo site list",
+      "m365 spo list list",
+      "m365 spo eventreceiver list",
       "Get-PnPEventReceiver",
       "Get-PnPList",
       "Get-PnPTenantSite",
@@ -42,6 +50,11 @@
         "company": "",
         "pictureUrl": "https://github.com/tanddant.png",
         "name": "Dan Toft"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -49,6 +62,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

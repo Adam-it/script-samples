@@ -6,7 +6,7 @@
     "url": "https://pnp.github.io/script-samples/spo-allow-custom-scripts/README.html",
     "longDescription": [],
     "creationDateTime": "2023-05-26",
-    "updateDateTime": "2023-05-26",
+    "updateDateTime": "2026-02-02",
     "products": [
         "SharePoint"
     ],
@@ -21,7 +21,7 @@
         },
         {
             "key":"CLI-FOR-MICROSOFT365",
-            "value":"6.7.0"
+            "value":"11.4.0"
         }
     ],
     "categories": [
@@ -36,10 +36,8 @@
         "Connect-SPOService",
         "Set-SPOSite",
         "Disconnect-SPOService",
-        "m365 status",
         "m365 login",
-        "m365 spo site set",
-        "m365 logout"
+        "m365 spo site set"
     ],
     "thumbnails": [{
         "type": "image",
@@ -52,6 +50,12 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/25476310?v=4",
         "name": "Ganesh Sanap"
+    },
+    {
+        "gitHubAccount": "Adam-it",
+        "company": "",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
     }],
     "references": [{
       "name": "Introduction to the SharePoint Online Management Shell",

@@ -54,22 +54,67 @@ Disconnect-PnPOnline
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 
 ```powershell
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory, HelpMessage = "The URL of the SharePoint site collection to configure")]
+    [ValidatePattern('^https://.*\.sharepoint\.(com|us|mil|cn)/(sites|teams)/.+$')]
+    [string]$SiteUrl
+)
 
-# SharePoint online site URL
-$siteUrl = Read-Host -Prompt "Enter your SharePoint site URL (e.g https://contoso.sharepoint.com/sites/SPConnect)"
-
-# Get Credentials to connect
-$m365Status = m365 status
-if ($m365Status -match "Logged Out") {
-   m365 login
+begin {
+    Write-Host "Configuring custom script settings for SharePoint site..." -ForegroundColor Cyan
+    
+    # Ensure user is authenticated with CLI for Microsoft 365
+    m365 login --ensure
+    
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate with CLI for Microsoft 365. Please run 'm365 login' manually."
+    }
+    
+    Write-Verbose "Successfully authenticated with CLI for Microsoft 365"
 }
 
-# Allow custom scripts on SharePoint online site collection
-m365 spo site set --url $siteUrl --noScriptSite $false
+process {
+    if ($PSCmdlet.ShouldProcess($SiteUrl, "Enable custom scripts (set NoScriptSite to false)")) {
+        try {
+            Write-Verbose "Enabling custom scripts on site: $SiteUrl"
+            
+            # Enable custom scripts on the SharePoint site
+            $output = m365 spo site set --url $SiteUrl --noScriptSite false --output json 2>&1
+            
+            if ($LASTEXITCODE -ne 0) {
+                throw "Failed to update site settings. CLI output: $output"
+            }
+            
+            Write-Host "  ✓ Successfully enabled custom scripts on site" -ForegroundColor Green
+            Write-Verbose "Site URL: $SiteUrl"
+        }
+        catch {
+            Write-Error "Failed to enable custom scripts on '$SiteUrl': $_"
+            throw
+        }
+    }
+    else {
+        Write-Host "WhatIf: Would enable custom scripts on $SiteUrl" -ForegroundColor Yellow
+    }
+}
 
-# Disconnect CLI for Microsoft connection
-m365 logout
+end {
+    Write-Host "`nOperation completed successfully" -ForegroundColor Cyan
+    Write-Host "Note: It may take up to 15 minutes for the changes to take effect." -ForegroundColor Gray
+}
 
+# Example 1: Basic usage with mandatory parameter
+# .\Enable-CustomScripts.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/SPConnect"
+
+# Example 2: Test changes with WhatIf before applying
+# .\Enable-CustomScripts.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/SPConnect" -WhatIf
+
+# Example 3: Run with verbose output for detailed logging
+# .\Enable-CustomScripts.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/SPConnect" -Verbose
+
+# Example 4: Disable custom scripts (opposite operation)
+# To disable custom scripts, you can modify the script and change --noScriptSite parameter to true
 ```
 
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
@@ -81,6 +126,7 @@ m365 logout
 | Author(s) |
 |-----------|
 | [Ganesh Sanap](https://ganeshsanapblogs.wordpress.com/about) |
+| [Adam Wójcik](https://github.com/Adam-it) |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-allow-custom-scripts" aria-hidden="true" />

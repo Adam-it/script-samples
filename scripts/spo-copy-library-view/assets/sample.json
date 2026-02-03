@@ -9,7 +9,7 @@
       "The script copies a library flat view to library(ies) in destination site with fields, query and item limit settings"
     ],
     "creationDateTime": "2021-10-08",
-    "updateDateTime": "2022-06-22",
+    "updateDateTime": "2026-02-03",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "5.4.0"
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -35,9 +35,7 @@
       "Get-PnPList",
       "Get-PnPView",
       "Set-PnPView",
-      "m365 login",
-      "m365 logout",
-      "m365 status",
+      "m365 login --ensure",
       "m365 spo list list",
       "m365 spo list view add",
       "m365 spo list view get",
@@ -57,6 +55,11 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4",
         "name": "Reshmee Auckloo"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

@@ -12,83 +12,231 @@ Please refactor according to requirements as in the sample given only fields, vi
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 
 ```powershell
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory = $true, HelpMessage = "Source site URL where the view exists")]
+    [ValidatePattern('^https://.*\.sharepoint\.(com|us|mil|cn)$')]
+    [string]$SourceSiteUrl,
 
-$SourceSite = Read-Host "Enter the source site url from which to copy the view from" #e.g.https://contose.sharepoint.com/sites/test
-$SourceList = Read-Host "Enter the source Library from which to copy the view from" #Documents
-$SourceViewName = Read-Host "Enter the view name to be copied from" #Checked Out FlatView
+    [Parameter(Mandatory = $true, HelpMessage = "Source library title from which to copy the view")]
+    [string]$SourceListTitle,
 
-$destSiteUrl = Read-Host "Enter the destination site url to which to copy the view to" #e.g.https://contose.sharepoint.com/sites/testClone2
+    [Parameter(Mandatory = $true, HelpMessage = "Name of the view to copy")]
+    [string]$SourceViewName,
 
-$dateTime = (Get-Date).toString("dd-MM-yyyy")
-$invocation = (Get-Variable MyInvocation).Value
-$directorypath = Split-Path $invocation.MyCommand.Path
-$fileName = "CheckedOutViewCreationReport-" + $dateTime + ".csv"
-$OutPutView = $directorypath + $fileName
+    [Parameter(Mandatory = $true, HelpMessage = "Destination site URL where views will be created")]
+    [ValidatePattern('^https://.*\.sharepoint\.(com|us|mil|cn)$')]
+    [string]$DestinationSiteUrl,
 
-#Arry to Skip System Lists and Libraries
-$SystemLists = @("Converted Forms", "Master Page Gallery", "Customized Reports", "Form Templates", "List Template Gallery", "Theme Gallery",
-                            "Reporting Templates", "Solution Gallery", "Style Library", "Web Part Gallery","Site Assets", "wfpub", "Site Pages", "Images", "MicroFeed","Pages")
+    [Parameter(Mandatory = $false, HelpMessage = "Output path for CSV report and transcript")]
+    [string]$OutputPath = (Get-Location).Path,
 
-#remove any spaces from view 
-$SourceInternalName = $SourceViewName -replace '\s',''
+    [Parameter(Mandatory = $false, HelpMessage = "View scope: Default (0), Recursive (1), RecursiveAll (2), FilesOnly (3)")]
+    [ValidateSet(0, 1, 2, 3)]
+    [int]$ViewScope = 1
+)
 
-$m365Status = m365 status
+begin {
+    $dateTime = (Get-Date).ToString("yyyy-MM-dd_HHmmss")
+    $transcriptPath = Join-Path $OutputPath "CopyLibraryView_Transcript_$dateTime.log"
+    $csvPath = Join-Path $OutputPath "CopyLibraryView_Report_$dateTime.csv"
 
-if ($m365Status -eq "Logged Out") {
-    # Connection to Microsoft 365
-    m365 login
-}
+    Start-Transcript -Path $transcriptPath
+    Write-Host "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Starting library view copy operation" -ForegroundColor Cyan
 
-
-$CheckedOutView = m365 spo list view get --webUrl $SourceSite --listTitle $SourceList --viewTitle $SourceViewName |ConvertFrom-Json
-[xml] $listViewXML = $CheckedOutView.ListViewXml
-
-#Array to Hold Result - PSObjects
-
-$ViewCollection = @()
-
-$fieldsArr = @();
-
-$listViewXML.View.ViewFields.FieldRef |  ForEach-Object {
- $fieldsArr +=$_.Name;
-}
-
-$viewScope=1 #enum recursive = 1 , RecursiveAll = 2, FilesOnly = 3
-
-#retrieving only document libraries from destination libraries
- $lists= m365 spo list list --webUrl $destSiteUrl | ConvertFrom-Json  
-  foreach ($list in ($lists | Where-Object {$_.BaseTemplate -eq 101 -and $_.Hidden -eq $false -and $SystemLists -notcontains $_.Title})) {
-   $viewInL =  m365 spo list view get --webUrl $destSiteUrl --listTitle $list.Title --viewTitle $SourceViewName
-   #create view only if not present
-   if(!$viewInl)
-   {
-
-     $ExportVw = New-Object PSObject
-     $ExportVw | Add-Member -MemberType NoteProperty -name "Site URL" -value $destSiteUrl
-     $ExportVw | Add-Member -MemberType NoteProperty -name "Library Name" -value $list.Title
-     $ExportVw | Add-Member -MemberType NoteProperty -name "View Name" -value $SourceViewName
-
-    #create view
-     m365 spo list view add --webUrl $destSiteUrl --listTitle $list.Title --title $SourceInternalName  --fields ($fieldsArr -join ",") --rowLimit $CheckedOutView.RowLimit
-     $viewInL = m365 spo list view get --webUrl $destSiteUrl --listTitle $list.Title --viewTitle $SourceInternalName  
-    
-
-     if($viewInL)
-     {
-       # Update the list view name to the display name and change the scope to recursive so that all files are displayed without any folders.
-      m365 spo list view set --webUrl $destSiteUrl --listTitle $list.Title  --viewTitle $SourceInternalName --Title $SourceViewName --ViewQuery $CheckedOutView.ViewQuery.Replace('"','\"') --Scope $viewScope
-      
-      #m365 spo list view set --webUrl https://reshmeeauckloo.sharepoint.com/sites/TestClone2 --listTitle "Documents" --viewTitle "FlatView" --Title "FlatView1"
-      #Set-PnPView -List $list.Title -Identity $SourceInternalName -Values @{Scope=$viewScope;Title=$SourceViewName}   
-     }
-      $ViewCollection += $ExportVw
+    if ($PSBoundParameters.ContainsKey('OutputPath')) {
+        if (-not (Test-Path -Path $OutputPath)) {
+            Stop-Transcript
+            throw "Output path '$OutputPath' does not exist. Please provide a valid path."
+        }
     }
-   }
 
-#Export the result Array to CSV file
-$ViewCollection | Export-CSV $OutPutView -Force -NoTypeInformation
+    Write-Verbose "Ensuring Microsoft 365 login..."
+    m365 login --ensure
 
-m365 logout
+    if ($LASTEXITCODE -ne 0) {
+        Stop-Transcript
+        throw "Failed to authenticate with Microsoft 365. Exit code: $LASTEXITCODE"
+    }
+
+    Write-Host "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Successfully authenticated" -ForegroundColor Green
+
+    $script:ReportCollection = @()
+    $script:Summary = @{
+        TotalLibraries = 0
+        ViewsCreated   = 0
+        Skipped        = 0
+        Failures       = 0
+    }
+
+    $SystemLists = @(
+        "Converted Forms", "Master Page Gallery", "Customized Reports", 
+        "Form Templates", "List Template Gallery", "Theme Gallery",
+        "Reporting Templates", "Solution Gallery", "Style Library", 
+        "Web Part Gallery", "Site Assets", "wfpub", "Site Pages", 
+        "Images", "MicroFeed", "Pages"
+    )
+}
+
+process {
+    try {
+        Write-Host "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Retrieving source view from '$SourceListTitle' at $SourceSiteUrl" -ForegroundColor Cyan
+        Write-Verbose "Executing: m365 spo list view get --webUrl $SourceSiteUrl --listTitle $SourceListTitle --viewTitle $SourceViewName --output json"
+
+        $sourceViewJson = m365 spo list view get --webUrl $SourceSiteUrl --listTitle $SourceListTitle --viewTitle $SourceViewName --output json
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve source view '$SourceViewName' from list '$SourceListTitle'. Exit code: $LASTEXITCODE"
+        }
+
+        $sourceView = $sourceViewJson | ConvertFrom-Json
+        [xml]$listViewXML = $sourceView.ListViewXml
+
+        $fieldsArr = @()
+        $listViewXML.View.ViewFields.FieldRef | ForEach-Object {
+            $fieldsArr += $_.Name
+        }
+
+        $sourceInternalName = $SourceViewName -replace '\s', ''
+
+        Write-Host "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Source view retrieved successfully. Fields: $($fieldsArr.Count), RowLimit: $($sourceView.RowLimit)" -ForegroundColor Green
+        Write-Verbose "View fields: $($fieldsArr -join ', ')"
+
+        Write-Host "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Retrieving document libraries from $DestinationSiteUrl" -ForegroundColor Cyan
+        Write-Verbose "Executing: m365 spo list list --webUrl $DestinationSiteUrl --output json"
+
+        $listsJson = m365 spo list list --webUrl $DestinationSiteUrl --output json
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve lists from destination site. Exit code: $LASTEXITCODE"
+        }
+
+        $allLists = $listsJson | ConvertFrom-Json
+        $documentLibraries = $allLists | Where-Object {
+            $_.BaseTemplate -eq 101 -and 
+            $_.Hidden -eq $false -and 
+            $SystemLists -notcontains $_.Title
+        }
+
+        $script:Summary.TotalLibraries = $documentLibraries.Count
+        Write-Host "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Found $($script:Summary.TotalLibraries) document libraries to process" -ForegroundColor Cyan
+
+        foreach ($list in $documentLibraries) {
+            try {
+                Write-Verbose "Processing library: $($list.Title)"
+
+                $existingViewJson = m365 spo list view get --webUrl $DestinationSiteUrl --listTitle $list.Title --viewTitle $SourceViewName --output json 2>$null
+
+                if ($LASTEXITCODE -eq 0 -and $existingViewJson) {
+                    Write-Verbose "View '$SourceViewName' already exists in library '$($list.Title)'. Skipping."
+                    $script:Summary.Skipped++
+
+                    $script:ReportCollection += [PSCustomObject]@{
+                        Timestamp       = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                        SiteUrl         = $DestinationSiteUrl
+                        LibraryName     = $list.Title
+                        ViewName        = $SourceViewName
+                        Status          = "Skipped - Already Exists"
+                        ErrorMessage    = ""
+                    }
+                    continue
+                }
+
+                if ($PSCmdlet.ShouldProcess($list.Title, "Create view '$SourceViewName'")) {
+                    Write-Verbose "Creating view '$sourceInternalName' in library '$($list.Title)'"
+
+                    m365 spo list view add --webUrl $DestinationSiteUrl --listTitle $list.Title --title $sourceInternalName --fields ($fieldsArr -join ",") --rowLimit $sourceView.RowLimit --output json 2>&1 | Out-Null
+
+                    if ($LASTEXITCODE -ne 0) {
+                        throw "Failed to create view. Exit code: $LASTEXITCODE"
+                    }
+
+                    Write-Verbose "View created. Updating view properties (Title, ViewQuery, Scope)..."
+
+                    $escapedViewQuery = $sourceView.ViewQuery -replace '"', '`"'
+
+                    m365 spo list view set --webUrl $DestinationSiteUrl --listTitle $list.Title --viewTitle $sourceInternalName --Title $SourceViewName --ViewQuery $escapedViewQuery --Scope $ViewScope 2>&1 | Out-Null
+
+                    if ($LASTEXITCODE -ne 0) {
+                        throw "Failed to update view properties. Exit code: $LASTEXITCODE"
+                    }
+
+                    $script:Summary.ViewsCreated++
+                    Write-Host "  [$(Get-Date -Format 'HH:mm:ss')] ✓ Created view in '$($list.Title)'" -ForegroundColor Green
+
+                    $script:ReportCollection += [PSCustomObject]@{
+                        Timestamp       = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                        SiteUrl         = $DestinationSiteUrl
+                        LibraryName     = $list.Title
+                        ViewName        = $SourceViewName
+                        Status          = "Success"
+                        ErrorMessage    = ""
+                    }
+                }
+            }
+            catch {
+                $script:Summary.Failures++
+                Write-Warning "Failed to process library '$($list.Title)': $($_.Exception.Message)"
+
+                $script:ReportCollection += [PSCustomObject]@{
+                    Timestamp       = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                    SiteUrl         = $DestinationSiteUrl
+                    LibraryName     = $list.Title
+                    ViewName        = $SourceViewName
+                    Status          = "Failed"
+                    ErrorMessage    = $_.Exception.Message
+                }
+                continue
+            }
+        }
+    }
+    catch {
+        Write-Error "Critical error during view copy operation: $($_.Exception.Message)"
+        Stop-Transcript
+        throw
+    }
+}
+
+end {
+    if ($script:ReportCollection.Count -gt 0) {
+        $script:ReportCollection | Export-Csv -Path $csvPath -NoTypeInformation -Force
+        Write-Host "\n[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] CSV report exported to: $csvPath" -ForegroundColor Cyan
+    }
+
+    Write-Host "\n========================================" -ForegroundColor Cyan
+    Write-Host "    SUMMARY - Copy Library View" -ForegroundColor Cyan
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "Total Libraries Processed : $($script:Summary.TotalLibraries)" -ForegroundColor White
+    Write-Host "Views Created             : " -NoNewline
+    Write-Host $script:Summary.ViewsCreated -ForegroundColor Green
+    Write-Host "Skipped (Already Exists)  : " -NoNewline
+    Write-Host $script:Summary.Skipped -ForegroundColor Yellow
+    Write-Host "Failures                  : " -NoNewline
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host $script:Summary.Failures -ForegroundColor Red
+    } else {
+        Write-Host $script:Summary.Failures -ForegroundColor Green
+    }
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "Transcript: $transcriptPath" -ForegroundColor Gray
+    Write-Host "========================================\n" -ForegroundColor Cyan
+
+    Stop-Transcript
+}
+
+# Usage Examples:
+#
+# Example 1: Basic usage - Copy view from source to destination
+# .\CopyLibraryView.ps1 -SourceSiteUrl "https://contoso.sharepoint.com/sites/source" -SourceListTitle "Documents" -SourceViewName "Checked Out Files" -DestinationSiteUrl "https://contoso.sharepoint.com/sites/destination"
+#
+# Example 2: Test with WhatIf to preview changes
+# .\CopyLibraryView.ps1 -SourceSiteUrl "https://contoso.sharepoint.com/sites/source" -SourceListTitle "Documents" -SourceViewName "Checked Out Files" -DestinationSiteUrl "https://contoso.sharepoint.com/sites/destination" -WhatIf
+#
+# Example 3: With verbose output and custom view scope
+# .\CopyLibraryView.ps1 -SourceSiteUrl "https://contoso.sharepoint.com/sites/source" -SourceListTitle "Documents" -SourceViewName "All Items" -DestinationSiteUrl "https://contoso.sharepoint.com/sites/destination" -ViewScope 2 -Verbose
+#
+# Example 4: Custom output path for reports
+# .\CopyLibraryView.ps1 -SourceSiteUrl "https://contoso.sharepoint.com/sites/source" -SourceListTitle "Documents" -SourceViewName "Checked Out Files" -DestinationSiteUrl "https://contoso.sharepoint.com/sites/destination" -OutputPath "C:\\Reports"
 ```
 
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
@@ -172,6 +320,7 @@ Disconnect-PnPOnline
 | Author(s) |
 |-----------|
 | [Reshmee Auckloo](https://github.com/reshmee011)|
+| [Adam Wójcik](https://github.com/Adam-it)|
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-copy-library-view" aria-hidden="true" />

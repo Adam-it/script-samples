@@ -8,9 +8,9 @@
     "longDescription": [
       "This script will show you how by creating a modern site with the primary language set to a language other than English."
     ],
-    "creationDateTime": "2021-05-11",
-    "updateDateTime": "2021-10-13",
-    "products": [
+   "creationDateTime": "2021-05-11",
+    "updateDateTime": "2026-02-03",
+   "products": [
       "SharePoint"
     ],
     "metadata": [
@@ -22,10 +22,10 @@
         "key": "SPO-MANAGEMENT-SHELL",
         "value": "16.0.21116.12000"
       },
-      {
-        "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
-      }
+     {
+       "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.4.0"
+     }
     ],
     "categories": [
       "Provision"
@@ -34,9 +34,8 @@
       "Connect-PnPOnline",
       "New-PnPTenantSite",
       "Connect-SPOService",
-      "New-SPOSite",
-      "m365 status",
-      "m365 login",
+     "New-SPOSite",
+     "m365 login",
       "m365 spo site add"
     ],
     "thumbnails": [

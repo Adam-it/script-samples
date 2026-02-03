@@ -4,27 +4,244 @@
 
 ## Summary
 
-This script performs a two-step process to manage the recycle bin items in a SharePoint Online site. Here's a summary of the script's functionality: 
+This script allows you to bulk delete recycle bin items from a SharePoint Online site while avoiding List View Threshold issues by using batch processing. The CLI for Microsoft 365 version provides a modern, streamlined approach with comprehensive error handling and audit capabilities.
 
-Step 1: 
-- The script connects to a SharePoint Online site using PnP PowerShell. 
-- It defines a date range and retrieves recycle bin items meeting specific conditions based on a defined CSV file. 
-- The retrieved items are exported to a CSV file named "recyclebin.csv". 
-
-Step 2: 
-- The script connects again to the same SharePoint Online site using PnP PowerShell. 
-- It reads the "recyclebin.csv" file, which should have been manually modified to contain only the items intended for deletion. 
-- The script processes the items in batches (default batch size: 10) and deletes them from the recycle bin using SharePoint's REST API. 
-- The results of the deletion process are written to "recyclebinresults.csv". 
-
-Both steps include informative messages to keep users updated on the progress and status of the operations. 
-
-> [!Note]
-> The script relies on the PnP PowerShell module to interact with SharePoint Online, and it is essential to have the module installed and authenticated before executing the script. Additionally, users should carefully review and modify the "recyclebin.csv" file in Step 2 to ensure that only the intended items are deleted. 
+> [!IMPORTANT]
+> This script permanently deletes items from the recycle bin. Items cannot be restored once deleted. Always test with `-WhatIf` parameter first.
 
 [!INCLUDE [Delete Warning](../../docfx/includes/DELETE-WARN.md)]
 
 ![Example Screenshot](assets/example.png)
+
+### Prerequisites
+
+- The user account that runs the script must have permissions to manage the recycle bin on the SharePoint Online site.
+
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding(SupportsShouldProcess)]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "SharePoint site URL")]
+    [ValidatePattern('^https://.*\\.sharepoint\\.(com|us|mil|cn)')]
+    [string]$SiteUrl,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Email of user who deleted items (filter)")]
+    [ValidatePattern('^[^@]+@[^@]+\\.[^@]+$')]
+    [string]$DeletedByEmail,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Start date for deletion filter (default: 8 days ago)")]
+    [DateTime]$DateFrom = (Get-Date).AddDays(-8),
+
+    [Parameter(Mandatory = $false, HelpMessage = "End date for deletion filter (default: 5 days ago)")]
+    [DateTime]$DateTo = (Get-Date).AddDays(-5),
+
+    [Parameter(Mandatory = $false, HelpMessage = "Number of items to delete per batch (default: 10)")]
+    [ValidateRange(1, 100)]
+    [int]$BatchSize = 10,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Path for CSV exports (default: current directory)")]
+    [string]$ExportPath = (Get-Location).Path,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Target secondary recycle bin")]
+    [switch]$Secondary
+)
+
+begin {
+    Write-Verbose "Authenticating to Microsoft 365..."
+    m365 login --ensure 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to login to Microsoft 365"
+    }
+
+    if ($PSBoundParameters.ContainsKey('ExportPath')) {
+        if (-not (Test-Path -Path $ExportPath -PathType Container)) {
+            throw "Export path does not exist: $ExportPath"
+        }
+    }
+
+    if ($DateFrom -ge $DateTo) {
+        throw "DateFrom must be earlier than DateTo"
+    }
+
+    $script:Summary = @{
+        TotalItems      = 0
+        FilteredItems   = 0
+        BatchesAttempted = 0
+        ItemsDeleted    = 0
+        Failures        = 0
+    }
+
+    $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+    $script:ItemsExportPath = Join-Path $ExportPath "RecycleBinItems_$timestamp.csv"
+    $script:ResultsExportPath = Join-Path $ExportPath "RecycleBinResults_$timestamp.csv"
+    $script:ReportCollection = [System.Collections.Generic.List[object]]::new()
+
+    Start-Transcript -Path (Join-Path $ExportPath "RecycleBinDeletion_$timestamp.log")
+}
+
+process {
+    Write-Host "`nRetrieving recycle bin items from site: $SiteUrl" -ForegroundColor Cyan
+
+    try {
+        $commandArgs = @('spo', 'site', 'recyclebinitem', 'list', '--siteUrl', $SiteUrl, '--output', 'json')
+        if ($Secondary) {
+            $commandArgs += '--secondary'
+        }
+
+        $result = m365 @commandArgs 2>&1 | Out-String
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve recycle bin items. Exit code: $LASTEXITCODE"
+        }
+
+        $recycleBinItems = @($result | ConvertFrom-Json)
+        $script:Summary.TotalItems = $recycleBinItems.Count
+
+        Write-Host "Total items in recycle bin: $($recycleBinItems.Count)" -ForegroundColor White
+
+        $filteredItems = $recycleBinItems | Where-Object {
+            $matchesEmail = $true
+            $matchesDate = $true
+
+            if ($PSBoundParameters.ContainsKey('DeletedByEmail')) {
+                $matchesEmail = $_.DeletedByEmail -eq $DeletedByEmail
+            }
+
+            if ($_.DeletedDate) {
+                $deletedDate = [DateTime]::Parse($_.DeletedDate)
+                $matchesDate = ($deletedDate -ge $DateFrom) -and ($deletedDate -le $DateTo)
+            }
+
+            $matchesEmail -and $matchesDate
+        }
+
+        $script:Summary.FilteredItems = $filteredItems.Count
+
+        if ($filteredItems.Count -eq 0) {
+            Write-Host "No items found matching the filter criteria." -ForegroundColor Yellow
+            return
+        }
+
+        Write-Host "Items matching filter criteria: $($filteredItems.Count)" -ForegroundColor Green
+        $filteredItems | Export-Csv -Path $script:ItemsExportPath -NoTypeInformation
+        Write-Verbose "Exported filtered items to: $script:ItemsExportPath"
+
+        $batches = for ($i = 0; $i -lt $filteredItems.Count; $i += $BatchSize) {
+            $end = [Math]::Min($i + $BatchSize - 1, $filteredItems.Count - 1)
+            , $filteredItems[$i..$end]
+        }
+
+        Write-Host "`nDeleting $($filteredItems.Count) items in $($batches.Count) batch(es) of up to $BatchSize items..." -ForegroundColor Cyan
+
+        foreach ($batch in $batches) {
+            $script:Summary.BatchesAttempted++
+            $batchNumber = $script:Summary.BatchesAttempted
+            $batchItemCount = $batch.Count
+
+            Write-Verbose "Processing batch $batchNumber of $($batches.Count) ($batchItemCount items)"
+
+            try {
+                if ($PSCmdlet.ShouldProcess("Batch $batchNumber ($batchItemCount items)", 'Delete from recycle bin')) {
+                    $ids = ($batch | ForEach-Object { $_.Id }) -join ','
+
+                    m365 spo site recyclebinitem remove --siteUrl $SiteUrl --ids $ids --force 2>&1 | Out-Null
+
+                    if ($LASTEXITCODE -ne 0) {
+                        throw "CLI command failed with exit code $LASTEXITCODE"
+                    }
+
+                    Write-Host "  Batch $batchNumber: Successfully deleted $batchItemCount items" -ForegroundColor Green
+                    $script:Summary.ItemsDeleted += $batchItemCount
+
+                    foreach ($item in $batch) {
+                        $script:ReportCollection.Add([PSCustomObject]@{
+                            Id               = $item.Id
+                            Title            = $item.Title
+                            DirName          = $item.DirName
+                            LeafName         = $item.LeafName
+                            DeletedByEmail   = $item.DeletedByEmail
+                            DeletedDate      = $item.DeletedDate
+                            BatchNumber      = $batchNumber
+                            Status           = 'Success'
+                            ErrorMessage     = ''
+                        })
+                    }
+                } else {
+                    Write-Host "  Batch $batchNumber: WhatIf - Would delete $batchItemCount items" -ForegroundColor Yellow
+                    $script:Summary.ItemsDeleted += $batchItemCount
+                }
+            }
+            catch {
+                Write-Warning "Batch $batchNumber failed: $($_.Exception.Message)"
+                $script:Summary.Failures += $batchItemCount
+
+                foreach ($item in $batch) {
+                    $script:ReportCollection.Add([PSCustomObject]@{
+                        Id               = $item.Id
+                        Title            = $item.Title
+                        DirName          = $item.DirName
+                        LeafName         = $item.LeafName
+                        DeletedByEmail   = $item.DeletedByEmail
+                        DeletedDate      = $item.DeletedDate
+                        BatchNumber      = $batchNumber
+                        Status           = 'Failed'
+                        ErrorMessage     = $_.Exception.Message
+                    })
+                }
+
+                continue
+            }
+        }
+    }
+    catch {
+        Write-Warning "Failed to process recycle bin items: $($_.Exception.Message)"
+        throw
+    }
+}
+
+end {
+    Stop-Transcript
+
+    if ($script:ReportCollection.Count -gt 0) {
+        $script:ReportCollection | Export-Csv -Path $script:ResultsExportPath -NoTypeInformation
+        Write-Host "`nResults exported to: $script:ResultsExportPath" -ForegroundColor Cyan
+    }
+
+    Write-Host "`n===== Summary =====" -ForegroundColor Cyan
+    Write-Host "Site: $SiteUrl" -ForegroundColor White
+    Write-Host "Date range: $($DateFrom.ToString('yyyy-MM-dd')) to $($DateTo.ToString('yyyy-MM-dd'))" -ForegroundColor White
+    if ($PSBoundParameters.ContainsKey('DeletedByEmail')) {
+        Write-Host "Deleted by: $DeletedByEmail" -ForegroundColor White
+    }
+    Write-Host "Total items in recycle bin: $($script:Summary.TotalItems)" -ForegroundColor White
+    Write-Host "Items matching filter: $($script:Summary.FilteredItems)" -ForegroundColor White
+    Write-Host "Batches attempted: $($script:Summary.BatchesAttempted)" -ForegroundColor White
+    Write-Host "Items deleted: $($script:Summary.ItemsDeleted)" -ForegroundColor Green
+
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor Red
+    } else {
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor White
+    }
+}
+
+# Example 1: Delete items deleted by specific user in date range
+# .\Remove-RecycleBinItemsBulk.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" -DeletedByEmail "user@contoso.com" -DateFrom (Get-Date).AddDays(-10) -DateTo (Get-Date).AddDays(-3)
+
+# Example 2: Test with WhatIf (no deletions performed)
+# .\Remove-RecycleBinItemsBulk.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/hr" -DeletedByEmail "user@contoso.com" -WhatIf
+
+# Example 3: Delete with custom batch size and verbose output
+# .\Remove-RecycleBinItemsBulk.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project" -BatchSize 20 -Verbose
+
+# Example 4: Delete from secondary recycle bin
+# .\Remove-RecycleBinItemsBulk.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/sales" -DeletedByEmail "user@contoso.com" -Secondary
+
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
+***
 
 # [PnP PowerShell](#tab/pnpps)
 
@@ -191,6 +408,7 @@ Sample first appeared on [Restore large amount of items from SharePoint Recycle 
 
 | Author(s) |
 |-----------|
+| [Adam Wójcik](https://github.com/Adam-it) |
 | Eilaf Barmare |
 
 

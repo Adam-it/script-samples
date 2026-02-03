@@ -4,13 +4,153 @@
 
 ## Summary
 
-Converts unique site IDs from a txt file to URLs using Microsoft Search for M365 Tenancy and exports to CSV.
+Converts unique site IDs from a txt file to URLs using Microsoft Search for M365 Tenancy and exports to CSV. Available using PnP PowerShell or CLI for Microsoft 365.
 
 ![Example Screenshot](assets/example.png)
 
 This PowerShell script takes an input file containing one or more SharePoint online (Office 365) Site Collection Object IDs and converts them into the full URLs. It requires PnP Online module for connection to Office 365, performs a search query using these GUIDs as parameters, retrieves site details including their respective URL addresses from each result row.
 
 Note: Above description uses AI to describe the script.
+
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "Path to input text file containing Site IDs (one per line)")]
+    [ValidateScript({
+        if (Test-Path -Path $_ -PathType Leaf) {
+            $true
+        } else {
+            throw "Input file '$_' does not exist."
+        }
+    })]
+    [string]$InputFile,
+
+    [Parameter(Mandatory = $false, HelpMessage = "Output directory for CSV export")]
+    [string]$OutputPath = (Get-Location).Path
+)
+
+begin {
+    Write-Host "Authenticating to Microsoft 365..." -ForegroundColor Cyan
+    m365 login --ensure 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate to Microsoft 365. Please check your credentials."
+    }
+
+    $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+    $csvPath = Join-Path -Path $OutputPath -ChildPath "SiteIdToURL_$timestamp.csv"
+
+    $script:Results = [System.Collections.Generic.List[PSCustomObject]]::new()
+    $script:Summary = @{
+        Total     = 0
+        Found     = 0
+        NotFound  = 0
+        Failures  = 0
+    }
+
+    $siteIds = Get-Content -Path $InputFile | Where-Object { $_.Trim() -ne "" }
+    $script:Summary.Total = $siteIds.Count
+
+    Write-Host "Found $($script:Summary.Total) site ID(s) in input file" -ForegroundColor White
+    Write-Host "Starting site ID lookup...`n" -ForegroundColor Cyan
+}
+
+process {
+    $count = 0
+
+    foreach ($siteId in $siteIds) {
+        $count++
+        Write-Progress -Activity "Processing site IDs" -Status "$count of $($script:Summary.Total): $siteId" -PercentComplete (($count / $script:Summary.Total) * 100)
+
+        try {
+            $query = "SiteId:$siteId contentClass:STS_Site"
+            $result = m365 spo search --queryText $query --selectProperties "Title,Path,SiteId,WebTemplate" --output json 2>&1 | Out-String
+
+            if ($LASTEXITCODE -ne 0) {
+                throw "Search command failed with exit code $LASTEXITCODE: $result"
+            }
+
+            $searchResults = $result | ConvertFrom-Json
+
+            if ($searchResults -and $searchResults.Count -gt 0) {
+                foreach ($site in $searchResults) {
+                    $script:Results.Add([PSCustomObject]@{
+                        SiteId      = $siteId
+                        Title       = $site.Title
+                        Path        = $site.Path
+                        WebTemplate = $site.WebTemplate
+                    })
+                }
+                Write-Verbose "Found site: $($searchResults[0].Path)"
+                $script:Summary.Found++
+            } else {
+                Write-Warning "Site ID not found: $siteId"
+                $script:Results.Add([PSCustomObject]@{
+                    SiteId      = $siteId
+                    Title       = "NOT FOUND"
+                    Path        = "NOT FOUND"
+                    WebTemplate = "NOT FOUND"
+                })
+                $script:Summary.NotFound++
+            }
+        }
+        catch {
+            Write-Warning "Failed to process site ID '$siteId': $($_.Exception.Message)"
+            $script:Results.Add([PSCustomObject]@{
+                SiteId      = $siteId
+                Title       = "ERROR"
+                Path        = "ERROR: $($_.Exception.Message)"
+                WebTemplate = "ERROR"
+            })
+            $script:Summary.Failures++
+            continue
+        }
+    }
+}
+
+end {
+    Write-Progress -Activity "Processing site IDs" -Completed
+
+    if ($script:Results.Count -gt 0) {
+        $script:Results | Export-Csv -Path $csvPath -NoTypeInformation -Force
+        Write-Host "`nCSV export completed: $csvPath" -ForegroundColor Green
+    } else {
+        Write-Warning "No results to export."
+    }
+
+    Write-Host "`n===== Summary =====" -ForegroundColor Cyan
+    Write-Host "Input file: $InputFile" -ForegroundColor White
+    Write-Host "Output CSV: $csvPath" -ForegroundColor White
+    Write-Host "Total site IDs processed: $($script:Summary.Total)" -ForegroundColor White
+    Write-Host "Found: $($script:Summary.Found)" -ForegroundColor Green
+
+    if ($script:Summary.NotFound -gt 0) {
+        Write-Host "Not found: $($script:Summary.NotFound)" -ForegroundColor Yellow
+    } else {
+        Write-Host "Not found: $($script:Summary.NotFound)" -ForegroundColor White
+    }
+
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor Red
+    } else {
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor White
+    }
+}
+
+# Example 1: Convert site IDs from input file
+# .\Get-SiteIdToURL.ps1 -InputFile "C:\Temp\SiteIDs.txt"
+
+# Example 2: Specify custom output directory
+# .\Get-SiteIdToURL.ps1 -InputFile "C:\Temp\SiteIDs.txt" -OutputPath "C:\Reports"
+
+# Example 3: Run with verbose output to see each site as it's found
+# .\Get-SiteIdToURL.ps1 -InputFile "C:\Temp\SiteIDs.txt" -Verbose
+
+```
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+***
 
 # [PnP PowerShell](#tab/pnpps)
 
@@ -149,6 +289,7 @@ https://github.com/pnp/powershell
 |-----------|
 | Sam Larson |
 | Paul Bullock |
+| Adam Wójcik |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-get-site-list-ids" aria-hidden="true" />

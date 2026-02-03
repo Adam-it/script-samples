@@ -9,7 +9,7 @@
       ""
     ],
     "creationDateTime": "2021-06-18",
-    "updateDateTime": "2022-08-01",
+    "updateDateTime": "2026-02-03",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "6.14.22"
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -34,8 +34,8 @@
       "Get-PnPList",
       "Add-PnPPageWebPart",
       "Get-PnPPage",
-      "m365 status",
       "m365 login",
+      "m365 spo list get",
       "m365 spo page add",
       "m365 spo page section add",
       "m365 spo page text add",

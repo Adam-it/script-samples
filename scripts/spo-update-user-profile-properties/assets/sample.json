@@ -9,7 +9,7 @@
       "In This script sample, first, we will connect to the SharePoint admin site, then we will ask for location and skills from the user and we will update both properties."
     ],
     "creationDateTime": "2022-03-24",
-    "updateDateTime": "2022-04-29",
+    "updateDateTime": "2026-02-04",
     "products": [
       "SharePoint",
       "Office"
@@ -21,7 +21,7 @@
       },
       {
         "key": "cli-for-microsoft365",
-        "value": "5.2.0"
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -31,7 +31,6 @@
     "tags": [
       "Connect-PnPOnline",
       "Set-PnPUserProfileProperty",
-      "m365 status",
       "m365 login",
       "m365 spo userprofile set"
     ],
@@ -45,11 +44,16 @@
     ],
     "authors": [
       {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
+      {
         "gitHubAccount": "Jwaegebaert",
         "company": "GMI Group",
         "pictureUrl": "https://github.com/Jwaegebaert.png",
         "name": "Jasey Waegebaert"
-      },  
+      },
       {
         "company": "Rapid Circle",
         "gitHubAccount": "chandaniprajapati",

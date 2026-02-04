@@ -9,7 +9,7 @@
       "This script exports all content types available on a SharePoint site, including basic information such as Name, ID, Scope, Schema, Fields, and more, into a CSV format."
     ],
     "creationDateTime": "2024-03-05",
-    "updateDateTime": "2024-03-09",
+    "updateDateTime": "2026-02-03",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "7.5.0"
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -34,10 +34,8 @@
       "Get-PnPProperty",
       "Export-Csv",
       "Disconnect-PnPOnline",
-      "m365 status",
       "m365 login",
-      "m365 spo contenttype list",
-      "m365 logout"
+      "m365 spo contenttype list"
     ],
     "thumbnails": [
       {
@@ -59,6 +57,11 @@
         "company": "Rapid Circle",
         "pictureUrl": "https://avatars.githubusercontent.com/u/52065929?v=4",
         "name": "Chandani Prajapati"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

@@ -87,69 +87,112 @@ StartProcessing
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 
 ```powershell
-$siteUrl = Read-Host -Prompt "Enter your SharePoint online site URL (e.g https://contoso.sharepoint.com/sites/work)"
-$dateTime = "{0:MM_dd_yy}_{0:HH_mm_ss}" -f (Get-Date)
-$basePath = "D:\dtemp\"
-$csvPath = $basePath + "\ContentTypesData" + $dateTime + ".csv"
-$global:ctData = @()
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $true, HelpMessage = "SharePoint site URL (e.g., https://contoso.sharepoint.com/sites/marketing)")]
+    [ValidatePattern('^https://.*\.sharepoint\.(com|us|mil|cn).*$')]
+    [string]$SiteUrl,
 
-Function Login() {     
-    Write-Host "Connecting to SharePoint" -ForegroundColor Yellow
-	
-	#Get Credentials to connect
-	$m365Status = m365 status
-	if ($m365Status -match "Logged Out") {
-		m365 login
-	}
+    [Parameter(Mandatory = $false, HelpMessage = "Output directory path for the CSV file")]
+    [ValidateScript({
+        if ($PSBoundParameters.ContainsKey('OutputPath') -and -not (Test-Path -Path $_ -PathType Container)) {
+            throw "The directory '$_' does not exist."
+        }
+        $true
+    })]
+    [string]$OutputPath = (Get-Location).Path
+)
+
+begin {
+    Write-Verbose "Ensuring authentication to Microsoft 365..."
+    m365 login --ensure
     
-	Write-Host "Connection Successful!" -ForegroundColor Green
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate with Microsoft 365. Please try again."
+    }
+    
+    Write-Verbose "Authentication successful."
+    
+    $script:ContentTypeCollection = @()
+    
+    $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+    $csvFileName = "ContentTypes_$timestamp.csv"
+    $csvPath = Join-Path -Path $OutputPath -ChildPath $csvFileName
+    
+    $transcriptPath = Join-Path -Path $OutputPath -ChildPath "ContentTypeExport_$timestamp.log"
+    Start-Transcript -Path $transcriptPath | Out-Null
+    
+    Write-Host "Starting content type export from: $SiteUrl" -ForegroundColor Cyan
 }
 
-Function ContentTypeDetails() {
+process {
     try {
-        Write-Host "Getting content type details..." -ForegroundColor Yellow
-		$allContentTypes = m365 spo contenttype list --webUrl $siteUrl | ConvertFrom-Json
-
-        Foreach ($contentType in $allContentTypes)
-        {
-            #Collect Content Type Data
-            $ctName = $contentType.Name
-            $ctId = $contentType.Id
-            $ctGroup = $contentType.Group
-			$ctDescription = $contentType.Description
-            $ctScope = $contentType.Scope
-            $ctStringId = $contentType.StringId
-            $ctSchemaXml = $contentType.SchemaXml
+        Write-Verbose "Fetching content types from site..."
+        
+        $result = m365 spo contenttype list --webUrl $SiteUrl --output json
+        
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve content types from site: $SiteUrl"
+        }
+        
+        $contentTypes = @($result | ConvertFrom-Json)
+        Write-Verbose "Found $($contentTypes.Count) content type(s)."
+        
+        foreach ($contentType in $contentTypes) {
+            Write-Verbose "Processing content type: $($contentType.Name)"
             
-            $global:ctData += [PSCustomObject] @{
-                Name            = $ctName
-                ID              = $ctId.StringValue
-                Group			= $ctGroup
-                Description		= $ctDescription
-                Scope			= $ctScope
-                StringId		= $ctStringId
-                SchemaXml		= $ctSchemaXml
+            $script:ContentTypeCollection += [PSCustomObject]@{
+                Name        = $contentType.Name
+                ID          = $contentType.Id.StringValue
+                Group       = $contentType.Group
+                Description = $contentType.Description
+                Scope       = $contentType.Scope
+                StringId    = $contentType.StringId
+                SchemaXml   = $contentType.SchemaXml
             }
         }
-        Write-Host "Getting content type details successfully!..." -ForegroundColor Green
     }
     catch {
-        Write-Host "Error in getting content type information:" $_.Exception.Message -ForegroundColor Red
+        Write-Warning "Error retrieving content types: $($_.Exception.Message)"
+        throw
     }
-    Write-Host "Exporting to CSV..."  -ForegroundColor Yellow
-    $global:ctData | Export-Csv $csvPath -NoTypeInformation -Append
-    Write-Host "Exported to CSV successfully!..."  -ForegroundColor Green
-	
-	# Disconnect SharePoint online connection
-	m365 logout
 }
 
-Function StartProcessing {
-	Login
-    ContentTypeDetails
+end {
+    if ($script:ContentTypeCollection.Count -gt 0) {
+        Write-Verbose "Exporting $($script:ContentTypeCollection.Count) content type(s) to CSV..."
+        
+        $script:ContentTypeCollection | Export-Csv -Path $csvPath -NoTypeInformation
+        
+        Write-Host "" -ForegroundColor Cyan
+        Write-Host "========================================" -ForegroundColor Cyan
+        Write-Host "  Content Type Export Complete" -ForegroundColor Green
+        Write-Host "========================================" -ForegroundColor Cyan
+        Write-Host "Total content types exported: $($script:ContentTypeCollection.Count)" -ForegroundColor White
+        Write-Host "CSV file location: $csvPath" -ForegroundColor White
+        Write-Host "Transcript log: $transcriptPath" -ForegroundColor White
+        Write-Host "========================================" -ForegroundColor Cyan
+        Write-Host "" -ForegroundColor Cyan
+    }
+    else {
+        Write-Warning "No content types found to export."
+    }
+    
+    Stop-Transcript | Out-Null
 }
 
-StartProcessing
+# Usage examples:
+# Basic usage:
+# .\Export-ContentTypes.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing"
+
+# Custom output directory:
+# .\Export-ContentTypes.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" -OutputPath "C:\Reports"
+
+# With verbose logging:
+# .\Export-ContentTypes.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/marketing" -Verbose
+
+# Pipeline usage with current directory:
+# "https://contoso.sharepoint.com/sites/marketing" | .\Export-ContentTypes.ps1
 ```
 
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]

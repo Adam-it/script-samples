@@ -9,7 +9,7 @@
       ""
     ],
     "creationDateTime": "2021-03-24",
-    "updateDateTime": "2022-06-02",
+    "updateDateTime": "2026-02-05",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "5.3.0"
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -41,6 +41,11 @@
       }
     ],
     "authors": [
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
       {
         "gitHubAccount": "mathijsverbeeck",
         "company": "",

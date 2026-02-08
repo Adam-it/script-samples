@@ -9,14 +9,14 @@
       "With this sample, you can copy an existing Planner plan to a specific group. This script will create a new plan with the same name and copy all buckets and tasks."
     ],
     "creationDateTime": "2022-06-05",
-    "updateDateTime": "2022-07-09",
+    "updateDateTime": "2026-02-08",
     "products": [
       "Planner"
     ],
     "metadata": [
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "5.4.0"
+        "value": "11.4.0"
       },
       {
         "key": "PNP-POWERSHELL",
@@ -31,7 +31,6 @@
       "Planner",
       "PowerShell",
       "m365 login",
-      "m365 status",
       "m365 planner plan get",
       "m365 planner bucket list",
       "m365 planner task list",
@@ -56,6 +55,11 @@
       }
     ],
     "authors": [
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
       {
         "gitHubAccount": "reshmee011",
         "company": "",

@@ -9,7 +9,7 @@
       "Get/add/update/delete items in large SharePoint list using batch. PnP PowerShell and CLI examples"
     ],
     "creationDateTime": "2021-09-24",
-    "updateDateTime": "2021-09-27",
+    "updateDateTime": "2026-02-09",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -28,7 +28,6 @@
     ],
     "tags": [
       "m365 login",
-      "m365 status",
       "m365 spo list get",
       "m365 spo listitem add",
       "m365 spo listitem list",
@@ -54,6 +53,11 @@
       }
     ],
     "authors": [
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
       {
         "gitHubAccount": "ValerasNarbutas",
         "company": "",

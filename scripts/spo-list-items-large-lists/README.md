@@ -5,7 +5,7 @@
 ## Summary
 
 Working and processing lists items in large lists.
-PnP PowerShell and M365 CLI examples
+PnP PowerShell and CLI for Microsoft 365 examples
 
 ## Implementation
 
@@ -66,59 +66,234 @@ Invoke-PnPBatch -Batch $batch
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 ```powershell
 
+[CmdletBinding()]
+param(
+  [Parameter(Mandatory, HelpMessage = "URL of the SharePoint site")]
+  [ValidatePattern('^https://.*\.sharepoint\.(com|us|mil|cn)$')]
+  [string]$SiteUrl,
 
-$url = "Site Url"
-$listName = "LargeListTitle"
+  [Parameter(Mandatory, HelpMessage = "Title of the SharePoint list")]
+  [ValidateNotNullOrEmpty()]
+  [string]$ListName,
 
+  [Parameter(HelpMessage = "Number of items per page (100-5000)")]
+  [ValidateRange(100, 5000)]
+  [int]$PageSize = 1000,
 
-$m365Status = m365 status
-if ($m365Status -match "Logged Out") {
-  Write-Host "Logging in the User!"
-  m365 login --authType browser
+  [Parameter(HelpMessage = "Path where transcript log will be saved")]
+  [ValidateNotNullOrEmpty()]
+  [string]$OutputPath = (Get-Location).Path
+)
+
+begin {
+  $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+  $transcriptPath = Join-Path $OutputPath "LargeList-Operations-$timestamp.log"
+  Start-Transcript -Path $transcriptPath
+
+  Write-Host "Connecting to Microsoft 365..." -ForegroundColor Yellow
+  m365 login --ensure
+  if ($LASTEXITCODE -ne 0) {
+    Stop-Transcript
+    throw "Failed to authenticate to Microsoft 365"
+  }
+
+  Write-Host "Getting list properties..." -ForegroundColor Yellow
+  $listPropertiesJson = m365 spo list get --title $ListName --webUrl $SiteUrl --output json
+  if ($LASTEXITCODE -ne 0) {
+    Stop-Transcript
+    throw "Failed to get list properties for '$ListName'"
+  }
+
+  $listProperties = $listPropertiesJson | ConvertFrom-Json
+  $itemCount = $listProperties.ItemCount
+  $pageNumber = [int][Math]::Ceiling($itemCount / $PageSize)
+
+  Write-Host "Found $itemCount items in list '$ListName'" -ForegroundColor Cyan
+  Write-Host "Will process in $pageNumber pages (PageSize: $PageSize)`n" -ForegroundColor Cyan
+
+  $script:Summary = @{
+    TotalItems    = $itemCount
+    ItemsAdded    = 0
+    ItemsUpdated  = 0
+    ItemsRemoved  = 0
+    Failures      = 0
+  }
 }
 
-#count list items
-$listProperties = m365 spo list get --title  $listName --webUrl $url -o json | ConvertFrom-Json
-$itemCount = $listProperties.ItemCount
+process {
+  Write-Host "`n========== OPERATION 1: Get All Items =========" -ForegroundColor Magenta
+  Write-Host "Retrieving all items from large list...`n" -ForegroundColor Yellow
 
-#Set up page size and page number
-$pageSize = 1000
-$pageNumber = [int][Math]::Ceiling($itemCount/$pageSize)
+  for ($i = 0; $i -lt $pageNumber; $i++) {
+    try {
+      $pagePercent = [math]::Round((($i + 1) / $pageNumber) * 100, 1)
+      Write-Host "Processing page $($i + 1)/$pageNumber ($pagePercent%)..." -ForegroundColor Gray
 
+      $items = m365 spo listitem list --title $ListName --webUrl $SiteUrl --pageSize $PageSize --pageNumber $i --output json
+      if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to retrieve items from page $($i + 1)"
+        $script:Summary.Failures++
+        continue
+      }
 
-# get all items from large list
-for ($i = 0; $i -lt $pageNumber; $i++)
-{ 
-  # get items from large library
- m365 spo listitem list --title $listName --webUrl $url --pageSize $pageSize --pageNumber $i  
+      $itemsArray = $items | ConvertFrom-Json
+      Write-Host "  Retrieved $($itemsArray.Count) items from page $($i + 1)" -ForegroundColor Green
+    }
+    catch {
+      Write-Warning "Error processing page $($i + 1): $_"
+      $script:Summary.Failures++
+      continue
+    }
+  }
+
+  Write-Host "`n========== OPERATION 2: Create List Items =========" -ForegroundColor Magenta
+  Write-Host "Creating 100 demo items...`n" -ForegroundColor Yellow
+
+  $itemsToCreate = 100
+  $createdCount = 0
+
+  1..$itemsToCreate | ForEach-Object {
+    try {
+      $itemNumber = $_
+      if ($itemNumber % 10 -eq 0) {
+        Write-Host "Creating items: $itemNumber/$itemsToCreate..." -ForegroundColor Gray
+      }
+
+      m365 spo listitem add --contentType Item --listTitle $ListName --webUrl $SiteUrl --Title "Demo Item $itemNumber using CLI" --output json | Out-Null
+      if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to create item $itemNumber"
+        $script:Summary.Failures++
+      }
+      else {
+        $createdCount++
+      }
+    }
+    catch {
+      Write-Warning "Error creating item $itemNumber: $_"
+      $script:Summary.Failures++
+    }
+  }
+
+  $script:Summary.ItemsAdded = $createdCount
+  Write-Host "Successfully created $createdCount items" -ForegroundColor Green
+
+  Write-Host "`n========== OPERATION 3: Update List Items =========" -ForegroundColor Magenta
+  Write-Host "Updating all items in list...`n" -ForegroundColor Yellow
+
+  $updatedCount = 0
+  for ($i = 0; $i -lt $pageNumber; $i++) {
+    try {
+      $pagePercent = [math]::Round((($i + 1) / $pageNumber) * 100, 1)
+      Write-Host "Updating page $($i + 1)/$pageNumber ($pagePercent%)..." -ForegroundColor Gray
+
+      $itemsJson = m365 spo listitem list --title $ListName --webUrl $SiteUrl --fields "ID" --pageSize $PageSize --pageNumber $i --output json
+      if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to retrieve items from page $($i + 1) for update"
+        $script:Summary.Failures++
+        continue
+      }
+
+      $items = $itemsJson | ConvertFrom-Json
+      $items | Select-Object -ExpandProperty ID | ForEach-Object {
+        try {
+          $itemId = $_
+          m365 spo listitem set --listTitle $ListName --id $itemId --webUrl $SiteUrl --Title "Updated with CLI at $timestamp" --output json | Out-Null
+          if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to update item ID $itemId"
+            $script:Summary.Failures++
+          }
+          else {
+            $updatedCount++
+          }
+        }
+        catch {
+          Write-Warning "Error updating item ID $itemId: $_"
+          $script:Summary.Failures++
+        }
+      }
+    }
+    catch {
+      Write-Warning "Error processing page $($i + 1) for update: $_"
+      $script:Summary.Failures++
+      continue
+    }
+  }
+
+  $script:Summary.ItemsUpdated = $updatedCount
+  Write-Host "Successfully updated $updatedCount items" -ForegroundColor Green
+
+  Write-Host "`n========== OPERATION 4: Remove List Items =========" -ForegroundColor Magenta
+  Write-Host "Removing all items from list...`n" -ForegroundColor Yellow
+
+  $removedCount = 0
+  for ($i = 0; $i -lt $pageNumber; $i++) {
+    try {
+      $pagePercent = [math]::Round((($i + 1) / $pageNumber) * 100, 1)
+      Write-Host "Removing page $($i + 1)/$pageNumber ($pagePercent%)..." -ForegroundColor Gray
+
+      $itemsJson = m365 spo listitem list --title $ListName --webUrl $SiteUrl --fields "ID" --pageSize $PageSize --pageNumber $i --output json
+      if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to retrieve items from page $($i + 1) for removal"
+        $script:Summary.Failures++
+        continue
+      }
+
+      $items = $itemsJson | ConvertFrom-Json
+      $items | Select-Object -ExpandProperty ID | ForEach-Object {
+        try {
+          $itemId = $_
+          m365 spo listitem remove --webUrl $SiteUrl --listTitle $ListName --id $itemId --force
+          if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to remove item ID $itemId"
+            $script:Summary.Failures++
+          }
+          else {
+            $removedCount++
+          }
+        }
+        catch {
+          Write-Warning "Error removing item ID $itemId: $_"
+          $script:Summary.Failures++
+        }
+      }
+    }
+    catch {
+      Write-Warning "Error processing page $($i + 1) for removal: $_"
+      $script:Summary.Failures++
+      continue
+    }
+  }
+
+  $script:Summary.ItemsRemoved = $removedCount
+  Write-Host "Successfully removed $removedCount items" -ForegroundColor Green
 }
 
+end {
+  Write-Host "`n========== Summary ==========" -ForegroundColor Cyan
+  Write-Host "Site URL: $SiteUrl" -ForegroundColor White
+  Write-Host "List Name: $ListName" -ForegroundColor White
+  Write-Host "Page Size: $PageSize" -ForegroundColor White
+  Write-Host "Total Items Found: $($Summary.TotalItems)" -ForegroundColor Green
+  Write-Host "Items Added: $($Summary.ItemsAdded)" -ForegroundColor Green
+  Write-Host "Items Updated: $($Summary.ItemsUpdated)" -ForegroundColor Green
+  Write-Host "Items Removed: $($Summary.ItemsRemoved)" -ForegroundColor Green
+  Write-Host "Failures: $($Summary.Failures)" -ForegroundColor $(if ($Summary.Failures -gt 0) { 'Red' } else { 'Green' })
+  Write-Host "Transcript saved to: $transcriptPath" -ForegroundColor Cyan
 
-# create list items
-1..100 | ForEach-Object { 
-            m365 spo listitem add --contentType Item --listTitle $listName --webUrl $url --Title "Demo Item using CLI"
-           }
-
-#update list items
-for ($i = 0; $i -lt $pageNumber; $i++)
-{ 
-   $items = m365 spo listitem list --title $listName --webUrl $url --fields "ID"  --pageSize $pageSize --pageNumber $i --output json 
-    $items = $items.Replace("Id","Idd") | ConvertFrom-Json
-    $items | select -ExpandProperty ID | ForEach-Object { 
-             m365 spo listitem set --listTitle $listName --id $_ --webUrl $url --Title "update with cli"
-           }
+  Stop-Transcript
 }
 
-#remove list items
-for ($i = 0; $i -lt $pageNumber; $i++)
-{ 
-  # get items from large library
-    $items = m365 spo listitem list --title $listName --webUrl $url --fields "ID"  --pageSize $pageSize --pageNumber $i --output json 
-    $items = $items.Replace("Id","Idd") | ConvertFrom-Json
-    $items | select -ExpandProperty ID | ForEach-Object { 
-             m365 spo listitem remove --webUrl $url --listTitle $listName --id $_  --confirm 
-           }
-}
+# Example 1: Basic usage (WhatIf mode for get operations)
+# .\script.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project" -ListName "LargeList"
+
+# Example 2: Custom page size for better performance
+# .\script.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project" -ListName "LargeList" -PageSize 2000
+
+# Example 3: Custom output path for transcript
+# .\script.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project" -ListName "LargeList" -OutputPath "C:\Logs"
+
+# Example 4: Verbose mode for detailed execution
+# .\script.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/project" -ListName "LargeList" -Verbose
 
 
 ```
@@ -129,6 +304,7 @@ for ($i = 0; $i -lt $pageNumber; $i++)
 
 | Author(s) |
 |-----------|
+| [Adam Wójcik](https://github.com/Adam-it) |
 | Valeras Narbutas |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

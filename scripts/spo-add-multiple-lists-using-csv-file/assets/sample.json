@@ -9,14 +9,14 @@
       "This script sample shows how to bulk create lists or libraries using CSV file"
     ],
     "creationDateTime": "2021-10-08",
-    "updateDateTime": "2021-10-25",
+    "updateDateTime": "2026-02-09",
     "products": [
       "SharePoint"
     ],
     "metadata": [
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "3.7.0"
+        "value": "11.4.0"
       },
       {
         "key": "PNP-POWERSHELL",
@@ -32,7 +32,6 @@
       "Connect-PnPOnline",
       "New-PnPList",
       "Disconnect-PnPOnline",
-      "m365 status",
       "m365 login",
       "m365 spo list add"
     ],
@@ -45,6 +44,11 @@
       }
     ],
     "authors": [
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
       {
         "gitHubAccount": "ValerasNarbutas",
         "company": "",

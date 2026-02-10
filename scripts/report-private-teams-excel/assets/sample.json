@@ -7,7 +7,7 @@
     "url": "https://pnp.github.io/script-samples/report-private-teams-excel/README.html",
     "longDescription": [],
     "creationDateTime": "2021-02-27",
-    "updateDateTime": "2021-11-21",
+    "updateDateTime": "2026-02-10",
     "products": [
       "SharePoint",
       "Teams"
@@ -19,7 +19,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "6.14.22"
+      "value": "11.4.0"
       }
     ],
     "categories": [
@@ -27,12 +27,8 @@
       "Security"
     ],
     "tags": [
-      "Connect-PnPOnline",
-      "Get-PnPTenantSite",
-      "Add-PnPFile",
-      "m365 status",
       "m365 login",
-      "m365 spo site classic list",
+      "m365 spo site list",
       "m365 spo file add"
     ],
     "thumbnails": [

@@ -9,7 +9,7 @@
       "Script that creates and applies custom site design with custom column types. It will also creates custom list using new content type"
     ],
     "creationDateTime": "2021-10-03",
-    "updateDateTime": "2021-11-03",
+    "updateDateTime": "2026-02-10",
     "products": [
       "SharePoint"
     ],
@@ -20,7 +20,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "4.1.0"
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -31,8 +31,6 @@
     "tags": [
       "modern",
       "m365 login",
-      "m365 logout",
-      "m365 status",
       "m365 spo site get",
       "m365 spo sitedesign add",
       "m365 spo sitedesign apply",
@@ -60,6 +58,11 @@
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/16476453?s=400&v=4",
         "name": "Valeras Narbutas"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [

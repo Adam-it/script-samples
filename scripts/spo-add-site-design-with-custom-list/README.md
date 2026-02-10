@@ -4,7 +4,9 @@
 
 ## Summary
 
-This script will create site design with different column types. 
+This script creates and applies a site design with custom column types to a SharePoint site. This sample has been modernized to use CLI for Microsoft 365 v11.4.0+ and follows modern PowerShell best practices including typed parameters, WhatIf support, error handling, and progress reporting.
+
+The script:
  - Sets regional settings
  - Creates custom content type 
  - Adds new fields to new content type
@@ -223,63 +225,237 @@ Stop-Transcript
 > [!Note]
 > SharePoint tenant admin right are required to be able add site design
 
-[!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
-
 # [CLI for Microsoft 365](#tab/cli-m365-ps)
 ```powershell
-###### Declare and Initialize Variables ######  
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory, HelpMessage = "URL of the SharePoint site where the site design will be applied")]
+    [ValidatePattern('^https://.*\\.sharepoint\\.(com|us|mil|cn)/.+')]
+    [string]$SiteUrl,
 
-#Destination site collection url
-$url="https://<tenant>.sharepoint.com/sites/siteurl"
+    [Parameter(Mandatory, HelpMessage = "Path to the first JSON site script file (site columns, content types, theme)")]
+    [ValidateNotNullOrEmpty()]
+    [string]$FirstScriptPath,
 
-Write-host 'setup script example'
+    [Parameter(Mandatory, HelpMessage = "Path to the second JSON site script file (list creation, views)")]
+    [ValidateNotNullOrEmpty()]
+    [string]$SecondScriptPath,
 
-Write-host 'ensure logged in'
-$m365Status = m365 status
-if ($m365Status -match "Logged Out") {
-  m365 login --authType browser
+    [Parameter(Mandatory, HelpMessage = "Title for the site design")]
+    [ValidateNotNullOrEmpty()]
+    [string]$SiteDesignTitle,
+
+    [Parameter(HelpMessage = "Description for the site design")]
+    [string]$SiteDesignDescription = "Site design created with CLI for Microsoft 365",
+
+    [Parameter(HelpMessage = "Web template type for the site design")]
+    [ValidateSet('TeamSite', 'CommunicationSite')]
+    [string]$WebTemplate = 'TeamSite',
+
+    [Parameter(HelpMessage = "Version number for the site design")]
+    [int]$SiteDesignVersion = 1,
+
+    [Parameter(HelpMessage = "Directory path where the transcript log will be saved. Defaults to current directory")]
+    [string]$OutputPath = (Get-Location).Path
+)
+
+begin {
+    if ($PSBoundParameters.ContainsKey('OutputPath')) {
+        if (-not (Test-Path -Path $OutputPath -PathType Container)) {
+            throw "Output path '$OutputPath' does not exist or is not a directory."
+        }
+    }
+
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $transcriptPath = Join-Path -Path $OutputPath -ChildPath "SiteDesign-Transcript-$timestamp.log"
+    Start-Transcript -Path $transcriptPath
+
+    Write-Verbose "Starting site design creation and application process..."
+
+    $script:Summary = @{
+        ScriptsCreated = 0
+        DesignsCreated = 0
+        DesignsApplied = 0
+        Failures = 0
+    }
+
+    try {
+        Write-Verbose "Validating JSON script file paths..."
+        
+        if (-not (Test-Path -Path $FirstScriptPath -PathType Leaf)) {
+            throw "First script file not found at path: $FirstScriptPath"
+        }
+        
+        if (-not (Test-Path -Path $SecondScriptPath -PathType Leaf)) {
+            throw "Second script file not found at path: $SecondScriptPath"
+        }
+
+        Write-Verbose "Validating JSON content..."
+        try {
+            $null = Get-Content -Path $FirstScriptPath -Raw | ConvertFrom-Json -ErrorAction Stop
+            $null = Get-Content -Path $SecondScriptPath -Raw | ConvertFrom-Json -ErrorAction Stop
+        }
+        catch {
+            throw "Invalid JSON in script files: $_"
+        }
+
+        Write-Progress -Activity "Site Design Setup" -Status "Authenticating to Microsoft 365" -PercentComplete 5
+        Write-Verbose "Ensuring user is logged in to Microsoft 365..."
+        m365 login --ensure
+        
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to authenticate to Microsoft 365. Please check your credentials and try again."
+        }
+        
+        Write-Verbose "Successfully authenticated to Microsoft 365"
+
+        Write-Progress -Activity "Site Design Setup" -Status "Validating site URL" -PercentComplete 10
+        Write-Verbose "Retrieving site information for $SiteUrl..."
+        $siteJson = m365 spo site get --url $SiteUrl --output json
+        
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve site information for $SiteUrl. Ensure the URL is correct and you have access."
+        }
+        
+        $site = $siteJson | ConvertFrom-Json
+        Write-Verbose "Successfully validated site: $($site.Title)"
+    }
+    catch {
+        Write-Error $_
+        Stop-Transcript
+        throw
+    }
 }
 
+process {
+    try {
+        Write-Progress -Activity "Site Design Setup" -Status "Creating first site script (columns, content types, theme)" -PercentComplete 20
+        
+        $firstScriptContent = Get-Content -Path $FirstScriptPath -Raw
+        $firstScriptTitle = "$SiteDesignTitle - Script 1 (Site Columns & Content Types)"
+        
+        if ($PSCmdlet.ShouldProcess($firstScriptTitle, 'Create site script')) {
+            Write-Verbose "Creating first site script: $firstScriptTitle"
+            $firstScriptJson = m365 spo sitescript add --title $firstScriptTitle --description "Site columns, content types, and theme configuration" --content $firstScriptContent --output json
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to create first site script. Skipping remaining operations."
+                $script:Summary.Failures++
+                return
+            }
+            
+            $firstScript = $firstScriptJson | ConvertFrom-Json
+            $script:Summary.ScriptsCreated++
+            Write-Host "Created site script: $firstScriptTitle (ID: $($firstScript.Id))" -ForegroundColor Green
+        }
 
-## Connect to SharePoint Online site  
-$site = m365 spo site get --url $url 
-$site = $site | ConvertFrom-Json
+        Write-Progress -Activity "Site Design Setup" -Status "Creating second site script (list, views)" -PercentComplete 40
+        
+        $secondScriptContent = Get-Content -Path $SecondScriptPath -Raw
+        $secondScriptTitle = "$SiteDesignTitle - Script 2 (List & Views)"
+        
+        if ($PSCmdlet.ShouldProcess($secondScriptTitle, 'Create site script')) {
+            Write-Verbose "Creating second site script: $secondScriptTitle"
+            $secondScriptJson = m365 spo sitescript add --title $secondScriptTitle --description "List creation and view configuration" --content $secondScriptContent --output json
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to create second site script. Skipping remaining operations."
+                $script:Summary.Failures++
+                return
+            }
+            
+            $secondScript = $secondScriptJson | ConvertFrom-Json
+            $script:Summary.ScriptsCreated++
+            Write-Host "Created site script: $secondScriptTitle (ID: $($secondScript.Id))" -ForegroundColor Green
+        }
 
+        Write-Progress -Activity "Site Design Setup" -Status "Creating site design" -PercentComplete 60
+        
+        if ($PSCmdlet.ShouldProcess($SiteDesignTitle, 'Create site design')) {
+            Write-Verbose "Creating site design: $SiteDesignTitle"
+            $siteDesignJson = m365 spo sitedesign add --title $SiteDesignTitle --description $SiteDesignDescription --webTemplate $WebTemplate --siteScripts "$($firstScript.Id),$($secondScript.Id)" --output json
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to create site design. Skipping remaining operations."
+                $script:Summary.Failures++
+                return
+            }
+            
+            $siteDesign = $siteDesignJson | ConvertFrom-Json
+            $script:Summary.DesignsCreated++
+            Write-Host "Created site design: $SiteDesignTitle (ID: $($siteDesign.Id))" -ForegroundColor Green
+        }
 
-#Site design script
-# - Set site regionalsettings (useful for formatting date type field)
-# - Apply custom theme
-# - Create site columns (text, number, person, choice)
-# - Create site content type with created site columns
+        Write-Progress -Activity "Site Design Setup" -Status "Updating site design version" -PercentComplete 75
+        
+        if ($PSCmdlet.ShouldProcess("$SiteDesignTitle (Version $SiteDesignVersion)", 'Update site design version')) {
+            Write-Verbose "Updating site design version to $SiteDesignVersion..."
+            $null = m365 spo sitedesign set --id $siteDesign.Id --version $SiteDesignVersion --output json
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to update site design version."
+                $script:Summary.Failures++
+            }
+            else {
+                Write-Verbose "Site design version updated to $SiteDesignVersion"
+            }
+        }
 
+        Write-Progress -Activity "Site Design Setup" -Status "Applying site design to site" -PercentComplete 90
+        
+        if ($PSCmdlet.ShouldProcess($SiteUrl, "Apply site design '$SiteDesignTitle'")) {
+            Write-Verbose "Applying site design to $SiteUrl..."
+            $applyResultJson = m365 spo sitedesign apply --id $siteDesign.Id --webUrl $SiteUrl --output json
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "Failed to apply site design to site."
+                $script:Summary.Failures++
+            }
+            else {
+                $script:Summary.DesignsApplied++
+                Write-Host "Successfully applied site design to $SiteUrl" -ForegroundColor Green
+            }
+        }
 
- #add Script to SharePoint sharepoint tenant 
- $addScript = m365 spo sitescript add --title "This is first script CLI 1" --description "some description " --content "@firstscript.json"
- $addScript =  $addScript | ConvertFrom-Json
+        Write-Progress -Activity "Site Design Setup" -Status "Completed" -PercentComplete 100 -Completed
+    }
+    catch {
+        Write-Warning "Error during site design setup: $_"
+        $script:Summary.Failures++
+    }
+}
 
- $site_script_CreateAndUpdateSiteList = m365 spo sitescript add --title "This is second script for list CLI 2" --description "Create and Update list CLI2" --content "@secondscript.json"
- $site_script_CreateAndUpdateSiteList = $site_script_CreateAndUpdateSiteList | ConvertFrom-Json
- 
- #add site design to site collection with site script
- $siteDesign = m365 spo sitedesign add --title "DevGods site design CLI" --webTemplate "TeamSite" --siteScripts "$($addScript.Id),$($site_script_CreateAndUpdateSiteList.Id)"
- $siteDesign =$siteDesign | ConvertFrom-Json
- 
- 
- #set design on site collection
- m365 spo sitedesign set --id $siteDesign.Id --title "DevGods site design from cli" --version 2
- 
- #invoke site design
- m365 spo sitedesign apply --id $siteDesign.Id --webUrl  $url
- 
- m365 logout
+end {
+    Write-Host "`n========================================" -ForegroundColor Cyan
+    Write-Host "Site Design Setup Summary" -ForegroundColor Cyan
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "Site Scripts Created: " -NoNewline
+    Write-Host $script:Summary.ScriptsCreated -ForegroundColor $(if ($script:Summary.ScriptsCreated -gt 0) { 'Green' } else { 'Yellow' })
+    Write-Host "Site Designs Created: " -NoNewline
+    Write-Host $script:Summary.DesignsCreated -ForegroundColor $(if ($script:Summary.DesignsCreated -gt 0) { 'Green' } else { 'Yellow' })
+    Write-Host "Site Designs Applied: " -NoNewline
+    Write-Host $script:Summary.DesignsApplied -ForegroundColor $(if ($script:Summary.DesignsApplied -gt 0) { 'Green' } else { 'Yellow' })
+    Write-Host "Failures: " -NoNewline
+    Write-Host $script:Summary.Failures -ForegroundColor $(if ($script:Summary.Failures -eq 0) { 'Green' } else { 'Red' })
+    Write-Host "========================================`n" -ForegroundColor Cyan
 
+    Write-Verbose "Transcript saved to: $transcriptPath"
+    Stop-Transcript
+}
+
+# Example 1: Basic usage with site design for a Team site
+# .\Create-SiteDesignWithCustomList.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/demo" -FirstScriptPath ".\firstscript.json" -SecondScriptPath ".\secondscript.json" -SiteDesignTitle "Contoso Site Design"
+
+# Example 2: Use WhatIf to preview actions without making changes
+# .\Create-SiteDesignWithCustomList.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/demo" -FirstScriptPath ".\firstscript.json" -SecondScriptPath ".\secondscript.json" -SiteDesignTitle "Contoso Site Design" -WhatIf
+
+# Example 3: Create site design for Communication site with custom version
+# .\Create-SiteDesignWithCustomList.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/comms" -FirstScriptPath ".\firstscript.json" -SecondScriptPath ".\secondscript.json" -SiteDesignTitle "Comms Site Design" -WebTemplate "CommunicationSite" -SiteDesignVersion 2
+
+# Example 4: Verbose output with custom transcript path
+# .\Create-SiteDesignWithCustomList.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/demo" -FirstScriptPath ".\firstscript.json" -SecondScriptPath ".\secondscript.json" -SiteDesignTitle "Contoso Site Design" -OutputPath "C:\Logs" -Verbose
 ```
 [!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
-
-
-> [!Note]
-> PowerShell cant correctly pass json of design script if it is added directly in the code. 
-> To make this work save json files in same directory you are running script, in the code above files names "firstscript.json" and "secondscript.json"
 
 
 # [JSON Site Script](#tab/json1)
@@ -443,6 +619,7 @@ $site = $site | ConvertFrom-Json
 | Author(s) |
 |-----------|
 | Valeras Narbutas |
+| Adam Wójcik |
 
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]

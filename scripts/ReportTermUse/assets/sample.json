@@ -7,7 +7,7 @@
     "url": "https://pnp.github.io/script-samples/ReportTermUse/README.html",
     "longDescription": [],
     "creationDateTime": "2021-12-13",
-    "updateDateTime": "2023-01-16",
+    "updateDateTime": "2026-02-10",
     "products": [
       "SharePoint"
     ],
@@ -18,7 +18,7 @@
       },
       {
         "key": "CLI-FOR-MICROSOFT365",
-        "value": "6.1.0"
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -33,7 +33,6 @@
       "Disconnect-PnPOnline",
       "Get-PnPWeb",
       "Get-PnPSubWeb",
-      "m365 status",
       "m365 login",
       "m365 spo list list",
       "m365 spo field list",

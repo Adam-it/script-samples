@@ -3,13 +3,13 @@
     "name": "spo-list-formatting",
     "source": "pnp",
     "title": "Export / Import list formatting",
-    "shortDescription": "SharePoint Online provides user interface for defining column and view formatting and forms",
+    "shortDescription": "Export and import SharePoint list formatting (column formatting, view formatting, form customizers) using PnP PowerShell or CLI for Microsoft 365",
     "url": "https://pnp.github.io/script-samples/spo-list-formatting/README.html",
     "longDescription": [
-      "SharePoint Online provides user interface for defining column and view formatting and forms"
+      "Export and import SharePoint list formatting (column formatting, view formatting, form customizers) using PnP PowerShell or CLI for Microsoft 365. Bridges the gap in PnP provisioning where Get-PnPSiteTemplate does not export list formatting customizations."
     ],
     "creationDateTime": "2021-12-08",
-    "updateDateTime": "2021-12-08",
+    "updateDateTime": "2026-02-16",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.5.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -34,7 +38,18 @@
       "Get-PnPView",
       "Invoke-PnPSiteTemplate",
       "Set-PnPField",
-      "Set-PnPView"
+      "Set-PnPView",
+      "m365 login",
+      "m365 spo contenttype field list",
+      "m365 spo contenttype list",
+      "m365 spo contenttype set",
+      "m365 spo field list",
+      "m365 spo field set",
+      "m365 spo list get",
+      "m365 spo list view add",
+      "m365 spo list view get",
+      "m365 spo list view list",
+      "m365 spo list view set"
     ],
     "thumbnails": [
       {
@@ -49,6 +64,11 @@
         "gitHubAccount": "kkazala",
         "pictureUrl": "https://avatars.githubusercontent.com/u/22429087?v=4",
         "name": "Kinga Kazala"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -56,6 +76,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

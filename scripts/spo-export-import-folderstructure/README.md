@@ -4,7 +4,9 @@
 
 ## Summary
 
-Sometimes you just need to copy a folder structure from one library to another. This script will export the folder structure from one library and import it to another library using a JSON file to store the folder structure. The can be used as is or be an invidual function in a site provisioning script.
+Sometimes you just need to copy a folder structure from one library to another. This script will export the folder structure from one library and import it to another library using a JSON file to store the folder structure. This can be used as is or be an individual function in a site provisioning script.
+
+The CLI for Microsoft 365 implementation uses modern PowerShell practices with typed parameters, parameter sets for export/import modes, WhatIf support, and comprehensive error handling. It leverages CLI v11.4.0+ commands including recursive folder listing, native folder color support, and automatic parent folder creation. The script exports folder hierarchies with color preservation to JSON and imports them with atomic folder creation operations.
 
 
 ![Example Screenshot](assets/example.png)
@@ -162,6 +164,273 @@ Set-FolderstructurefromJson -json $json -folderName "Shared Documents/"
 #if you want to start the folder structure in a subfolder of the library
 Set-FolderstructurefromJson -json $json -folderName "Shared Documents/General"
 
+
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory = $true, ParameterSetName = 'Export', HelpMessage = "Source site URL for export")]
+    [Parameter(Mandatory = $true, ParameterSetName = 'Import', HelpMessage = "Target site URL for import")]
+    [ValidatePattern('^https://.*\\.sharepoint\\.(com|us|mil|cn)')]
+    [string]$SiteUrl,
+    
+    [Parameter(Mandatory = $true, ParameterSetName = 'Export', HelpMessage = "Document library name to export from")]
+    [Parameter(Mandatory = $true, ParameterSetName = 'Import', HelpMessage = "Document library name to import to")]
+    [ValidateNotNullOrEmpty()]
+    [string]$LibraryName,
+    
+    [Parameter(Mandatory = $true, ParameterSetName = 'Export', HelpMessage = "Path to save exported JSON file")]
+    [ValidateScript({ Test-Path (Split-Path $_) -PathType Container })]
+    [string]$ExportPath,
+    
+    [Parameter(Mandatory = $true, ParameterSetName = 'Import', HelpMessage = "Path to JSON file with folder structure")]
+    [ValidateScript({ Test-Path $_ -PathType Leaf })]
+    [string]$ImportPath,
+    
+    [Parameter(Mandatory = $false, ParameterSetName = 'Import', HelpMessage = "Target folder path within library (default: library root)")]
+    [string]$TargetFolder = ""
+)
+
+begin {
+    $script:Summary = @{
+        Mode = if ($PSCmdlet.ParameterSetName -eq 'Export') { 'Export' } else { 'Import' }
+        FoldersProcessed = 0
+        FoldersCreated = 0
+        Failures = 0
+    }
+    
+    $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+    $transcriptPath = Join-Path ([System.IO.Path]::GetTempPath()) "FolderStructure-$($script:Summary.Mode)-$timestamp.log"
+    Start-Transcript -Path $transcriptPath
+    
+    Write-Host "Folder Structure $($script:Summary.Mode) Tool" -ForegroundColor Cyan
+    Write-Host "Site URL: $SiteUrl" -ForegroundColor White
+    Write-Host "Library: $LibraryName" -ForegroundColor White
+    
+    Write-Verbose "Ensuring login to Microsoft 365"
+    m365 login --ensure
+    if ($LASTEXITCODE -ne 0) {
+        Stop-Transcript
+        throw "Failed to login to Microsoft 365. Please run 'm365 login' first."
+    }
+    
+    Write-Verbose "Verifying library exists"
+    $library = m365 spo list get --webUrl $SiteUrl --title $LibraryName --output json 2>&1 | ConvertFrom-Json
+    if ($LASTEXITCODE -ne 0 -or -not $library) {
+        Stop-Transcript
+        throw "Library '$LibraryName' not found at site '$SiteUrl'"
+    }
+    
+    $script:LibraryServerRelativeUrl = $library.RootFolder.ServerRelativeUrl
+    Write-Verbose "Library URL: $($script:LibraryServerRelativeUrl)"
+}
+
+process {
+    if ($PSCmdlet.ParameterSetName -eq 'Export') {
+        Write-Host "`nExporting folder structure..." -ForegroundColor Yellow
+        
+        try {
+            Write-Verbose "Fetching folders recursively from $($script:LibraryServerRelativeUrl)"
+            $folders = m365 spo folder list --webUrl $SiteUrl --parentFolderUrl $script:LibraryServerRelativeUrl --recursive --output json 2>&1 | ConvertFrom-Json
+            
+            if ($LASTEXITCODE -ne 0) {
+                throw "Failed to list folders: $folders"
+            }
+            
+            $folders = @($folders)
+            Write-Host "Found $($folders.Count) folder$(if ($folders.Count -ne 1) { 's' })" -ForegroundColor Green
+            
+            function Build-FolderTree {
+                param(
+                    [array]$AllFolders,
+                    [string]$ParentPath
+                )
+                
+                $children = $AllFolders | Where-Object { 
+                    $parentUrl = Split-Path $_.ServerRelativeUrl -Parent
+                    $parentUrl -eq $ParentPath
+                }
+                
+                $result = @()
+                foreach ($folder in $children) {
+                    $script:Summary.FoldersProcessed++
+                    Write-Progress -Activity "Processing folders" -Status "$($script:Summary.FoldersProcessed)/$($AllFolders.Count): $($folder.Name)" -PercentComplete (($script:Summary.FoldersProcessed / $AllFolders.Count) * 100)
+                    
+                    Write-Verbose "Processing folder: $($folder.Name)"
+                    
+                    $folderColor = $null
+                    try {
+                        $folderDetails = m365 spo folder get --webUrl $SiteUrl --url $folder.ServerRelativeUrl --output json 2>&1 | ConvertFrom-Json
+                        if ($LASTEXITCODE -eq 0 -and $folderDetails.ListItemAllFields) {
+                            $colorHex = $folderDetails.ListItemAllFields.'_ColorHex'
+                            $colorTag = $folderDetails.ListItemAllFields.'OData__ColorTag'
+                            $folderColor = if ($colorTag) { $colorTag } elseif ($colorHex) { $colorHex } else { $null }
+                            if ($folderColor) {
+                                Write-Verbose "Found color for '$($folder.Name)': $folderColor"
+                            }
+                        }
+                    }
+                    catch {
+                        Write-Verbose "Could not retrieve color for folder '$($folder.Name)': $_"
+                    }
+                    
+                    $subFolders = Build-FolderTree -AllFolders $AllFolders -ParentPath $folder.ServerRelativeUrl
+                    
+                    $folderObj = [PSCustomObject]@{
+                        Name = $folder.Name
+                        Color = $folderColor
+                    }
+                    
+                    if ($subFolders.Count -gt 0) {
+                        $folderObj | Add-Member -MemberType NoteProperty -Name Folders -Value $subFolders
+                    }
+                    
+                    $result += $folderObj
+                }
+                
+                return $result
+            }
+            
+            Write-Host "Building folder hierarchy..." -ForegroundColor Yellow
+            $folderTree = Build-FolderTree -AllFolders $folders -ParentPath $script:LibraryServerRelativeUrl
+            
+            Write-Progress -Activity "Processing folders" -Completed
+            
+            if ($PSCmdlet.ShouldProcess($ExportPath, "Export folder structure to JSON file")) {
+                $jsonContent = [PSCustomObject]@{
+                    ExportDate = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
+                    SiteUrl = $SiteUrl
+                    LibraryName = $LibraryName
+                    Folders = $folderTree
+                } | ConvertTo-Json -Depth 100
+                
+                $jsonContent | Out-File -FilePath $ExportPath -Encoding UTF8 -Force
+                Write-Host "Exported folder structure to: $ExportPath" -ForegroundColor Green
+            }
+        }
+        catch {
+            Write-Error "Export failed: $_"
+            $script:Summary.Failures++
+        }
+    }
+    else {
+        Write-Host "`nImporting folder structure..." -ForegroundColor Yellow
+        
+        try {
+            Write-Verbose "Reading JSON file: $ImportPath"
+            $jsonContent = Get-Content -Path $ImportPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            
+            $foldersToImport = $jsonContent.Folders
+            if (-not $foldersToImport) {
+                throw "Invalid JSON structure. Expected 'Folders' property."
+            }
+            
+            $baseUrl = if ($TargetFolder) {
+                "$($script:LibraryServerRelativeUrl)/$($TargetFolder.TrimStart('/'))"
+            } else {
+                $script:LibraryServerRelativeUrl
+            }
+            
+            Write-Host "Target location: $baseUrl" -ForegroundColor White
+            
+            function Import-Folders {
+                param(
+                    [array]$Folders,
+                    [string]$ParentUrl
+                )
+                
+                foreach ($folder in $Folders) {
+                    $script:Summary.FoldersProcessed++
+                    Write-Progress -Activity "Creating folders" -Status "$($script:Summary.FoldersProcessed): $($folder.Name)" -PercentComplete (($script:Summary.FoldersProcessed / ($script:Summary.FoldersProcessed + 1)) * 100)
+                    
+                    try {
+                        if ($PSCmdlet.ShouldProcess("$ParentUrl/$($folder.Name)", "Create folder with color: $($folder.Color)")) {
+                            Write-Verbose "Creating folder: $($folder.Name) in $ParentUrl"
+                            
+                            $args = @(
+                                'spo', 'folder', 'add',
+                                '--webUrl', $SiteUrl,
+                                '--parentFolderUrl', $ParentUrl,
+                                '--name', $folder.Name,
+                                '--output', 'json'
+                            )
+                            
+                            if ($folder.Color) {
+                                $args += '--color'
+                                $args += $folder.Color
+                            }
+                            
+                            $newFolder = m365 @args 2>&1 | ConvertFrom-Json
+                            
+                            if ($LASTEXITCODE -ne 0) {
+                                throw "CLI command failed"
+                            }
+                            
+                            $script:Summary.FoldersCreated++
+                            Write-Host "Created folder: $($folder.Name)" -ForegroundColor Green
+                            
+                            if ($folder.Folders -and $folder.Folders.Count -gt 0) {
+                                Import-Folders -Folders $folder.Folders -ParentUrl $newFolder.ServerRelativeUrl
+                            }
+                        }
+                    }
+                    catch {
+                        Write-Warning "Failed to create folder '$($folder.Name)': $_"
+                        $script:Summary.Failures++
+                        continue
+                    }
+                }
+            }
+            
+            Import-Folders -Folders $foldersToImport -ParentUrl $baseUrl
+            Write-Progress -Activity "Creating folders" -Completed
+        }
+        catch {
+            Write-Error "Import failed: $_"
+            $script:Summary.Failures++
+        }
+    }
+}
+
+end {
+    Write-Host "`n=== Folder Structure $($script:Summary.Mode) Summary ===" -ForegroundColor Cyan
+    Write-Host "Mode: $($script:Summary.Mode)" -ForegroundColor White
+    Write-Host "Folders Processed: $($script:Summary.FoldersProcessed)" -ForegroundColor White
+    
+    if ($script:Summary.Mode -eq 'Import') {
+        $createdColor = if ($script:Summary.FoldersCreated -gt 0) { "Green" } else { "Yellow" }
+        Write-Host "Folders Created: $($script:Summary.FoldersCreated)" -ForegroundColor $createdColor
+    }
+    
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host "Failures: $($script:Summary.Failures)" -ForegroundColor Red
+    } else {
+        Write-Host "Failures: 0" -ForegroundColor Green
+    }
+    
+    Write-Host "==========================================`n" -ForegroundColor Cyan
+    Write-Host "Transcript saved to: $transcriptPath" -ForegroundColor Gray
+    
+    Stop-Transcript
+}
+
+# Example 1: Export folder structure to JSON file
+# .\Export-Import-FolderStructure.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/source" -LibraryName "Documents" -ExportPath "C:\temp\folders.json"
+
+# Example 2: Import folder structure to library root
+# .\Export-Import-FolderStructure.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/target" -LibraryName "Documents" -ImportPath "C:\temp\folders.json"
+
+# Example 3: Import to subfolder with WhatIf
+# .\Export-Import-FolderStructure.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/target" -LibraryName "Documents" -ImportPath "C:\temp\folders.json" -TargetFolder "Projects/2024" -WhatIf
+
+# Example 4: Export with verbose output
+# .\Export-Import-FolderStructure.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/source" -LibraryName "Documents" -ExportPath "C:\temp\folders.json" -Verbose
+
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+***
 ```
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
 ***
@@ -172,6 +441,7 @@ Set-FolderstructurefromJson -json $json -folderName "Shared Documents/General"
 | Author(s) |
 |-----------|
 | Kasper Larsen |
+| Adam Wójcik |
 
 [!INCLUDE [DISCLAIMER](../../docfx/includes/DISCLAIMER.md)]
 <img src="https://m365-visitor-stats.azurewebsites.net/script-samples/scripts/spo-export-import-folderstructure" aria-hidden="true" />

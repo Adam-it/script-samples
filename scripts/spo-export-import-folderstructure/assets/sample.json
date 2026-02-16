@@ -9,7 +9,7 @@
       ""
     ],
     "creationDateTime": "2023-11-11",
-    "updateDateTime": "2023-11-24",
+    "updateDateTime": "2026-02-16",
     "products": [
       "SharePoint",
       "Teams"
@@ -18,6 +18,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "2.2.1"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -25,10 +29,13 @@
       "Deploy",
       "Provision",
       "Configure"
-      
     ],
     "tags": [
-      "<Cmdlets-Used>"
+      "m365 login",
+      "m365 spo folder list",
+      "m365 spo folder get",
+      "m365 spo folder add",
+      "m365 spo listitem get"
     ],
     "thumbnails": [
       {
@@ -44,6 +51,11 @@
         "company": "",
         "pictureUrl": "https://github.com/kasperbolarsen.png",
         "name": "Kasper Larsen"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -51,6 +63,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

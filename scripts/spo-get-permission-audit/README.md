@@ -4,9 +4,9 @@
 
 ## Summary
 
-Managing permissions in SharePoint is a critical aspect of maintaining data security and compliance within organisations. However, as SharePoint environments grow in complexity, manually auditing and managing permissions becomes increasingly challenging.
+Managing permissions in SharePoint is a critical aspect of maintaining data security and compliance within organisations. However, as SharePoint environments grow in complexity, manually auditing and managing permissions becomes increasingly challenging. This script is available for both PnP PowerShell and CLI for Microsoft 365 v11.4.0+.
 
-Copilot for Microsoft m365 can access data from all the tenant, whether it’s Outlook emails, Teams chats and meetings, SharePoint and OneDrive. SharePoint is where all most documents, videos, and more are stored. Hence permission audit across sensitive sites to ensure "Least privilege" is a must to avoid data leak while using Copilot for Microsoft m365 which makes it easier to discover content through prompts.
+Copilot for Microsoft m365 can access data from all the tenant, whether it's Outlook emails, Teams chats and meetings, SharePoint and OneDrive. SharePoint is where all most documents, videos, and more are stored. Hence permission audit across sensitive sites to ensure "Least privilege" is a must to avoid data leak while using Copilot for Microsoft m365 which makes it easier to discover content through prompts.
 
 ![Example Screenshot](assets/preview.png)
 
@@ -276,6 +276,477 @@ else{
 }
 ```
 
+# [CLI for Microsoft 365](#tab/cli-m365-ps)
+
+```powershell
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true, HelpMessage = "SharePoint site collection URL")]
+    [ValidatePattern('^https://.*\\.sharepoint\\.(com|us|mil|cn)')]
+    [string]$SiteUrl,
+    
+    [Parameter(Mandatory = $false, HelpMessage = "Output folder path for CSV export")]
+    [string]$OutputPath = (Get-Location).Path,
+    
+    [Parameter(Mandatory = $false, HelpMessage = "Include list item-level permissions audit")]
+    [switch]$IncludeListItems,
+    
+    [Parameter(Mandatory = $false, HelpMessage = "Exclude Limited Access role from report")]
+    [switch]$ExcludeLimitedAccess,
+    
+    [Parameter(Mandatory = $false, HelpMessage = "Excluded library titles")]
+    [string[]]$ExcludedLibraries = @("Form Templates", "Preservation Hold Library", "Site Assets", "Images", "Pages", "Settings", "Videos", "Timesheet", "Site Collection Documents", "Site Collection Images", "Style Library", "AppPages", "Apps for SharePoint", "Apps for Office")
+)
+
+begin {
+    Write-Verbose "Ensuring CLI for Microsoft 365 login..."
+    m365 login --ensure
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to authenticate with CLI for Microsoft 365"
+    }
+    
+    $script:PermissionsReport = [System.Collections.ArrayList]::new()
+    $script:Summary = @{
+        SitesAudited = 0
+        ListsAudited = 0
+        ItemsAudited = 0
+        SharingLinksFound = 0
+        Failures = 0
+    }
+    
+    $logPath = Join-Path $OutputPath "PermissionAudit_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
+    Start-Transcript -Path $logPath
+    
+    Write-Host "Starting permission audit for site: $SiteUrl" -ForegroundColor Cyan
+}
+
+process {
+    try {
+        # LEVEL 1: Site-level permissions
+        Write-Host "\nAuditing site-level permissions..." -ForegroundColor Yellow
+        $webJson = m365 spo web get --url $SiteUrl --withPermissions --output json
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve site permissions"
+        }
+        $web = $webJson | ConvertFrom-Json
+        
+        # Extract site title and sensitivity label
+        $siteTitle = $web.Title
+        $sensitivityLabel = ""
+        
+        # Try to get sensitivity label from Graph API
+        try {
+            Write-Verbose "  Attempting to retrieve sensitivity label..."
+            $siteIdJson = m365 request --url "https://graph.microsoft.com/v1.0/sites/$($web.Url.Replace('https://', '').Replace('/', ','))" --output json
+            if ($LASTEXITCODE -eq 0) {
+                $siteData = $siteIdJson | ConvertFrom-Json
+                if ($siteData.sensitivityLabel) {
+                    $sensitivityLabel = $siteData.sensitivityLabel.displayName
+                }
+            }
+        }
+        catch {
+            Write-Verbose "  Could not retrieve sensitivity label: $_"
+        }
+        
+        Write-Verbose "  Processing site permissions for: $siteTitle"
+        
+        # Process site RoleAssignments
+        if ($web.RoleAssignments) {
+            foreach ($roleAssignment in $web.RoleAssignments) {
+                $member = $roleAssignment.Member
+                $roles = ($roleAssignment.RoleDefinitionBindings | ForEach-Object { $_.Name }) -join ","
+                
+                # Filter out Limited Access if requested
+                if ($ExcludeLimitedAccess -and $roles -eq "Limited Access") {
+                    continue
+                }
+                
+                # Determine member type
+                $memberType = switch ($member.PrincipalType) {
+                    1 { "User" }
+                    4 { "SecurityGroup" }
+                    8 { "SharePointGroup" }
+                    default { "Unknown" }
+                }
+                
+                # Handle sharing links
+                if ($member.Title -like "SharingLinks*") {
+                    [void]$script:PermissionsReport.Add([PSCustomObject]@{
+                        SiteUrl = $SiteUrl
+                        SiteTitle = $siteTitle
+                        Type = "Site"
+                        SensitivityLabel = $sensitivityLabel
+                        RelativeUrl = ""
+                        ListTitle = ""
+                        MemberType = "Sharing Link"
+                        MemberName = $member.Title
+                        MemberLoginName = $member.LoginName
+                        ParentGroup = ""
+                        Roles = "Sharing Link"
+                    })
+                    $script:Summary.SharingLinksFound++
+                    continue
+                }
+                
+                # Handle SharePoint groups - expand members
+                if ($memberType -eq "SharePointGroup") {
+                    try {
+                        $groupMembersJson = m365 spo group member list --webUrl $SiteUrl --groupName $member.Title --output json
+                        if ($LASTEXITCODE -eq 0) {
+                            $groupMembers = @($groupMembersJson | ConvertFrom-Json)
+                            
+                            foreach ($groupMember in $groupMembers) {
+                                # Check if member is M365 group (LoginName starts with c:0o.c|federateddirectoryclaimprovider|)
+                                if ($groupMember.LoginName -match '^c:0o\\.c\\|federateddirectoryclaimprovider\\|(.+?)(_[om])?$') {
+                                    $m365GroupId = $matches[1]
+                                    
+                                    try {
+                                        $m365UsersJson = m365 entra m365group user list --groupId $m365GroupId --output json
+                                        if ($LASTEXITCODE -eq 0) {
+                                            $m365Users = @($m365UsersJson | ConvertFrom-Json)
+                                            
+                                            foreach ($m365User in $m365Users) {
+                                                [void]$script:PermissionsReport.Add([PSCustomObject]@{
+                                                    SiteUrl = $SiteUrl
+                                                    SiteTitle = $siteTitle
+                                                    Type = "Site"
+                                                    SensitivityLabel = $sensitivityLabel
+                                                    RelativeUrl = ""
+                                                    ListTitle = ""
+                                                    MemberType = "GroupMember"
+                                                    MemberName = $m365User.displayName
+                                                    MemberLoginName = $m365User.userPrincipalName
+                                                    ParentGroup = $member.Title
+                                                    Roles = $roles
+                                                })
+                                            }
+                                        }
+                                    }
+                                    catch {
+                                        Write-Verbose "  Could not expand M365 group: $m365GroupId"
+                                    }
+                                }
+                                else {
+                                    # Regular user or group
+                                    [void]$script:PermissionsReport.Add([PSCustomObject]@{
+                                        SiteUrl = $SiteUrl
+                                        SiteTitle = $siteTitle
+                                        Type = "Site"
+                                        SensitivityLabel = $sensitivityLabel
+                                        RelativeUrl = ""
+                                        ListTitle = ""
+                                        MemberType = "GroupMember"
+                                        MemberName = $groupMember.Title
+                                        MemberLoginName = $groupMember.LoginName
+                                        ParentGroup = $member.Title
+                                        Roles = $roles
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    catch {
+                        Write-Warning "  Failed to get members for group: $($member.Title)"
+                        $script:Summary.Failures++
+                    }
+                }
+                else {
+                    # Direct user or security group
+                    [void]$script:PermissionsReport.Add([PSCustomObject]@{
+                        SiteUrl = $SiteUrl
+                        SiteTitle = $siteTitle
+                        Type = "Site"
+                        SensitivityLabel = $sensitivityLabel
+                        RelativeUrl = ""
+                        ListTitle = ""
+                        MemberType = $memberType
+                        MemberName = $member.Title
+                        MemberLoginName = $member.LoginName
+                        ParentGroup = "NA"
+                        Roles = $roles
+                    })
+                }
+            }
+        }
+        
+        $script:Summary.SitesAudited++
+        
+        # LEVEL 2: List-level permissions
+        Write-Host "\nAuditing list-level permissions..." -ForegroundColor Yellow
+        $listsJson = m365 spo list list --webUrl $SiteUrl --output json --query "[?Hidden == \`false\`]"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to retrieve lists"
+        }
+        $lists = @($listsJson | ConvertFrom-Json)
+        
+        $filteredLists = $lists | Where-Object { $_.Title -notin $ExcludedLibraries }
+        Write-Host "  Found $($filteredLists.Count) lists to audit (excluded $($lists.Count - $filteredLists.Count) system libraries)" -ForegroundColor Green
+        
+        $listIndex = 0
+        foreach ($list in $filteredLists) {
+            $listIndex++
+            Write-Progress -Activity "Auditing Lists" -Status "$($list.Title) ($listIndex of $($filteredLists.Count))" -PercentComplete (($listIndex / $filteredLists.Count) * 100)
+            Write-Verbose "  Processing list: $($list.Title)"
+            
+            try {
+                # Check if list has unique permissions
+                $listDetailsJson = m365 spo list get --webUrl $SiteUrl --title $list.Title --output json
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Warning "  Failed to get list details: $($list.Title)"
+                    $script:Summary.Failures++
+                    continue
+                }
+                $listDetails = $listDetailsJson | ConvertFrom-Json
+                
+                if ($listDetails.HasUniqueRoleAssignments) {
+                    Write-Verbose "    List has unique permissions, retrieving role assignments..."
+                    
+                    # Get list RoleAssignments via REST API
+                    $listUrl = $list.RootFolder.ServerRelativeUrl
+                    $roleAssignmentsJson = m365 request --url "$SiteUrl/_api/web/lists/getbytitle('$($list.Title)')/roleassignments?\`$expand=Member,RoleDefinitionBindings" --output json
+                    if ($LASTEXITCODE -eq 0) {
+                        $roleAssignmentsData = $roleAssignmentsJson | ConvertFrom-Json
+                        $listRoleAssignments = @($roleAssignmentsData.value)
+                        
+                        foreach ($roleAssignment in $listRoleAssignments) {
+                            $member = $roleAssignment.Member
+                            $roles = ($roleAssignment.RoleDefinitionBindings | ForEach-Object { $_.Name }) -join ","
+                            
+                            if ($ExcludeLimitedAccess -and $roles -eq "Limited Access") {
+                                continue
+                            }
+                            
+                            $memberType = switch ($member.PrincipalType) {
+                                1 { "User" }
+                                4 { "SecurityGroup" }
+                                8 { "SharePointGroup" }
+                                default { "Unknown" }
+                            }
+                            
+                            [void]$script:PermissionsReport.Add([PSCustomObject]@{
+                                SiteUrl = $SiteUrl
+                                SiteTitle = $siteTitle
+                                Type = "List"
+                                SensitivityLabel = $sensitivityLabel
+                                RelativeUrl = $listUrl
+                                ListTitle = $list.Title
+                                MemberType = $memberType
+                                MemberName = $member.Title
+                                MemberLoginName = $member.LoginName
+                                ParentGroup = if ($memberType -eq "User") { "NA" } else { $member.Title }
+                                Roles = $roles
+                            })
+                        }
+                    }
+                    
+                    $script:Summary.ListsAudited++
+                }
+                
+                # LEVEL 3: Item-level permissions (optional)
+                if ($IncludeListItems) {
+                    Write-Verbose "    Checking for items with unique permissions..."
+                    
+                    # Get items with HasUniqueRoleAssignments = true (CRITICAL OPTIMIZATION)
+                    $itemsJson = m365 spo listitem list --webUrl $SiteUrl --listTitle $list.Title --fields "ID,FileRef,FileLeafRef,FileSystemObjectType,HasUniqueRoleAssignments" --output json --query "[?HasUniqueRoleAssignments == \`true\`]"
+                    if ($LASTEXITCODE -eq 0) {
+                        $items = @($itemsJson | ConvertFrom-Json)
+                        
+                        if ($items.Count -gt 0) {
+                            Write-Host "    Found $($items.Count) items with unique permissions in list: $($list.Title)" -ForegroundColor Yellow
+                            
+                            foreach ($item in $items) {
+                                try {
+                                    $fileUrl = $item.FileRef
+                                    $fileName = $item.FileLeafRef
+                                    $itemType = if ($item.FileSystemObjectType -eq 1) { "Folder" } else { "File" }
+                                    
+                                    # Get item RoleAssignments via REST API
+                                    $itemRoleAssignmentsJson = m365 request --url "$SiteUrl/_api/web/lists/getbytitle('$($list.Title)')/items($($item.ID))/roleassignments?\`$expand=Member,RoleDefinitionBindings" --output json
+                                    if ($LASTEXITCODE -eq 0) {
+                                        $itemRoleAssignmentsData = $itemRoleAssignmentsJson | ConvertFrom-Json
+                                        $itemRoleAssignments = @($itemRoleAssignmentsData.value)
+                                        
+                                        foreach ($roleAssignment in $itemRoleAssignments) {
+                                            $member = $roleAssignment.Member
+                                            $roles = ($roleAssignment.RoleDefinitionBindings | ForEach-Object { $_.Name }) -join ","
+                                            
+                                            if ($ExcludeLimitedAccess -and $roles -eq "Limited Access") {
+                                                continue
+                                            }
+                                            
+                                            $memberType = switch ($member.PrincipalType) {
+                                                1 { "User" }
+                                                4 { "SecurityGroup" }
+                                                8 { "SharePointGroup" }
+                                                default { "Unknown" }
+                                            }
+                                            
+                                            [void]$script:PermissionsReport.Add([PSCustomObject]@{
+                                                SiteUrl = $SiteUrl
+                                                SiteTitle = $siteTitle
+                                                Type = $itemType
+                                                SensitivityLabel = $sensitivityLabel
+                                                RelativeUrl = $fileUrl
+                                                ListTitle = $list.Title
+                                                MemberType = $memberType
+                                                MemberName = $member.Title
+                                                MemberLoginName = $member.LoginName
+                                                ParentGroup = if ($memberType -eq "User") { "NA" } else { $member.Title }
+                                                Roles = $roles
+                                            })
+                                        }
+                                    }
+                                    
+                                    # Get sharing links for files
+                                    if ($itemType -eq "File") {
+                                        try {
+                                            $sharingLinksJson = m365 spo file sharinglink list --webUrl $SiteUrl --fileUrl $fileUrl --output json
+                                            if ($LASTEXITCODE -eq 0) {
+                                                $sharingLinks = @($sharingLinksJson | ConvertFrom-Json)
+                                                
+                                                foreach ($link in $sharingLinks) {
+                                                    [void]$script:PermissionsReport.Add([PSCustomObject]@{
+                                                        SiteUrl = $SiteUrl
+                                                        SiteTitle = $siteTitle
+                                                        Type = $itemType
+                                                        SensitivityLabel = $sensitivityLabel
+                                                        RelativeUrl = $fileUrl
+                                                        ListTitle = $list.Title
+                                                        MemberType = "Sharing Link"
+                                                        MemberName = $link.scope
+                                                        MemberLoginName = $link.shareLink.webUrl
+                                                        ParentGroup = ""
+                                                        Roles = $link.shareLink.type
+                                                    })
+                                                    $script:Summary.SharingLinksFound++
+                                                }
+                                            }
+                                        }
+                                        catch {
+                                            Write-Verbose "      No sharing links found for file: $fileName"
+                                        }
+                                    }
+                                    
+                                    # Get sharing links for folders
+                                    if ($itemType -eq "Folder") {
+                                        try {
+                                            $sharingLinksJson = m365 spo folder sharinglink list --webUrl $SiteUrl --folderUrl $fileUrl --output json
+                                            if ($LASTEXITCODE -eq 0) {
+                                                $sharingLinks = @($sharingLinksJson | ConvertFrom-Json)
+                                                
+                                                foreach ($link in $sharingLinks) {
+                                                    [void]$script:PermissionsReport.Add([PSCustomObject]@{
+                                                        SiteUrl = $SiteUrl
+                                                        SiteTitle = $siteTitle
+                                                        Type = $itemType
+                                                        SensitivityLabel = $sensitivityLabel
+                                                        RelativeUrl = $fileUrl
+                                                        ListTitle = $list.Title
+                                                        MemberType = "Sharing Link"
+                                                        MemberName = $link.scope
+                                                        MemberLoginName = $link.shareLink.webUrl
+                                                        ParentGroup = ""
+                                                        Roles = $link.shareLink.type
+                                                    })
+                                                    $script:Summary.SharingLinksFound++
+                                                }
+                                            }
+                                        }
+                                        catch {
+                                            Write-Verbose "      No sharing links found for folder: $fileName"
+                                        }
+                                    }
+                                    
+                                    $script:Summary.ItemsAudited++
+                                }
+                                catch {
+                                    Write-Warning "      Error processing item ID $($item.ID): $_"
+                                    $script:Summary.Failures++
+                                    continue
+                                }
+                            }
+                        }
+                        else {
+                            Write-Verbose "    No items with unique permissions found"
+                        }
+                    }
+                }
+            }
+            catch {
+                Write-Warning "  Error processing list '$($list.Title)': $_"
+                $script:Summary.Failures++
+                continue
+            }
+        }
+        
+        Write-Progress -Activity "Auditing Lists" -Completed
+    }
+    catch {
+        Write-Host "\nFailed to complete permission audit: $_" -ForegroundColor Red
+        throw
+    }
+}
+
+end {
+    Write-Host "\nExporting permission audit report..." -ForegroundColor Yellow
+    
+    if ($script:PermissionsReport.Count -gt 0) {
+        $csvPath = Join-Path $OutputPath "PermissionAudit_$(Get-Date -Format 'yyyyMMdd_HHmmss').csv"
+        $script:PermissionsReport | Select-Object SiteUrl, SiteTitle, Type, SensitivityLabel, RelativeUrl, ListTitle, MemberType, MemberName, MemberLoginName, ParentGroup, Roles | Export-Csv -Path $csvPath -NoTypeInformation
+        
+        Write-Host "  Permission audit report exported to: " -NoNewline -ForegroundColor Green
+        Write-Host $csvPath -ForegroundColor Cyan
+    }
+    else {
+        Write-Host "  No permissions found to export" -ForegroundColor Yellow
+    }
+    
+    Write-Host "\n=== Permission Audit Summary ===" -ForegroundColor Cyan
+    Write-Host "Sites Audited: " -NoNewline
+    Write-Host $script:Summary.SitesAudited -ForegroundColor Green
+    Write-Host "Lists Audited: " -NoNewline
+    Write-Host $script:Summary.ListsAudited -ForegroundColor Green
+    Write-Host "Items Audited: " -NoNewline
+    Write-Host $script:Summary.ItemsAudited -ForegroundColor Green
+    Write-Host "Sharing Links Found: " -NoNewline
+    if ($script:Summary.SharingLinksFound -gt 0) {
+        Write-Host $script:Summary.SharingLinksFound -ForegroundColor Yellow
+    } else {
+        Write-Host $script:Summary.SharingLinksFound -ForegroundColor Green
+    }
+    Write-Host "Failures: " -NoNewline
+    if ($script:Summary.Failures -gt 0) {
+        Write-Host $script:Summary.Failures -ForegroundColor Red
+    } else {
+        Write-Host $script:Summary.Failures -ForegroundColor Green
+    }
+    Write-Host "Log File: " -NoNewline
+    Write-Host $logPath -ForegroundColor Cyan
+    Write-Host "================================\n" -ForegroundColor Cyan
+    
+    Stop-Transcript
+}
+
+# Example 1: Audit site-level and list-level permissions
+# .\Get-PermissionAudit.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/Marketing"
+
+# Example 2: Audit with item-level permissions (comprehensive)
+# .\Get-PermissionAudit.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/Marketing" -IncludeListItems
+
+# Example 3: Audit with custom output path and exclude Limited Access
+# .\Get-PermissionAudit.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/HR" -OutputPath "C:\\Reports" -ExcludeLimitedAccess
+
+# Example 4: Comprehensive audit with verbose output for troubleshooting
+# .\Get-PermissionAudit.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/Marketing" -IncludeListItems -ExcludeLimitedAccess -Verbose
+```
+
+[!INCLUDE [More about CLI for Microsoft 365](../../docfx/includes/MORE-CLIM365.md)]
+
+***
+
+
+
 [!INCLUDE [More about PnP PowerShell](../../docfx/includes/MORE-PNPPS.md)]
 
 ***
@@ -288,6 +759,7 @@ Sample first appeared on [PowerShell Script to Query Unique Permissions in Share
 
 | Author(s) |
 |-----------|
+| [Adam Wójcik](https://github.com/Adam-it) |
 | [Reshmee Auckloo](https://github.com/reshmee011) |
 
 

@@ -9,7 +9,7 @@
       "This sample shows how to efficiently update a large SharePoint list of 60,000 or more items using PnP-Batch, significantly reducing update time. It addresses throttling challenges, emphasizing exception handling and retry mechanisms to ensure smooth updates."
     ],
     "creationDateTime": "2023-07-27",
-    "updateDateTime": "2023-07-27",
+    "updateDateTime": "2026-02-17",
     "products": [
       "SharePoint"
     ],
@@ -17,6 +17,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "2.1.1"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.4.0"
       }
     ],
     "categories": [
@@ -28,7 +32,10 @@
       "New-PnPBatch",
       "Get-PnPListItem",
       "Set-PnPListItem",
-      "Invoke-PnPBatch"
+      "Invoke-PnPBatch",
+      "m365 login",
+      "m365 spo listitem list",
+      "m365 spo listitem set"
     ],
     "thumbnails": [
       {
@@ -44,6 +51,11 @@
         "gitHubAccount": "reshmee011",
         "company": "",
         "pictureUrl": "https://avatars.githubusercontent.com/u/7693852?v=4"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -51,6 +63,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

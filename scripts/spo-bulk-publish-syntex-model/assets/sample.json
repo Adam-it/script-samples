@@ -7,7 +7,7 @@
     "title": "Bulk Publish Syntex Models To Libraries",
     "url": "https://pnp.github.io/script-samples/spo-bulk-publish-syntex-model/README.html",
     "creationDateTime": "2022-07-22",
-    "updateDateTime": "2022-07-22",
+    "updateDateTime": "2026-02-17",
     "shortDescription": "This script sample will publish Syntex Document Understanding Models to many libraries using the batching functionality of PnP PowerShell.",
     "longDescription": null,
     "products": [
@@ -18,6 +18,8 @@
     ],
     "tags": [
       "SharePoint Online",
+      "m365 login",
+      "m365 spp model apply",
       "Publish-PnPSyntexModel",
       "SharePoint Syntex",
       "Invoke-PnPBatch"
@@ -26,6 +28,10 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.11.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.4.0"
       }
     ],
     "thumbnails": [
@@ -39,6 +45,11 @@
     ],
     "authors": [
       {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
+      },
+      {
         "name": "Leon Armston",
         "gitHubAccount": "LeonArmston",
         "company": null,
@@ -50,6 +61,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }

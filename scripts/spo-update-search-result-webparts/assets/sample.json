@@ -9,7 +9,7 @@
       "Locate all the pages where a classic SearchResultWebPart is used, and if the Remove Duplicates setting is True (which is the default) log the location in the csv file. The duplicate algoritm is basically broken and will often trim records that are NOT duplicates"
     ],
     "creationDateTime": "2022-10-17",
-    "updateDateTime": "2022-10-17",
+    "updateDateTime": "2026-02-17",
     "products": [
       "SharePoint"
     ],
@@ -17,12 +17,22 @@
       {
         "key": "PNP-POWERSHELL",
         "value": "1.6.0"
+      },
+      {
+        "key": "CLI-FOR-MICROSOFT365",
+        "value": "11.4.0"
       }
     ],
     "categories": [
       "Data"
     ],
     "tags": [
+      "m365 login",
+      "m365 spo site list",
+      "m365 spo web list",
+      "m365 spo listitem list",
+      "m365 spo page control list",
+      "m365 spo page control get",
       "Get-PnPWebPart",
       "Connect-PnPOnline",
       "Get-PnPTenantSite",
@@ -43,6 +53,11 @@
         "gitHubAccount": "kasperbolarsen",
         "pictureUrl": "https://avatars.githubusercontent.com/u/20593570?s=400&u=f9a4d5137685d8c3fcc60394fc193f3e8156f678&v=4",
         "name": "Kasper Larsen"
+      },
+      {
+        "gitHubAccount": "Adam-it",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/58668583?v=4",
+        "name": "Adam Wójcik"
       }
     ],
     "references": [
@@ -50,6 +65,11 @@
         "name": "Want to learn more about PnP PowerShell and the cmdlets",
         "description": "Check out the PnP PowerShell site to get started and for the reference to the cmdlets.",
         "url": "https://aka.ms/pnp/powershell"
+      },
+      {
+        "name": "Want to learn more about CLI for Microsoft 365 and the commands",
+        "description": "Check out the CLI for Microsoft 365 site to get started and for the reference to the commands.",
+        "url": "https://aka.ms/cli-m365"
       }
     ]
   }
